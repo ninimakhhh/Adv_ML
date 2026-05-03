@@ -1,0 +1,142 @@
+{
+  "to_review": [
+    {
+      "id": "TCK-1001",
+      "customer": "João Silva",
+      "subject": "Product stopped working after update",
+      "raw_text": "I purchased the wireless charger last week and it worked fine for 5 days. After the latest software update on my phone, it stops charging completely. I've tried different cables and outlets. Very frustrated. Please help!",
+      "suggested_category": "Bug",
+      "confidence": 92
+    },
+    {
+      "id": "TCK-1002",
+      "customer": "Ana Santos",
+      "subject": "Refund request for wrong item",
+      "raw_text": "Hi, I ordered the red phone case but received the blue one instead. I want to return it and get the correct color. Can you arrange a return label? I need this ASAP as a gift.",
+      "suggested_category": "Returns",
+      "confidence": 88
+    },
+    {
+      "id": "TCK-1003",
+      "customer": "Carlos Mendes",
+      "subject": "Package tracking issue - where is my order?",
+      "raw_text": "My order #ORD-456789 was supposed to arrive 3 days ago. The tracking number shows it left the facility on April 28th but I haven't received it yet. It's showing as 'in transit' for 5 days now. Very concerning.",
+      "suggested_category": "Shipping",
+      "confidence": 85
+    },
+    {
+      "id": "TCK-1004",
+      "customer": "Maria Costa",
+      "subject": "Cannot process my credit card",
+      "raw_text": "I tried to check out 4 times but keep getting an error message saying 'payment declined' even though I have sufficient funds and my card works everywhere else. This is very frustrating. What's wrong?",
+      "suggested_category": "Payments",
+      "confidence": 90
+    },
+    {
+      "id": "TCK-1005",
+      "customer": "Pedro Oliveira",
+      "subject": "Your customer service is amazing!",
+      "raw_text": "Just wanted to say thank you! I had an issue with my order and the support team resolved it within 2 hours. I've been a customer for 3 years and this is why I keep coming back. Keep it up!",
+      "suggested_category": "Other",
+      "confidence": 72
+    }
+  ],
+  "classified": [
+    {
+      "id": "TCK-0950",
+      "customer": "Fernanda Rocha",
+      "subject": "Defective battery - won't charge",
+      "category": "Bug",
+      "sentiment": "Negative",
+      "confidence": 94,
+      "assigned_queue": "Technical Support",
+      "status": "In Progress",
+      "created_at": "2026-05-02T14:30:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "TCK-0951",
+      "customer": "Roberto Dias",
+      "subject": "Received damaged item",
+      "category": "Shipping",
+      "sentiment": "Negative",
+      "confidence": 91,
+      "assigned_queue": "Logistics",
+      "status": "Resolved",
+      "created_at": "2026-05-01T10:15:00Z",
+      "resolved_at": "2026-05-02T16:45:00Z"
+    },
+    {
+      "id": "TCK-0952",
+      "customer": "Lucia Martins",
+      "subject": "Initiating return for wrong size",
+      "category": "Returns",
+      "sentiment": "Neutral",
+      "confidence": 89,
+      "assigned_queue": "Returns",
+      "status": "In Progress",
+      "created_at": "2026-05-02T09:20:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "TCK-0953",
+      "customer": "Felipe Nunes",
+      "subject": "Payment method not accepting",
+      "category": "Payments",
+      "sentiment": "Negative",
+      "confidence": 93,
+      "assigned_queue": "Payments",
+      "status": "Resolved",
+      "created_at": "2026-04-30T18:50:00Z",
+      "resolved_at": "2026-05-01T11:30:00Z"
+    },
+    {
+      "id": "TCK-0954",
+      "customer": "Beatriz Gomes",
+      "subject": "Great experience with your store",
+      "category": "Other",
+      "sentiment": "Positive",
+      "confidence": 85,
+      "assigned_queue": "General",
+      "status": "Resolved",
+      "created_at": "2026-05-02T12:00:00Z",
+      "resolved_at": "2026-05-02T13:45:00Z"
+    },
+    {
+      "id": "TCK-0955",
+      "customer": "Gustavo Pereira",
+      "subject": "Shipping delay - where's my order?",
+      "category": "Shipping",
+      "sentiment": "Negative",
+      "confidence": 88,
+      "assigned_queue": "Logistics",
+      "status": "Waiting",
+      "created_at": "2026-05-01T15:30:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "TCK-0956",
+      "customer": "Sofia Miranda",
+      "subject": "App crashes on startup",
+      "category": "Bug",
+      "sentiment": "Negative",
+      "confidence": 91,
+      "assigned_queue": "Technical Support",
+      "status": "In Progress",
+      "created_at": "2026-05-02T08:20:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "TCK-0957",
+      "customer": "Thiago Alves",
+      "subject": "Question about return policy",
+      "category": "Returns",
+      "sentiment": "Neutral",
+      "confidence": 79,
+      "assigned_queue": "Returns",
+      "status": "Resolved",
+      "created_at": "2026-05-02T11:45:00Z",
+      "resolved_at": "2026-05-02T12:30:00Z"
+    }
+  ]
+}

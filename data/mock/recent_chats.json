@@ -1,0 +1,137 @@
+{
+  "recent_chats": [
+    {
+      "chat_id": "CHT-5001",
+      "customer": "Isabel Ferreira",
+      "timestamp": "2026-05-03T10:45:00Z",
+      "status": "closed",
+      "sentiment": "positive",
+      "resolution": "Provided tracking information",
+      "ai_handled": true,
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hi, where is my order?"
+        },
+        {
+          "role": "ai",
+          "text": "Hello! I'd be happy to help you track your order. Could you please provide your order number?"
+        },
+        {
+          "role": "customer",
+          "text": "It's ORD-234567"
+        },
+        {
+          "role": "ai",
+          "text": "Great! Your order is currently out for delivery and should arrive today by 6 PM. You can track it here: [link]"
+        },
+        {
+          "role": "customer",
+          "text": "Perfect, thank you!"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHT-5002",
+      "customer": "Daniel Rocha",
+      "timestamp": "2026-05-03T09:20:00Z",
+      "status": "closed",
+      "sentiment": "neutral",
+      "resolution": "Escalated to human agent",
+      "ai_handled": false,
+      "messages": [
+        {
+          "role": "customer",
+          "text": "I need to file a complaint about the quality of this product"
+        },
+        {
+          "role": "ai",
+          "text": "I'm sorry to hear you're experiencing an issue. Let me connect you with our support team to better assist you."
+        }
+      ]
+    },
+    {
+      "chat_id": "CHT-5003",
+      "customer": "Camila Leite",
+      "timestamp": "2026-05-03T08:15:00Z",
+      "status": "closed",
+      "sentiment": "positive",
+      "resolution": "Answered product question",
+      "ai_handled": true,
+      "messages": [
+        {
+          "role": "customer",
+          "text": "What's the warranty on your phones?"
+        },
+        {
+          "role": "ai",
+          "text": "Our phones come with a 2-year manufacturer warranty covering defects. Extended warranty options are also available for purchase."
+        },
+        {
+          "role": "customer",
+          "text": "Thanks! Is the warranty valid in Portugal?"
+        },
+        {
+          "role": "ai",
+          "text": "Yes! Our warranty is valid throughout the EU, including Portugal."
+        }
+      ]
+    },
+    {
+      "chat_id": "CHT-5004",
+      "customer": "Lucas Tavares",
+      "timestamp": "2026-05-02T16:40:00Z",
+      "status": "closed",
+      "sentiment": "negative",
+      "resolution": "Issued refund",
+      "ai_handled": false,
+      "messages": [
+        {
+          "role": "customer",
+          "text": "I received the wrong item and want a refund"
+        },
+        {
+          "role": "ai",
+          "text": "I apologize for the inconvenience. Let me escalate this to our team to process your refund right away."
+        }
+      ]
+    },
+    {
+      "chat_id": "CHT-5005",
+      "customer": "Rita Lemos",
+      "timestamp": "2026-05-02T14:25:00Z",
+      "status": "closed",
+      "sentiment": "positive",
+      "resolution": "Provided size guide",
+      "ai_handled": true,
+      "messages": [
+        {
+          "role": "customer",
+          "text": "What size should I choose for the jacket?"
+        },
+        {
+          "role": "ai",
+          "text": "Our jackets run true to size. Here's our size guide: [image]. For reference, size M fits chest measurements 96-106cm. What's your usual size?"
+        },
+        {
+          "role": "customer",
+          "text": "I'm usually a large"
+        },
+        {
+          "role": "ai",
+          "text": "Perfect! Size L would be ideal for you. Would you like to add it to your cart?"
+        }
+      ]
+    }
+  ],
+  "chat_statistics": {
+    "total_chats": 342,
+    "ai_resolved": 231,
+    "human_escalated": 111,
+    "avg_resolution_time_minutes": 8,
+    "sentiment_positive": 234,
+    "sentiment_neutral": 78,
+    "sentiment_negative": 30,
+    "customer_satisfaction": 4.3
+  }
+}

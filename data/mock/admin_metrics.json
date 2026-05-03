@@ -1,0 +1,258 @@
+{
+  "kpi_summary": {
+    "tickets": {
+      "created": 342,
+      "solved": 298,
+      "open": 44,
+      "reopened": 8
+    },
+    "ai_performance": {
+      "auto_resolution_rate": 68,
+      "tickets_auto_routed": 231,
+      "accuracy": 87.5
+    },
+    "response_times": {
+      "avg_first_reply_minutes": 12,
+      "avg_full_resolution_hours": 4.2
+    }
+  },
+  "daily_metrics": [
+    {
+      "date": "2026-04-03",
+      "created": 8,
+      "solved": 7,
+      "first_reply_time": 10,
+      "resolution_time": 3.8
+    },
+    {
+      "date": "2026-04-04",
+      "created": 12,
+      "solved": 10,
+      "first_reply_time": 11,
+      "resolution_time": 4.1
+    },
+    {
+      "date": "2026-04-05",
+      "created": 9,
+      "solved": 11,
+      "first_reply_time": 9,
+      "resolution_time": 3.5
+    },
+    {
+      "date": "2026-04-06",
+      "created": 15,
+      "solved": 12,
+      "first_reply_time": 14,
+      "resolution_time": 4.6
+    },
+    {
+      "date": "2026-04-07",
+      "created": 11,
+      "solved": 9,
+      "first_reply_time": 12,
+      "resolution_time": 4.0
+    },
+    {
+      "date": "2026-04-08",
+      "created": 18,
+      "solved": 16,
+      "first_reply_time": 13,
+      "resolution_time": 4.3
+    },
+    {
+      "date": "2026-04-09",
+      "created": 14,
+      "solved": 15,
+      "first_reply_time": 11,
+      "resolution_time": 3.9
+    },
+    {
+      "date": "2026-04-10",
+      "created": 22,
+      "solved": 19,
+      "first_reply_time": 15,
+      "resolution_time": 4.5
+    },
+    {
+      "date": "2026-04-11",
+      "created": 16,
+      "solved": 18,
+      "first_reply_time": 10,
+      "resolution_time": 3.7
+    },
+    {
+      "date": "2026-04-12",
+      "created": 13,
+      "solved": 14,
+      "first_reply_time": 11,
+      "resolution_time": 3.8
+    },
+    {
+      "date": "2026-04-13",
+      "created": 19,
+      "solved": 17,
+      "first_reply_time": 12,
+      "resolution_time": 4.2
+    },
+    {
+      "date": "2026-04-14",
+      "created": 17,
+      "solved": 16,
+      "first_reply_time": 13,
+      "resolution_time": 4.4
+    },
+    {
+      "date": "2026-04-15",
+      "created": 21,
+      "solved": 20,
+      "first_reply_time": 11,
+      "resolution_time": 3.9
+    },
+    {
+      "date": "2026-04-16",
+      "created": 14,
+      "solved": 13,
+      "first_reply_time": 12,
+      "resolution_time": 4.1
+    },
+    {
+      "date": "2026-04-17",
+      "created": 18,
+      "solved": 19,
+      "first_reply_time": 10,
+      "resolution_time": 3.6
+    },
+    {
+      "date": "2026-04-18",
+      "created": 20,
+      "solved": 21,
+      "first_reply_time": 11,
+      "resolution_time": 3.8
+    },
+    {
+      "date": "2026-04-19",
+      "created": 15,
+      "solved": 16,
+      "first_reply_time": 13,
+      "resolution_time": 4.3
+    },
+    {
+      "date": "2026-04-20",
+      "created": 23,
+      "solved": 22,
+      "first_reply_time": 12,
+      "resolution_time": 4.0
+    },
+    {
+      "date": "2026-04-21",
+      "created": 16,
+      "solved": 15,
+      "first_reply_time": 14,
+      "resolution_time": 4.5
+    },
+    {
+      "date": "2026-04-22",
+      "created": 19,
+      "solved": 20,
+      "first_reply_time": 11,
+      "resolution_time": 3.9
+    },
+    {
+      "date": "2026-04-23",
+      "created": 17,
+      "solved": 18,
+      "first_reply_time": 12,
+      "resolution_time": 4.1
+    },
+    {
+      "date": "2026-04-24",
+      "created": 21,
+      "solved": 19,
+      "first_reply_time": 13,
+      "resolution_time": 4.4
+    },
+    {
+      "date": "2026-04-25",
+      "created": 14,
+      "solved": 16,
+      "first_reply_time": 10,
+      "resolution_time": 3.7
+    },
+    {
+      "date": "2026-04-26",
+      "created": 18,
+      "solved": 17,
+      "first_reply_time": 11,
+      "resolution_time": 3.9
+    },
+    {
+      "date": "2026-04-27",
+      "created": 20,
+      "solved": 21,
+      "first_reply_time": 12,
+      "resolution_time": 4.2
+    },
+    {
+      "date": "2026-04-28",
+      "created": 16,
+      "solved": 15,
+      "first_reply_time": 14,
+      "resolution_time": 4.3
+    },
+    {
+      "date": "2026-04-29",
+      "created": 19,
+      "solved": 20,
+      "first_reply_time": 11,
+      "resolution_time": 3.8
+    },
+    {
+      "date": "2026-04-30",
+      "created": 17,
+      "solved": 18,
+      "first_reply_time": 12,
+      "resolution_time": 4.0
+    },
+    {
+      "date": "2026-05-01",
+      "created": 21,
+      "solved": 19,
+      "first_reply_time": 13,
+      "resolution_time": 4.4
+    },
+    {
+      "date": "2026-05-02",
+      "created": 14,
+      "solved": 16,
+      "first_reply_time": 10,
+      "resolution_time": 3.6
+    },
+    {
+      "date": "2026-05-03",
+      "created": 18,
+      "solved": 17,
+      "first_reply_time": 11,
+      "resolution_time": 3.9
+    }
+  ],
+  "channel_distribution": {
+    "Email": 142,
+    "Chat": 120,
+    "Web": 56,
+    "API": 24
+  },
+  "ticket_type_distribution": {
+    "Bug": 68,
+    "Shipping": 92,
+    "Returns": 78,
+    "Payments": 61,
+    "Other": 43
+  },
+  "sentiment_distribution": {
+    "Positive": 45,
+    "Neutral": 38,
+    "Negative": 17
+  },
+  "satisfaction_score": 82,
+  "revenue_impact": 2340
+}

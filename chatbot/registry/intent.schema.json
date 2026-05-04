@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "intent.schema.json",
+  "title": "ChatbotIntent",
+  "description": "Schema for a single intent in the Olá Market chatbot registry.",
+  "type": "object",
+  "required": [
+    "intent_id",
+    "display_name",
+    "category",
+    "example_utterances",
+    "required_slots",
+    "resolution_type",
+    "resolution_config",
+    "escalation_triggers",
+    "confidence_threshold",
+    "is_button_visible"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "intent_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Unique snake_case identifier. Used as the canonical key throughout the codebase."
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Short human-readable label shown on chatbot quick-action buttons."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["orders", "returns", "products", "account", "other"],
+      "description": "Grouping used for UI organisation and routing."
+    },
+    "example_utterances": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 3 },
+      "minItems": 5,
+      "description": "Representative user messages used for intent classification training / few-shot prompting."
+    },
+    "required_slots": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slot" },
+      "description": "Ordered list of information pieces the bot must collect before resolving."
+    },
+    "resolution_type": {
+      "type": "string",
+      "enum": ["api_call", "faq_answer", "guided_flow"],
+      "description": "How the intent is fulfilled once all slots are collected."
+    },
+    "resolution_config": {
+      "type": "object",
+      "description": "Type-specific config. Shape validated by validate.py based on resolution_type."
+    },
+    "escalation_triggers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions (returned by the API or detected during flow) that force human handoff."
+    },
+    "confidence_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Minimum classifier confidence to activate this intent. Below this → ask for clarification."
+    },
+    "is_button_visible": {
+      "type": "boolean",
+      "description": "Whether this intent appears as a quick-action button when the chatbot opens."
+    }
+  },
+  "$defs": {
+    "slot": {
+      "type": "object",
+      "required": ["name", "prompt"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Snake_case slot identifier used in response_template placeholders."
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 5,
+          "description": "Question the bot asks the user to fill this slot."
+        },
+        "validation_regex": {
+          "type": "string",
+          "description": "Optional Python-compatible regex the user's answer must match."
+        },
+        "optional": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, the bot skips this slot when the user says they don't have it."
+        }
+      }
+    }
+  }
+}

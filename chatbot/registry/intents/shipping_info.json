@@ -1,0 +1,29 @@
+{
+  "intent_id": "shipping_info",
+  "display_name": "Shipping Info",
+  "category": "orders",
+  "example_utterances": [
+    "how long does shipping take",
+    "what are your delivery options",
+    "do you ship internationally",
+    "how much does shipping cost",
+    "is there free shipping",
+    "when will my order be dispatched",
+    "shipping times and prices",
+    "do you deliver to my country",
+    "same day delivery",
+    "express shipping available"
+  ],
+  "required_slots": [],
+  "resolution_type": "faq_answer",
+  "resolution_config": {
+    "answer": "Here are our shipping options:\n\n| Option | Delivery Time | Cost |\n|---|---|---|\n| Standard (Portugal) | 2–4 business days | Free on orders over €50, else €3.99 |\n| Express (Portugal) | Next business day | €7.99 |\n| EU International | 5–10 business days | €9.99 |\n| Rest of World | 10–21 business days | €14.99 |\n\n**Dispatch cut-off:** Orders placed before **2 PM (weekdays)** ship the same day.\n\n**Tracking:** You'll receive a tracking link by email as soon as your parcel is collected by the courier.\n\n**Delays:** During sale periods or public holidays, please allow 1–2 extra business days."
+  },
+  "escalation_triggers": [
+    "shipment_delayed_over_10_days",
+    "package_lost_in_transit",
+    "customs_hold"
+  ],
+  "confidence_threshold": 0.65,
+  "is_button_visible": true
+}

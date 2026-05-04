@@ -1,0 +1,51 @@
+{
+  "intent_id": "cancel_order",
+  "display_name": "Cancel Order",
+  "category": "orders",
+  "example_utterances": [
+    "I want to cancel my order",
+    "cancel my order please",
+    "how do I cancel",
+    "I ordered by mistake, can I cancel",
+    "I changed my mind about my purchase",
+    "stop my order before it ships",
+    "can I still cancel my order",
+    "I need to cancel immediately",
+    "cancel before delivery",
+    "I don't want this order anymore"
+  ],
+  "required_slots": [
+    {
+      "name": "order_id",
+      "prompt": "I can help with that. Please share your order number (e.g. #10234) so I can check if cancellation is still possible.",
+      "validation_regex": "^#?\\d{4,10}$",
+      "optional": false
+    }
+  ],
+  "resolution_type": "guided_flow",
+  "resolution_config": {
+    "steps": [
+      {
+        "prompt": "I found order **{order_id}**. Before I proceed, can you confirm you want to cancel this entire order? Reply **yes** to continue or **no** to keep it.",
+        "expected_input_type": "confirmation"
+      },
+      {
+        "prompt": "Got it. Could you quickly tell us why you're cancelling? This helps us improve.\n\n1. Changed my mind\n2. Found a better price elsewhere\n3. Ordered the wrong item\n4. Delivery time too long\n5. Other",
+        "expected_input_type": "choice"
+      },
+      {
+        "prompt": "Your cancellation request for order **{order_id}** has been submitted. ✓\n\nYou'll receive a confirmation email within 10 minutes. If a payment was taken, your refund will appear in 5–7 business days.\n\nIs there anything else I can help you with?",
+        "expected_input_type": "free_text"
+      }
+    ]
+  },
+  "escalation_triggers": [
+    "order_already_shipped",
+    "order_fulfilled",
+    "cancellation_window_expired",
+    "partial_shipment",
+    "order_not_found"
+  ],
+  "confidence_threshold": 0.75,
+  "is_button_visible": true
+}

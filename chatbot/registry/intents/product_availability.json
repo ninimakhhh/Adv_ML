@@ -1,0 +1,38 @@
+{
+  "intent_id": "product_availability",
+  "display_name": "Check Stock",
+  "category": "products",
+  "example_utterances": [
+    "is this product in stock",
+    "do you have this item available",
+    "when will this be back in stock",
+    "is the golden mirror available",
+    "can I order this right now",
+    "notify me when back in stock",
+    "out of stock, what now",
+    "do you have this in size M",
+    "is there stock of the yoga mat",
+    "will this be restocked soon"
+  ],
+  "required_slots": [
+    {
+      "name": "product_name",
+      "prompt": "Which product would you like to check? Please share the product name or item number — you can find it on the product page.",
+      "validation_regex": "^.{2,120}$",
+      "optional": false
+    }
+  ],
+  "resolution_type": "api_call",
+  "resolution_config": {
+    "endpoint": "/api/v1/products/availability",
+    "method": "GET",
+    "response_template": "Here's the stock info for **{product_name}**:\n\n• **Availability:** {availability_status}\n• {availability_detail}\n\n{restock_message}"
+  },
+  "escalation_triggers": [
+    "product_discontinued",
+    "product_not_found",
+    "ambiguous_product_match"
+  ],
+  "confidence_threshold": 0.68,
+  "is_button_visible": false
+}

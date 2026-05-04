@@ -1,0 +1,39 @@
+{
+  "intent_id": "refund_status",
+  "display_name": "Check Refund",
+  "category": "returns",
+  "example_utterances": [
+    "where is my refund",
+    "when will I get my money back",
+    "I haven't received my refund yet",
+    "has my refund been processed",
+    "I returned my order but haven't gotten a refund",
+    "check my refund status",
+    "how long does a refund take",
+    "refund not in my account",
+    "my return was accepted but no money yet",
+    "refund still pending"
+  ],
+  "required_slots": [
+    {
+      "name": "order_id",
+      "prompt": "I'll look that up right away. What's your order number? (e.g. #10234)",
+      "validation_regex": "^#?\\d{4,10}$",
+      "optional": false
+    }
+  ],
+  "resolution_type": "api_call",
+  "resolution_config": {
+    "endpoint": "/api/v1/orders/{order_id}/refund",
+    "method": "GET",
+    "response_template": "Here's your refund update for order **{order_id}**:\n\n• **Refund status:** {refund_status}\n• **Amount:** {refund_amount}\n• **Expected in your account:** {refund_eta}\n\n{refund_detail}"
+  },
+  "escalation_triggers": [
+    "refund_denied",
+    "refund_amount_disputed",
+    "refund_pending_over_14_days",
+    "order_not_found"
+  ],
+  "confidence_threshold": 0.70,
+  "is_button_visible": false
+}

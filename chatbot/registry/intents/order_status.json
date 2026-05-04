@@ -1,0 +1,45 @@
+{
+  "intent_id": "order_status",
+  "display_name": "Track My Order",
+  "category": "orders",
+  "example_utterances": [
+    "where's my order",
+    "track my package",
+    "when will my order arrive",
+    "what's the status of my order",
+    "has my order shipped yet",
+    "where is my package",
+    "I want to track my delivery",
+    "order tracking",
+    "my order hasn't arrived yet",
+    "can you check on my order"
+  ],
+  "required_slots": [
+    {
+      "name": "order_id",
+      "prompt": "Sure! Please share your order number — you'll find it in your confirmation email (e.g. #10234).",
+      "validation_regex": "^#?\\d{4,10}$",
+      "optional": false
+    },
+    {
+      "name": "email",
+      "prompt": "And the email address you used when placing the order?",
+      "validation_regex": "^[\\w.+\\-]+@[\\w\\-]+\\.[\\w.]+$",
+      "optional": false
+    }
+  ],
+  "resolution_type": "api_call",
+  "resolution_config": {
+    "endpoint": "/api/v1/orders/{order_id}/status",
+    "method": "GET",
+    "response_template": "Here's the latest on order **{order_id}**:\n\n• **Status:** {status}\n• **Detail:** {status_detail}\n• **Estimated delivery:** {estimated_delivery}\n\nYou can also follow live tracking at {tracking_url}"
+  },
+  "escalation_triggers": [
+    "order_not_found",
+    "status_unknown",
+    "payment_failed",
+    "delivery_exception"
+  ],
+  "confidence_threshold": 0.70,
+  "is_button_visible": true
+}

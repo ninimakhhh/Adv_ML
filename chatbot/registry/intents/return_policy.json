@@ -1,0 +1,30 @@
+{
+  "intent_id": "return_policy",
+  "display_name": "Return Policy",
+  "category": "returns",
+  "example_utterances": [
+    "what is your return policy",
+    "how do I return an item",
+    "can I return this",
+    "I want to return my purchase",
+    "how long do I have to return something",
+    "what's the returns process",
+    "return instructions",
+    "do you accept returns",
+    "I changed my mind, can I send it back",
+    "is it free to return"
+  ],
+  "required_slots": [],
+  "resolution_type": "faq_answer",
+  "resolution_config": {
+    "answer": "We offer **free returns within 30 days** of delivery. Here's how it works:\n\n1. **Start your return** at [Returns Portal](https://store.example.com/returns) — enter your order number and email.\n2. **Select items** you want to return and choose a reason.\n3. **Print your free prepaid label** (emailed to you instantly).\n4. **Drop off** at any CTT or DPD location.\n5. **Refund issued** within 5–7 business days of us receiving the parcel.\n\n**Conditions:** Items must be unused, unwashed, and in original packaging. Certain categories (perishable food, personalised items) are non-returnable — these are marked on the product page.\n\nNeed to start a return right now? Just ask and I'll guide you through it!"
+  },
+  "escalation_triggers": [
+    "item_damaged_on_arrival",
+    "return_window_exceeded",
+    "item_not_eligible_for_return",
+    "missing_return_label"
+  ],
+  "confidence_threshold": 0.65,
+  "is_button_visible": true
+}

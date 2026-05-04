@@ -44,6 +44,12 @@ class ConversationState:
     # Message history for the current session (role, content)
     history: list[dict[str, str]] = field(default_factory=list)
 
+    # True once the orchestrator has created the DB ticket row
+    ticket_created: bool = False
+
+    # Name of the slot (or "guided_step_N") the bot is currently waiting for
+    waiting_for_slot: Optional[str] = None
+
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------

@@ -1,362 +1,362 @@
 [
   {
-    "id": "prod_01", "name": "Candeeiro de Mesa Moderno", "category_id": "cat_1",
+    "id": "prod_01", "name": "Modern Table Lamp", "category_id": "cat_1",
     "price": 45.00, "original_price": 60.00, "discount_percent": 25,
-    "description": "Candeeiro de mesa com design contemporâneo que combina elegância e funcionalidade. A base em metal pintado a preto mate contrasta com o difusor em tecido creme, criando uma iluminação ambiente sofisticada. Ideal para mesas de cabeceira, escritórios e salas de estar modernas.",
-    "full_description": "Este candeeiro de mesa foi concebido para quem valoriza o detalhe e o bom gosto. A estrutura em metal lacado a preto mate oferece durabilidade e um aspeto premium, enquanto o abajur em tecido creme proporciona uma luz suave e aconchegante. Com apenas 45 cm de altura, encaixa-se perfeitamente em qualquer superfície sem ocupar demasiado espaço. Compatível com lâmpadas E27 até 40W (não incluída), adaptável a LED. Fio têxtil incluído com interruptor de corda. Um toque de sofisticação para qualquer divisão.",
+    "description": "Table lamp with contemporary design combining elegance and functionality. The matte black metal base contrasts with the cream fabric diffuser, creating sophisticated ambient lighting. Ideal for nightstands, offices, and modern living rooms.",
+    "full_description": "This table lamp was designed for those who value detail and good taste. The matte black lacquered metal structure offers durability and a premium appearance, while the cream fabric shade provides soft and cozy light. At just 45 cm in height, it fits perfectly on any surface without taking up too much space. Compatible with E27 bulbs up to 40W (not included), adaptable to LED. Textile cord included with rope switch. A touch of sophistication for any room.",
     "image_url": "https://picsum.photos/seed/prod_01/600/600",
     "in_stock": true, "stock_count": 12, "rating": 4.3, "review_count": 18,
-    "tags": ["decoração", "iluminação", "moderno", "sala"], "is_popular": false, "is_on_sale": true
+    "tags": ["décor", "lighting", "modern", "living room"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_02", "name": "Almofada de Linho Natural", "category_id": "cat_1",
+    "id": "prod_02", "name": "Natural Linen Pillow", "category_id": "cat_1",
     "price": 22.00, "original_price": 22.00, "discount_percent": 0,
-    "description": "Almofada artesanal em 100% linho natural, com textura rústica e elegante. O enchimento em algodão orgânico garante conforto e forma duradouros. Disponível em tom natural bege, combina com qualquer estilo decorativo desde o escandinavo ao mediterrânico.",
-    "full_description": "Produzida em Portugal por artesãos locais, esta almofada de linho natural é o complemento perfeito para sofás, cadeiras e camas. O tecido de linho de alta qualidade é respirável, hipoalergénico e torna-se mais macio com o uso. O enchimento em fibra de algodão orgânico mantém a forma ao longo do tempo. O fecho com botões discretos facilita a lavagem da capa. Dimensões: 45x45 cm. Lavável a máquina a 30°C. Uma peça que une a tradição têxtil portuguesa ao design contemporâneo.",
+    "description": "Handcrafted pillow in 100% natural linen with rustic and elegant texture. The organic cotton filling ensures lasting comfort and shape. Available in natural beige tone, works with any decorative style from Scandinavian to Mediterranean.",
+    "full_description": "Produced in Portugal by local craftsmen, this natural linen pillow is the perfect complement for sofas, chairs, and beds. The high-quality linen fabric is breathable, hypoallergenic, and becomes softer with use. The organic cotton fiber filling maintains its shape over time. The discrete button closure makes it easy to wash the cover. Dimensions: 45x45 cm. Machine washable at 30°C. A piece that unites Portuguese textile tradition with contemporary design.",
     "image_url": "https://picsum.photos/seed/prod_02/600/600",
     "in_stock": true, "stock_count": 28, "rating": 4.7, "review_count": 34,
-    "tags": ["decoração", "têxteis", "natural", "linho", "sala"], "is_popular": true, "is_on_sale": false
+    "tags": ["décor", "textiles", "natural", "linen", "living room"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_03", "name": "Vaso de Cerâmica Artesanal", "category_id": "cat_1",
+    "id": "prod_03", "name": "Handcrafted Ceramic Vase", "category_id": "cat_1",
     "price": 28.00, "original_price": 35.00, "discount_percent": 20,
-    "description": "Vaso de cerâmica feito à mão com acabamento em glasura artesanal nas tonalidades terracota e branco. Cada peça é única, com pequenas imperfeições que testemunham a sua origem manual. Perfeito para plantas, flores secas ou simplesmente como elemento decorativo.",
-    "full_description": "Criado por ceramistas portugueses na região de Caldas da Rainha, este vaso combina técnicas tradicionais com sensibilidade contemporânea. A glasura é aplicada à mão, criando gradientes únicos que variam entre o terracota quente e o branco creme. Com 22 cm de altura e 14 cm de diâmetro, é ideal para plantas de pequeno e médio porte. Fundo com orifício de drenagem. Não apto para lava-louça. A textura ligeiramente rugosa evoca a matéria-prima da terra alentejana. Uma obra de arte funcional.",
+    "description": "Hand-made ceramic vase with handcrafted glaze finish in terracotta and white tones. Each piece is unique, with small imperfections that testify to its manual origin. Perfect for plants, dried flowers, or simply as a decorative element.",
+    "full_description": "Created by Portuguese potters in the Caldas da Rainha region, this vase combines traditional techniques with contemporary sensibility. The glaze is applied by hand, creating unique gradients varying between warm terracotta and cream white. With 22 cm height and 14 cm diameter, it's ideal for small to medium plants. Bottom with drainage hole. Not dishwasher safe. The slightly rough texture evokes the raw material of Alentejo earth. A functional work of art.",
     "image_url": "https://picsum.photos/seed/prod_03/600/600",
     "in_stock": true, "stock_count": 8, "rating": 4.4, "review_count": 22,
-    "tags": ["decoração", "cerâmica", "artesanal", "plantas"], "is_popular": false, "is_on_sale": true
+    "tags": ["décor", "ceramic", "handcrafted", "plants"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_04", "name": "Espelho Redondo Dourado", "category_id": "cat_1",
+    "id": "prod_04", "name": "Golden Round Mirror", "category_id": "cat_1",
     "price": 75.65, "original_price": 89.00, "discount_percent": 15,
-    "description": "Espelho circular com moldura em metal dourado escovado, 60 cm de diâmetro. O acabamento mate do dourado é sofisticado e atual, longe dos dourados brilhantes dos anos 90. Inclui sistema de penduração para montagem na parede em qualquer orientação.",
-    "full_description": "Este espelho redondo é uma das peças mais versáteis em decoração de interiores — vai bem em corredores, salas de estar, quartos e até casas de banho. A moldura em metal com acabamento dourado mate mede 5 cm de largura, criando um enquadramento elegante e robusto. Vidro de 5 mm com tratamento anti-reflexo suave. O kit de montagem incluso suporta paredes em betão, alvenaria e pladur. Dimensão total: 60 cm de diâmetro. Peso: 3,2 kg. Uma peça statement que faz qualquer divisão parecer maior e mais luminosa.",
+    "description": "Circular mirror with brushed gold metal frame, 60 cm diameter. The matte finish of the gold is sophisticated and current, far from the shiny golds of the 90s. Includes wall hanging system for mounting in any orientation.",
+    "full_description": "This round mirror is one of the most versatile pieces in interior decoration — works well in hallways, living rooms, bedrooms, and even bathrooms. The metal frame with matte gold finish measures 5 cm in width, creating an elegant and robust framing. 5 mm glass with soft anti-reflective treatment. The included mounting kit supports concrete, masonry, and drywall. Total dimension: 60 cm diameter. Weight: 3.2 kg. A statement piece that makes any room look larger and brighter.",
     "image_url": "https://picsum.photos/seed/prod_04/600/600",
     "in_stock": true, "stock_count": 5, "rating": 4.8, "review_count": 47,
-    "tags": ["decoração", "espelho", "dourado", "parede"], "is_popular": true, "is_on_sale": true
+    "tags": ["décor", "mirror", "gold", "wall"], "is_popular": true, "is_on_sale": true
   },
   {
-    "id": "prod_05", "name": "Porta-Velas de Madeira", "category_id": "cat_1",
+    "id": "prod_05", "name": "Wooden Candle Holders", "category_id": "cat_1",
     "price": 18.00, "original_price": 18.00, "discount_percent": 0,
-    "description": "Conjunto de 3 porta-velas em madeira de acácia com diferentes alturas, para velas votivas e de pilar. O acabamento natural realça os veios da madeira. Cria uma composição coesa e orgânica sobre qualquer superfície.",
-    "full_description": "Este conjunto de porta-velas foi desenhado para criar um centro de mesa ou aparador visualmente rico com um esforço mínimo. As três peças têm alturas de 8, 12 e 16 cm, permitindo jogos de altura interessantes. A madeira de acácia é conhecida pela sua durabilidade e pela beleza dos seus veios únicos. Acabamento com óleo natural, sem vernizes sintéticos. Compatíveis com velas de 4 a 6 cm de diâmetro. Fáceis de limpar com pano húmido. Não expor a humidade excessiva. Vendidos como conjunto de 3.",
+    "description": "Set of 3 candle holders in acacia wood with different heights, for votive and pillar candles. The natural finish highlights the grain of the wood. Creates a cohesive and organic composition on any surface.",
+    "full_description": "This set of candle holders was designed to create a visually rich table center or sideboard with minimal effort. The three pieces have heights of 8, 12, and 16 cm, allowing for interesting height variations. Acacia wood is known for its durability and the beauty of its unique grain patterns. Finished with natural oil, without synthetic varnishes. Compatible with 4 to 6 cm diameter candles. Easy to clean with a damp cloth. Do not expose to excessive moisture. Sold as a set of 3.",
     "image_url": "https://picsum.photos/seed/prod_05/600/600",
     "in_stock": true, "stock_count": 20, "rating": 4.2, "review_count": 11,
-    "tags": ["decoração", "velas", "madeira", "conjunto"], "is_popular": false, "is_on_sale": false
+    "tags": ["décor", "candles", "wood", "set"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_06", "name": "Camisola de Algodão Orgânico", "category_id": "cat_2",
+    "id": "prod_06", "name": "Organic Cotton T-Shirt", "category_id": "cat_2",
     "price": 49.00, "original_price": 49.00, "discount_percent": 0,
-    "description": "Camisola oversized em 100% algodão orgânico certificado GOTS. O corte relaxado e o peso do tecido (280g/m²) conferem uma silhueta premium. Disponível em 8 cores neutras da estação, do off-white ao carvão.",
-    "full_description": "Feita com algodão orgânico certificado pela GOTS (Global Organic Textile Standard), esta camisola é suave ao toque, durável e produzida sem pesticidas prejudiciais. O tecido de 280g/m² tem uma queda estruturada que evita a aparência barata típica dos algodões finos. Costura reforçada nos ombros e gola. Disponível em tamanhos XS a XXL. Lavável a máquina a 30°C. Feita em Portugal — cada peça inclui um cartão com o nome da costureira que a produziu. A moda que respeita quem a faz.",
+    "description": "Oversized t-shirt in 100% GOTS-certified organic cotton. The relaxed fit and fabric weight (280g/m²) provide a premium silhouette. Available in 8 neutral season colors, from off-white to charcoal.",
+    "full_description": "Made with organic cotton certified by GOTS (Global Organic Textile Standard), this t-shirt is soft to the touch, durable, and produced without harmful pesticides. The 280g/m² fabric has a structured drape that avoids the cheap appearance typical of thin cottons. Reinforced stitching at shoulders and neckline. Available in sizes XS to XXL. Machine washable at 30°C. Made in Portugal — each piece includes a card with the name of the seamstress who produced it. Fashion that respects those who make it.",
     "image_url": "https://picsum.photos/seed/prod_06/600/600",
     "in_stock": true, "stock_count": 25, "rating": 4.6, "review_count": 39,
-    "tags": ["moda", "camisola", "orgânico", "algodão", "sustentável"], "is_popular": true, "is_on_sale": false
+    "tags": ["fashion", "t-shirt", "organic", "cotton", "sustainable"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_07", "name": "Calças de Linho Relaxed", "category_id": "cat_2",
+    "id": "prod_07", "name": "Relaxed Linen Pants", "category_id": "cat_2",
     "price": 45.50, "original_price": 65.00, "discount_percent": 30,
-    "description": "Calças de linho puro com corte relaxed e cós elástico. Frescas, elegantes e versáteis — funcionam tanto em contexto casual como num jantar de verão. O linho ganha caráter com o uso, amolecendo e desenvolvendo uma leveza única.",
-    "full_description": "O linho é a fibra têxtil mais refrescante que existe, e estas calças demonstram porque é que os portugueses a amaram sempre. O corte relaxed com algum volume nas pernas e tornozeiro ligeiramente mais ajustado cria uma silhueta equilibrada. Dois bolsos laterais funcionais com profundidade real. Passadores para cinto. Composição: 100% linho. Tamanhos 34 a 46. Por ser linho puro, espere algum amarrotamento natural — é parte do caráter do tecido. Lavagem a 30°C ou lavagem manual.",
+    "description": "Pure linen pants with relaxed fit and elastic waistband. Fresh, elegant, and versatile — they work in casual settings as well as a summer dinner. Linen gains character with use, softening and developing unique lightness.",
+    "full_description": "Linen is the most refreshing textile fiber that exists, and these pants demonstrate why the Portuguese have always loved it. The relaxed fit with some volume in the legs and slightly tapered ankle creates a balanced silhouette. Two functional side pockets with real depth. Belt loops. Composition: 100% linen. Sizes 34 to 46. Being pure linen, expect some natural wrinkling — it's part of the fabric's character. Wash at 30°C or hand wash.",
     "image_url": "https://picsum.photos/seed/prod_07/600/600",
     "in_stock": true, "stock_count": 14, "rating": 4.3, "review_count": 28,
-    "tags": ["moda", "calças", "linho", "verão", "casual"], "is_popular": false, "is_on_sale": true
+    "tags": ["fashion", "pants", "linen", "summer", "casual"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_08", "name": "Lenço de Seda Estampado", "category_id": "cat_2",
+    "id": "prod_08", "name": "Printed Silk Scarf", "category_id": "cat_2",
     "price": 38.00, "original_price": 38.00, "discount_percent": 0,
-    "description": "Lenço quadrado em seda natural 100%, com estampado floral inspirado nos azulejos portugueses do século XVIII. Pode ser usado ao pescoço, no cabelo, na mala ou enquadrado como obra de arte. Dimensões: 90x90 cm.",
-    "full_description": "Cada lenço é impresso digitalmente sobre seda Habotai de 12 momme, que combina leveza com resistência. O padrão foi desenvolvido por um designer gráfico português em colaboração com o Museu Nacional do Azulejo de Lisboa. As cores são fixadas com processo de vaporização a alta temperatura, garantindo que não desvanecem nas primeiras lavagens. Instruções: lavagem a mão ou lavagem a seco recomendada. Apresentado numa caixa de oferta elegante — perfeito como presente.",
+    "description": "Square scarf in 100% natural silk with floral print inspired by Portuguese 18th-century tiles. Can be worn around the neck, in the hair, on the bag, or framed as artwork. Dimensions: 90x90 cm.",
+    "full_description": "Each scarf is digitally printed on 12-momme Habotai silk, which combines lightness with resistance. The pattern was developed by a Portuguese graphic designer in collaboration with the National Tile Museum in Lisbon. Colors are fixed with a high-temperature vapor process, ensuring they don't fade in the first few washes. Instructions: hand wash or dry cleaning recommended. Presented in an elegant gift box — perfect as a gift.",
     "image_url": "https://picsum.photos/seed/prod_08/600/600",
     "in_stock": true, "stock_count": 18, "rating": 4.1, "review_count": 15,
-    "tags": ["moda", "lenço", "seda", "presente", "azulejo"], "is_popular": false, "is_on_sale": false
+    "tags": ["fashion", "scarf", "silk", "gift", "tile"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_09", "name": "Boné Bordado à Mão", "category_id": "cat_2",
+    "id": "prod_09", "name": "Hand-Embroidered Cap", "category_id": "cat_2",
     "price": 28.00, "original_price": 28.00, "discount_percent": 0,
-    "description": "Boné de 6 painéis em gabardine de algodão, com bordado artesanal na frente. O bordado representa uma gaivota estilizada — símbolo da identidade costeira portuguesa. Fecho traseiro em tafetá ajustável. Lavável a máquina.",
-    "full_description": "Os bonés da nossa linha artesanal são bordados à mão por costureiras na região de Viana do Castelo, com um mínimo de 2 horas de trabalho por peça. A gabardine de algodão de 260g/m² é resistente e mantém a forma. O bordado a fio de algodão mercerizado nunca perde a textura. Tama único ajustável. Disponível em preto, branco e verde musgo. Cada boné vem com uma etiqueta cosida com o nome da artesã que o bordou. Um acessório que conta uma história.",
+    "description": "6-panel cap in cotton gabardine with handcrafted embroidery on the front. The embroidery represents a stylized seagull — a symbol of Portuguese coastal identity. Adjustable back taffeta closure. Machine washable.",
+    "full_description": "The caps in our artisanal line are hand-embroidered by seamstresses in the Viana do Castelo region, with a minimum of 2 hours of work per piece. The 260g/m² cotton gabardine is sturdy and holds its shape. The embroidery uses mercerized cotton thread that never loses its texture. One-size adjustable. Available in black, white, and moss green. Each cap comes with a sewn label with the name of the artisan who embroidered it. An accessory that tells a story.",
     "image_url": "https://picsum.photos/seed/prod_09/600/600",
     "in_stock": true, "stock_count": 22, "rating": 4.5, "review_count": 32,
-    "tags": ["moda", "boné", "bordado", "artesanal", "acessório"], "is_popular": true, "is_on_sale": false
+    "tags": ["fashion", "cap", "embroidered", "handcrafted", "accessory"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_10", "name": "Mala de Pele Vegana", "category_id": "cat_2",
+    "id": "prod_10", "name": "Vegan Leather Tote Bag", "category_id": "cat_2",
     "price": 96.00, "original_price": 120.00, "discount_percent": 20,
-    "description": "Mala tote em pele vegana de alta qualidade, com textura granulada que imita o couro com grande fidelidade. Espaçosa o suficiente para o dia a dia, com compartimento interior com fecho e bolsa para telemóvel. Alças duplas longas.",
-    "full_description": "Produzida com material APPLE SKIN — um material inovador feito a partir de resíduos da produção de sumo de maçã — esta mala é sustentável, durável e de aparência premium. O interior em camurça sintética preta facilita a localização de objetos. A mala mede 38x32x10 cm e comporta comodamente um computador de 13. Inclui bolso exterior com íman. As alças reforçadas suportam até 8 kg. Disponível em preto, camel e vinho. Uma mala séria para um uso sério.",
+    "description": "Tote bag in high-quality vegan leather with granulated texture that imitates leather with great fidelity. Spacious enough for everyday use, with interior compartment with closure and smartphone pocket. Double long handles.",
+    "full_description": "Produced with APPLE SKIN material — an innovative material made from apple juice production waste — this bag is sustainable, durable, and premium in appearance. The interior in black synthetic suede facilitates locating objects. The bag measures 38x32x10 cm and comfortably fits a 13-inch laptop. Includes exterior pocket with magnet. Reinforced handles support up to 8 kg. Available in black, camel, and wine. A serious bag for serious use.",
     "image_url": "https://picsum.photos/seed/prod_10/600/600",
     "in_stock": true, "stock_count": 7, "rating": 4.4, "review_count": 19,
-    "tags": ["moda", "mala", "vegano", "sustentável", "tote"], "is_popular": false, "is_on_sale": true
+    "tags": ["fashion", "bag", "vegan", "sustainable", "tote"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_11", "name": "Sérum de Rosa Mosqueta", "category_id": "cat_3",
+    "id": "prod_11", "name": "Rosehip Serum", "category_id": "cat_3",
     "price": 34.00, "original_price": 34.00, "discount_percent": 0,
-    "description": "Sérum facial com 98% de ingredientes naturais e óleo de rosa mosqueta prensado a frio como ingrediente estrela. Regenerador, iluminador e antioxidante. Adequado para todos os tipos de pele, incluindo pele sensível. 30 ml.",
-    "full_description": "O óleo de rosa mosqueta utilizado neste sérum é prensado a frio a partir de frutos da espécie Rosa rubiginosa cultivada de forma sustentável no Chile. A formulação combina este ativo com ácido hialurónico de duplo peso molecular, vitamina C estabilizada e extrato de aloe vera português. Absorção rápida e textura seca — não deixa a pele oleosa. Resultados visíveis em 4 semanas: luminosidade aumentada e textura uniformizada. Dermatologicamente testado. Vegan & cruelty-free. Sem parabenos, sulfatos ou silicones.",
+    "description": "Facial serum with 98% natural ingredients and cold-pressed rosehip oil as the star ingredient. Regenerating, illuminating, and antioxidant. Suitable for all skin types, including sensitive skin. 30 ml.",
+    "full_description": "The rosehip oil used in this serum is cold-pressed from fruits of the Rosa rubiginosa species cultivated sustainably in Chile. The formulation combines this active ingredient with dual molecular weight hyaluronic acid, stabilized vitamin C, and Portuguese aloe vera extract. Fast absorption and dry texture — doesn't leave skin oily. Visible results in 4 weeks: increased luminosity and uniform texture. Dermatologically tested. Vegan & cruelty-free. Without parabens, sulfates, or silicones.",
     "image_url": "https://picsum.photos/seed/prod_11/600/600",
     "in_stock": true, "stock_count": 30, "rating": 4.8, "review_count": 56,
-    "tags": ["beleza", "sérum", "rosto", "rosa mosqueta", "natural"], "is_popular": true, "is_on_sale": false
+    "tags": ["beauty", "serum", "face", "rosehip", "natural"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_12", "name": "Bálsamo de Lábios Natural", "category_id": "cat_3",
+    "id": "prod_12", "name": "Natural Lip Balm", "category_id": "cat_3",
     "price": 12.00, "original_price": 12.00, "discount_percent": 0,
-    "description": "Bálsamo de lábios em barra com fórmula 100% natural: cera de abelha portuguesa, manteiga de karité, óleo de coco e extrato de mel alentejano. Hidrata e protege sem deixar sensação pegajosa. Aroma suave a mel e baunilha.",
-    "full_description": "Feito à mão em pequenos lotes numa laboratório certificado em Évora, este bálsamo usa apenas ingredientes que reconhece. A cera de abelha é proveniente de apicultores parceiros do Alentejo, garantindo rastreabilidade total. O óleo de coco virgin e a manteiga de karité não refinada proporcionam hidratação intensa de longa duração. O mel biológico acrescenta propriedades regeneradoras. Sem corantes, aromas sintéticos, parabenos ou silicones. Embalagem biodegradável em cartão. Peso: 4,5g. Produto vegan: NÃO (contém cera de abelha).",
+    "description": "Stick lip balm with 100% natural formula: Portuguese beeswax, shea butter, coconut oil, and Alentejo honey extract. Hydrates and protects without leaving a sticky feeling. Soft aroma of honey and vanilla.",
+    "full_description": "Hand-made in small batches in a certified laboratory in Évora, this balm uses only ingredients you recognize. The beeswax comes from beekeeper partners in the Alentejo, ensuring complete traceability. The virgin coconut oil and unrefined shea butter provide intense, long-lasting hydration. The organic honey adds regenerating properties. Without dyes, synthetic fragrances, parabens, or silicones. Biodegradable cardboard packaging. Weight: 4.5g. Vegan product: NO (contains beeswax).",
     "image_url": "https://picsum.photos/seed/prod_12/600/600",
     "in_stock": true, "stock_count": 45, "rating": 4.3, "review_count": 27,
-    "tags": ["beleza", "lábios", "natural", "hidratação", "mel"], "is_popular": false, "is_on_sale": false
+    "tags": ["beauty", "lips", "natural", "hydration", "honey"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_13", "name": "Óleo de Argan Bio", "category_id": "cat_3",
+    "id": "prod_13", "name": "Organic Argan Oil", "category_id": "cat_3",
     "price": 23.80, "original_price": 28.00, "discount_percent": 15,
-    "description": "Óleo de argan puro e biológico, extraído por prensagem a frio de nozes de argan do Marrocos. Multifuncional: rosto, cabelo e corpo. Certificado biológico pela Ecocert. 50 ml em frasco com conta-gotas.",
-    "full_description": "Este óleo de argan é extraído por cooperativas femininas marroquinas certificadas, garantindo práticas sustentáveis e comércio justo. A prensagem a frio preserva todos os ácidos gordos essenciais, vitamina E e esqualeno. Para o rosto, aplique 3-4 gotas antes do hidratante como sérum nutritivo. Para o cabelo, aplique nas pontas húmidas ou use como máscara noturna nas pontas. Para o corpo, aplique após o banho para uma hidratação profunda. Absorção rápida, sem residuo oleoso. Certificações: Ecocert Cosmos Organic, Vegan.",
+    "description": "Pure and organic argan oil, extracted by cold pressing argan nuts from Morocco. Multi-purpose: face, hair, and body. Certified organic by Ecocert. 50 ml in bottle with dropper.",
+    "full_description": "This argan oil is extracted by certified Moroccan women's cooperatives, ensuring sustainable practices and fair trade. Cold pressing preserves all essential fatty acids, vitamin E, and squalene. For the face, apply 3-4 drops before moisturizer as a nourishing serum. For hair, apply to damp ends or use as an overnight mask on ends. For the body, apply after bathing for deep hydration. Fast absorption, no oily residue. Certifications: Ecocert Cosmos Organic, Vegan.",
     "image_url": "https://picsum.photos/seed/prod_13/600/600",
     "in_stock": true, "stock_count": 16, "rating": 4.5, "review_count": 33,
-    "tags": ["beleza", "óleo", "argan", "bio", "cabelo", "rosto"], "is_popular": false, "is_on_sale": true
+    "tags": ["beauty", "oil", "argan", "organic", "hair", "face"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_14", "name": "Kit de Cuidados para o Rosto", "category_id": "cat_3",
+    "id": "prod_14", "name": "Facial Care Kit", "category_id": "cat_3",
     "price": 56.25, "original_price": 75.00, "discount_percent": 25,
-    "description": "Kit completo de skincare com 4 produtos da mesma linha: limpador suave em gel, tónico equilibrador, sérum de vitamina C e hidratante SPF 20. Formulados para uma rotina AM/PM eficaz e simplificada. Ideais para pele normal a mista.",
-    "full_description": "Este kit foi criado por uma dermatologista portuguesa para simplificar a rotina de cuidado da pele sem comprometer resultados. O limpador remove impurezas sem perturbar a barreira cutânea. O tónico equilibra o pH. O sérum de vitamina C estabilizada (L-ascorbyl glucoside) ilumina e protege dos radicais livres. O hidratante com SPF 20 protege e hidrata em simultâneo. Todos os produtos são compatíveis entre si e podem ser usados pela manhã e à noite. Sem parabenos, sem silicones. Cruelty-free. Dermatologicamente testados. Volume total: 4x30ml.",
+    "description": "Complete skincare kit with 4 products from the same line: gentle gel cleanser, balancing toner, vitamin C serum, and SPF 20 moisturizer. Formulated for an effective and simplified AM/PM routine. Ideal for normal to combination skin.",
+    "full_description": "This kit was created by a Portuguese dermatologist to simplify your skincare routine without compromising results. The cleanser removes impurities without disrupting the skin barrier. The toner balances pH. The stabilized vitamin C serum (L-ascorbyl glucoside) illuminates and protects against free radicals. The SPF 20 moisturizer protects and hydrates simultaneously. All products are compatible with each other and can be used morning and evening. Without parabens, without silicones. Cruelty-free. Dermatologically tested. Total volume: 4x30ml.",
     "image_url": "https://picsum.photos/seed/prod_14/600/600",
     "in_stock": true, "stock_count": 9, "rating": 4.9, "review_count": 62,
-    "tags": ["beleza", "skincare", "kit", "vitamina C", "presente"], "is_popular": true, "is_on_sale": true
+    "tags": ["beauty", "skincare", "kit", "vitamin C", "gift"], "is_popular": true, "is_on_sale": true
   },
   {
-    "id": "prod_15", "name": "Perfume Floral Português", "category_id": "cat_3",
+    "id": "prod_15", "name": "Portuguese Floral Perfume", "category_id": "cat_3",
     "price": 85.00, "original_price": 85.00, "discount_percent": 0,
-    "description": "Eau de Parfum 50 ml com composição floral inspirada nos jardins da Serra de Sintra. Notas de topo de bergamota e folha de violeta. Coração de rosa damascena e jasmim português. Fundo de sândalo e almíscar branco.",
-    "full_description": "Criado por um perfumista lisboeta independente em colaboração com produtores de flores aromáticas do Algarve, este perfume é uma ode aos jardins portugueses. Cada lote de matéria-prima é selecionado manualmente para garantir consistência. A concentração de Eau de Parfum (18%) assegura uma longevidade de 6-8 horas na pele. O frasco em vidro pesado com tampa dourada é recarregável — uma escolha sustentável. Produção em lotes limitados de 200 unidades por semestre. Para quem aprecia o luxo discreto e a identidade portuguesa.",
+    "description": "50 ml Eau de Parfum with floral composition inspired by the gardens of Serra de Sintra. Top notes of bergamot and violet leaf. Heart of damascena rose and Portuguese jasmine. Base of sandalwood and white musk.",
+    "full_description": "Created by an independent Lisbon perfumer in collaboration with aromatic flower producers from the Algarve, this perfume is an ode to Portuguese gardens. Each batch of raw material is manually selected to ensure consistency. The Eau de Parfum concentration (18%) ensures longevity of 6-8 hours on skin. The bottle in heavy glass with gold cap is refillable — a sustainable choice. Production in limited batches of 200 units per semester. For those who appreciate discreet luxury and Portuguese identity.",
     "image_url": "https://picsum.photos/seed/prod_15/600/600",
     "in_stock": true, "stock_count": 11, "rating": 4.6, "review_count": 24,
-    "tags": ["beleza", "perfume", "floral", "português", "luxo"], "is_popular": false, "is_on_sale": false
+    "tags": ["beauty", "perfume", "floral", "portuguese", "luxury"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_16", "name": "Coluna Bluetooth Portátil", "category_id": "cat_4",
+    "id": "prod_16", "name": "Portable Bluetooth Speaker", "category_id": "cat_4",
     "price": 63.20, "original_price": 79.00, "discount_percent": 20,
-    "description": "Coluna Bluetooth 5.0 com som de 360° e 12W de potência. Resistente a água IPX6, autonomia de 20 horas. Design cilíndrico compacto em alumínio anodizado. Carregamento USB-C. Ideal para interior e exterior.",
-    "full_description": "Esta coluna combina portabilidade, durabilidade e qualidade sonora de forma equilibrada. O driver de 45mm com radiador passivo traseiro produz graves surpreendentes para o seu tamanho. A tecnologia DSP ajusta a equalização automaticamente ao volume. Conectividade Bluetooth 5.0 com alcance de 15 metros. Entrada auxiliar 3.5mm para dispositivos sem Bluetooth. Carga completa em 2h via USB-C. Inclui cordão de transporte. Dimensões: 7 cm diâmetro x 18 cm altura. Peso: 420g. Disponível em preto, cinzento e verde.",
+    "description": "Bluetooth 5.0 speaker with 360° sound and 12W power. Water-resistant IPX6, 20-hour battery life. Compact cylindrical design in anodized aluminum. USB-C charging. Ideal for indoor and outdoor use.",
+    "full_description": "This speaker combines portability, durability, and sound quality in a balanced way. The 45mm driver with passive radiator produces surprising bass for its size. DSP technology automatically adjusts equalization to volume. Bluetooth 5.0 connectivity with 15-meter range. 3.5mm auxiliary input for devices without Bluetooth. Full charge in 2 hours via USB-C. Includes carry strap. Dimensions: 7 cm diameter x 18 cm height. Weight: 420g. Available in black, gray, and green.",
     "image_url": "https://picsum.photos/seed/prod_16/600/600",
     "in_stock": true, "stock_count": 15, "rating": 4.7, "review_count": 48,
-    "tags": ["eletrónica", "coluna", "bluetooth", "portátil", "música"], "is_popular": true, "is_on_sale": true
+    "tags": ["electronics", "speaker", "bluetooth", "portable", "music"], "is_popular": true, "is_on_sale": true
   },
   {
-    "id": "prod_17", "name": "Carregador Sem Fios 15W", "category_id": "cat_4",
+    "id": "prod_17", "name": "15W Wireless Charger", "category_id": "cat_4",
     "price": 45.00, "original_price": 45.00, "discount_percent": 0,
-    "description": "Carregador sem fios Qi certificado com potência máxima de 15W. Compatível com todos os smartphones Qi, incluindo iPhone 12-15 e Samsung Galaxy S20+. Base plana com superfície antiderrapante em couro vegano. LED de estado discreto.",
-    "full_description": "Este carregador suporta os modos de carga rápida de 15W para Samsung, 12W para Huawei e 7.5W para Apple, adaptando-se automaticamente. A bobina de carregamento de grande área (68mm) facilita o alinhamento do dispositivo. O chip de proteção contra sobrecarga, sobreaquecimento e sobretensão protege a bateria do seu dispositivo a longo prazo. A superfície em couro vegano preto oferece uma estética premium sobre a secretária. Adaptador de parede 18W não incluído (compatível com qualquer carregador PD). Cabo USB-A para USB-C incluído.",
+    "description": "Qi-certified wireless charger with maximum power of 15W. Compatible with all Qi smartphones, including iPhone 12-15 and Samsung Galaxy S20+. Flat base with non-slip surface in vegan leather. Discrete status LED.",
+    "full_description": "This charger supports fast charging modes of 15W for Samsung, 12W for Huawei, and 7.5W for Apple, automatically adapting. The large charging coil (68mm) makes device alignment easy. The protection chip against overcharge, overheating, and overvoltage protects your device's battery long-term. The black vegan leather surface offers premium aesthetics on your desk. 18W wall adapter not included (compatible with any PD charger). USB-A to USB-C cable included.",
     "image_url": "https://picsum.photos/seed/prod_17/600/600",
     "in_stock": true, "stock_count": 22, "rating": 4.2, "review_count": 31,
-    "tags": ["eletrónica", "carregador", "sem fios", "qi", "smartphone"], "is_popular": false, "is_on_sale": false
+    "tags": ["electronics", "charger", "wireless", "qi", "smartphone"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_18", "name": "Auriculares com Cancelamento de Ruído", "category_id": "cat_4",
+    "id": "prod_18", "name": "Noise-Canceling Headphones", "category_id": "cat_4",
     "price": 149.00, "original_price": 149.00, "discount_percent": 0,
-    "description": "Auriculares over-ear com cancelamento ativo de ruído (ANC) de 3 níveis, Bluetooth 5.2, autonomia de 35h e dobragem para transporte. Som detalhado com drivers de 40mm. Microfone para chamadas com redução de ruído ambiental.",
-    "full_description": "O cancelamento de ruído ativo usa 4 microfones para analisar e neutralizar até 92% do ruído ambiente, tornando-os ideais para trabalho, viagens e estudo. Os drivers de 40mm com diafragma compósito produzem um som equilibrado com graves controlados e agudos nítidos. O modo 'transparência' permite ouvir o ambiente sem tirar os auriculares. Conexão multi-ponto com 2 dispositivos simultâneos. Almofadas em couro proteínico de memória. Inclui cabo USB-C e cabo auxiliar. A bateria de 35 horas aguentam uma semana de uso intenso sem carregar.",
+    "description": "Over-ear headphones with 3-level active noise cancellation (ANC), Bluetooth 5.2, 35-hour battery life, and collapsible for transport. Detailed sound with 40mm drivers. Microphone for calls with ambient noise reduction.",
+    "full_description": "Active noise cancellation uses 4 microphones to analyze and neutralize up to 92% of ambient noise, making them ideal for work, travel, and study. The 40mm drivers with composite diaphragm produce balanced sound with controlled bass and crisp highs. The 'transparency' mode lets you hear your surroundings without removing the headphones. Multi-point connection with 2 devices simultaneously. Memory foam leather ear cushions. Includes USB-C cable and auxiliary cable. The 35-hour battery lasts a week of intensive use without charging.",
     "image_url": "https://picsum.photos/seed/prod_18/600/600",
     "in_stock": true, "stock_count": 8, "rating": 4.8, "review_count": 73,
-    "tags": ["eletrónica", "auriculares", "ANC", "música", "trabalho"], "is_popular": true, "is_on_sale": false
+    "tags": ["electronics", "headphones", "ANC", "music", "work"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_19", "name": "Câmara de Ação 4K", "category_id": "cat_4",
+    "id": "prod_19", "name": "4K Action Camera", "category_id": "cat_4",
     "price": 139.30, "original_price": 199.00, "discount_percent": 30,
-    "description": "Câmara de ação com gravação 4K/60fps, estabilização EIS de 6 eixos e resistência a água até 10 metros sem caixa. Ecrã tátil traseiro de 2 polegadas. Wi-Fi integrado para partilha imediata. Bateria com 2,5 horas de gravação.",
-    "full_description": "Esta câmara foi desenvolvida para aventureiros que não querem comprometer a qualidade da imagem. O sensor de 20MP com f/2.8 captura detalhes excecionais. A estabilização EIS de 6 eixos elimina tremidos em corrida, ciclismo e surf. Os modos de captura incluem: vídeo 4K/60fps, time-lapse, slow motion 1080p/240fps e modo noturno. A interface de ecrã tátil é intuitiva mesmo com luvas. Inclui: 2 baterias, carregador duplo, suporte de cabeça, suporte de peito e caixa protetora. Compatível com todos os acessórios da linha anterior.",
+    "description": "Action camera with 4K/60fps recording, 6-axis EIS stabilization, and water resistance to 10 meters without case. 2-inch rear touchscreen. Built-in Wi-Fi for immediate sharing. Battery with 2.5 hours of recording.",
+    "full_description": "This camera was developed for adventurers who don't want to compromise on image quality. The 20MP sensor with f/2.8 captures exceptional detail. The 6-axis EIS stabilization eliminates blur in running, cycling, and surfing. Capture modes include: 4K/60fps video, time-lapse, 1080p/240fps slow motion, and night mode. The touchscreen interface is intuitive even with gloves. Includes: 2 batteries, dual charger, head mount, chest mount, and protective case. Compatible with all accessories from the previous line.",
     "image_url": "https://picsum.photos/seed/prod_19/600/600",
     "in_stock": true, "stock_count": 6, "rating": 4.4, "review_count": 36,
-    "tags": ["eletrónica", "câmara", "4K", "desporto", "aventura"], "is_popular": false, "is_on_sale": true
+    "tags": ["electronics", "camera", "4K", "sports", "adventure"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_20", "name": "Smartwatch Desportivo", "category_id": "cat_4",
+    "id": "prod_20", "name": "Sports Smartwatch", "category_id": "cat_4",
     "price": 189.00, "original_price": 189.00, "discount_percent": 0,
-    "description": "Smartwatch com GPS integrado, monitor de frequência cardíaca contínuo, SpO2, mais de 100 modos desportivos e autonomia de 14 dias. Ecrã AMOLED de 1.43 polegadas. Resistência a água 5ATM. Notificações de smartphone.",
-    "full_description": "Desenhado para atletas e entusiastas de fitness que exigem dados precisos. O GPS dual-band (L1+L5) fornece localização precisa mesmo em zonas urbanas densas. O monitor cardíaco ótico usa 6 LEDs para medições confiáveis durante o exercício intenso. O sensor SpO2 monitoriza a saturação de oxigênio no sangue 24/7. Entre os 100+ modos desportivos encontra corrida, natação, ciclismo, yoga, escalada e muito mais. A bateria de 500mAh dura 14 dias em uso normal ou 40 horas com GPS ativo. Carregamento magnético completo em 2h. Inclui 2 braceletes intercambiáveis.",
+    "description": "Smartwatch with integrated GPS, continuous heart rate monitor, SpO2, over 100 sports modes, and 14-day battery life. 1.43-inch AMOLED screen. 5ATM water resistance. Smartphone notifications.",
+    "full_description": "Designed for athletes and fitness enthusiasts who demand accurate data. Dual-band GPS (L1+L5) provides precise location even in dense urban areas. The optical heart monitor uses 6 LEDs for reliable measurements during intense exercise. The SpO2 sensor monitors blood oxygen saturation 24/7. Among 100+ sports modes are running, swimming, cycling, yoga, climbing, and more. The 500mAh battery lasts 14 days in normal use or 40 hours with GPS active. Full magnetic charge in 2 hours. Includes 2 interchangeable bands.",
     "image_url": "https://picsum.photos/seed/prod_20/600/600",
     "in_stock": true, "stock_count": 12, "rating": 4.6, "review_count": 52,
-    "tags": ["eletrónica", "smartwatch", "fitness", "GPS", "saúde"], "is_popular": true, "is_on_sale": false
+    "tags": ["electronics", "smartwatch", "fitness", "GPS", "health"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_21", "name": "Mel de Alecrim Alentejano", "category_id": "cat_5",
+    "id": "prod_21", "name": "Alentejo Rosemary Honey", "category_id": "cat_5",
     "price": 15.00, "original_price": 15.00, "discount_percent": 0,
-    "description": "Mel monofloral de alecrim, colhido em colmeias do Alto Alentejo por apicultores familiares. Cor âmbar claro, aroma intenso e sabor adocicado com leve toque herbáceo. 350g em frasco de vidro reutilizável.",
-    "full_description": "O mel de alecrim do Alentejo é considerado um dos melhores do mundo pela sua pureza e complexidade aromática. As colmeias estão situadas numa reserva natural a mais de 5 km de qualquer cultivo intensivo. A extração é feita a frio, preservando todos os enzimas, antioxidantes e propriedades antimicrobianas. A cristalização natural é sinal de qualidade — basta aquecer levemente em banho-maria para recuperar a textura fluida. Lote rastreável com número de colmeia e data de extração gravados na tampa. Certificado pelo Centro Apícola Nacional.",
+    "description": "Monofloral rosemary honey harvested in Upper Alentejo beehives by family beekeepers. Light amber color, intense aroma, and sweet flavor with a slight herbal touch. 350g in reusable glass jar.",
+    "full_description": "Alentejo rosemary honey is considered one of the world's best for its purity and aromatic complexity. The beehives are located in a natural reserve more than 5 km from any intensive cultivation. Extraction is done cold, preserving all enzymes, antioxidants, and antimicrobial properties. Natural crystallization is a sign of quality — simply heat gently in a water bath to restore fluid texture. Traceable batch with hive number and extraction date engraved on the cap. Certified by the National Beekeeping Center.",
     "image_url": "https://picsum.photos/seed/prod_21/600/600",
     "in_stock": true, "stock_count": 60, "rating": 4.9, "review_count": 89,
-    "tags": ["alimentação", "mel", "alentejo", "biológico", "artesanal"], "is_popular": true, "is_on_sale": false
+    "tags": ["food", "honey", "alentejo", "organic", "handcrafted"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_22", "name": "Azeite Extra Virgem Bio 500ml", "category_id": "cat_5",
+    "id": "prod_22", "name": "Organic Extra Virgin Olive Oil 500ml", "category_id": "cat_5",
     "price": 22.00, "original_price": 22.00, "discount_percent": 0,
-    "description": "Azeite extra virgem de colheita antecipada, monovarietal Galega, certificado biológico. Acidez inferior a 0.2%. Frutado intenso, amargo e picante. Produzido no Ribatejo em agricultura biológica certificada.",
-    "full_description": "A colheita antecipada (antes da maturação completa da azeitona) maximiza os polifenóis e antioxidantes, resultando num azeite de sabor mais intenso e com maiores benefícios para a saúde. A variedade Galega é autóctone portuguesa, com notas características de erva e tomate verde no nariz. Produzido numa herdade familiar com mais de 200 anos de história. Prensado a frio nas primeiras 2 horas após a colheita. Garrafa em vidro escuro para preservar as propriedades. Acidez: 0.18%. Índice de peróxidos: 8 meq/kg. Ideal a cru sobre tostas, saladas e peixes.",
+    "description": "Early harvest extra virgin olive oil, monovarietal Galega, certified organic. Acidity below 0.2%. Intense fruity, bitter, and peppery. Produced in Ribatejo under certified organic agriculture.",
+    "full_description": "Early harvest (before the olive fully matures) maximizes polyphenols and antioxidants, resulting in a more intense-flavored oil with greater health benefits. The Galega variety is native Portuguese with characteristic notes of grass and green tomato on the nose. Produced on a family estate with over 200 years of history. Cold-pressed within 2 hours of harvest. Bottle in dark glass to preserve properties. Acidity: 0.18%. Peroxide index: 8 meq/kg. Ideal raw over toasts, salads, and fish.",
     "image_url": "https://picsum.photos/seed/prod_22/600/600",
     "in_stock": true, "stock_count": 40, "rating": 4.8, "review_count": 77,
-    "tags": ["alimentação", "azeite", "biológico", "ribatejo", "gourmet"], "is_popular": true, "is_on_sale": false
+    "tags": ["food", "olive oil", "organic", "ribatejo", "gourmet"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_23", "name": "Chá Verde com Menta 20 saquetas", "category_id": "cat_5",
+    "id": "prod_23", "name": "Green Tea with Mint 20 Tea Bags", "category_id": "cat_5",
     "price": 9.00, "original_price": 9.00, "discount_percent": 0,
-    "description": "Blend de chá verde sencha japonês com hortelã portuguesa fresca, desidratada a baixa temperatura. Refrescante a quente e delicioso em infusão fria. Embalagem biodegradável. 20 saquetas de pirâmide em malha de milho.",
-    "full_description": "O chá verde sencha selecionado provém de plantações da região de Shizuoka no Japão, colhidas na primeira flush da primavera. A hortelã é cultivada no Minho e desidratada a 38°C para preservar os óleos essenciais e o aroma vivo. A mistura resulta numa bebida refrescante, rica em catequinas antioxidantes. As saquetas de pirâmide em malha de amido de milho permitem que as folhas se expandam completamente, extraindo toda a complexidade do sabor. Temperatura ideal: 75-80°C. Tempo de infusão: 2-3 minutos. Pode adicionar mel e limão.",
+    "description": "Blend of Japanese green sencha tea with fresh Portuguese mint, dehydrated at low temperature. Refreshing hot and delicious as a cold infusion. Biodegradable packaging. 20 pyramid tea bags in corn mesh.",
+    "full_description": "The selected green sencha tea comes from plantations in the Shizuoka region of Japan, harvested in the first spring flush. The mint is cultivated in Minho and dehydrated at 38°C to preserve essential oils and vibrant aroma. The blend results in a refreshing beverage, rich in antioxidant catechins. The pyramid tea bags in corn starch mesh allow the leaves to fully expand, extracting all the complexity of flavor. Ideal temperature: 75-80°C. Brewing time: 2-3 minutes. You can add honey and lemon.",
     "image_url": "https://picsum.photos/seed/prod_23/600/600",
     "in_stock": true, "stock_count": 50, "rating": 4.3, "review_count": 21,
-    "tags": ["alimentação", "chá", "verde", "menta", "natural"], "is_popular": false, "is_on_sale": false
+    "tags": ["food", "tea", "green", "mint", "natural"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_24", "name": "Conjunto de Especiarias Portuguesas", "category_id": "cat_5",
+    "id": "prod_24", "name": "Portuguese Spices Collection", "category_id": "cat_5",
     "price": 25.20, "original_price": 28.00, "discount_percent": 10,
-    "description": "Coleção de 6 especiarias icónicas da cozinha portuguesa: pimentão fumado, colorau doce, canela do Ceilão, vinceiro, sal de flor do Algarve e açafrão-da-índia. Em frascos de vidro reutilizáveis com tampa de bambú. Caixa de oferta incluída.",
-    "full_description": "Esta coleção reúne as especiarias que definem os sabores da gastronomia portuguesa — desde o bacalhau ao chouriço, do frango à cataplana. Cada especiaria é selecionada pela origem e qualidade: o pimentão fumado é de Murcia, o colorau é português genuíno, a canela é do Ceilão (e não cássia) e o sal de flor é das marinhas de Castro Marim. Os frascos de vidro de 50ml são reutilizáveis e reetiquetáveis. A caixa de madeira de pinho natural serve de porta-temperos depois de usar. Um presente perfeito para quem aprecia cozinhar.",
+    "description": "Collection of 6 iconic Portuguese spices: smoked paprika, sweet paprika, Ceylon cinnamon, turmeric, Algarve flower salt, and saffron. In reusable glass jars with bamboo lids. Gift box included.",
+    "full_description": "This collection brings together the spices that define Portuguese gastronomy flavors — from cod to chorizo, from chicken to cataplana. Each spice is selected for origin and quality: smoked paprika is from Murcia, paprika is genuine Portuguese, cinnamon is from Ceylon (not cassia), and flower salt is from Castro Marim marshes. The 50ml glass jars are reusable and re-labelable. The natural pine wood box serves as a spice rack after use. A perfect gift for those who enjoy cooking.",
     "image_url": "https://picsum.photos/seed/prod_24/600/600",
     "in_stock": true, "stock_count": 35, "rating": 4.5, "review_count": 29,
-    "tags": ["alimentação", "especiarias", "gourmet", "presente", "culinária"], "is_popular": false, "is_on_sale": true
+    "tags": ["food", "spices", "gourmet", "gift", "culinary"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_25", "name": "Doce de Figo Artesanal", "category_id": "cat_5",
+    "id": "prod_25", "name": "Handcrafted Fig Jam", "category_id": "cat_5",
     "price": 11.00, "original_price": 11.00, "discount_percent": 0,
-    "description": "Doce de figo tradicional feito com figos frescos da variedade Pingo de Mel do Algarve, cozinhados lentamente com açúcar de cana e limão. Textura rica e concentrada. Ideal com queijos, carne de porco e tosta artesanal. 220g.",
-    "full_description": "Os figos utilizados neste doce são da variedade Pingo de Mel — a mais doce e saborosa das figuras algarvias — colhidos manualmente na época de setembro. A receita mantém-se inalterada há três gerações: figos, açúcar de cana integral, sumo de limão e uma pitada de sal marinho. A cozedura lenta em tacho de cobre durante 4 horas concentra os açúcares naturais e cria a textura aveludada característica. Sem corantes, conservantes ou pectina adicionada. Após aberto, conservar no frigorífico até 4 semanas. Certificado como Produto Artesanal pela DGADR.",
+    "description": "Traditional fig jam made with fresh figs of the Pingo de Mel variety from the Algarve, slowly cooked with cane sugar and lemon. Rich and concentrated texture. Ideal with cheeses, pork, and artisanal toast. 220g.",
+    "full_description": "The figs used in this jam are of the Pingo de Mel variety — the sweetest and most flavorful of Algarve figs — manually harvested in September. The recipe remains unchanged for three generations: figs, integral cane sugar, lemon juice, and a pinch of sea salt. Slow cooking in a copper pot for 4 hours concentrates natural sugars and creates the characteristic velvety texture. Without dyes, preservatives, or added pectin. After opening, store in the refrigerator for up to 4 weeks. Certified as Artisanal Product by DGADR.",
     "image_url": "https://picsum.photos/seed/prod_25/600/600",
     "in_stock": true, "stock_count": 25, "rating": 4.4, "review_count": 18,
-    "tags": ["alimentação", "doce", "figo", "algarve", "artesanal"], "is_popular": false, "is_on_sale": false
+    "tags": ["food", "jam", "fig", "algarve", "handcrafted"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_26", "name": "Tapete de Yoga Premium", "category_id": "cat_6",
+    "id": "prod_26", "name": "Premium Yoga Mat", "category_id": "cat_6",
     "price": 41.25, "original_price": 55.00, "discount_percent": 25,
-    "description": "Tapete de yoga em borracha natural com superfície antiderrapante gravada em relevo. 183x61 cm, 5mm de espessura. Absorve o suor e mantém a aderência mesmo em práticas intensas. Inclui cinta de transporte.",
-    "full_description": "Este tapete de yoga foi concebido para praticantes sérios que exigem estabilidade e conforto. A superfície superior em TPE com microtextura oferece uma aderência excecional em posturas de equilíbrio e transições rápidas. A base em borracha natural certificada FSC proporciona isolamento do chão e amortecimento para joelhos e articulações. A espessura de 5mm é o equilíbrio perfeito entre conforto e estabilidade proprioceptiva. Marcas de alinhamento bordadas para posicionamento correto. Lavável à mão com detergente neutro. Peso: 1.8 kg. Inclui cinta ajustável de ombro.",
+    "description": "Yoga mat in natural rubber with embossed non-slip surface. 183x61 cm, 5mm thick. Absorbs sweat and maintains grip even during intense practice. Includes carrying strap.",
+    "full_description": "This yoga mat was designed for serious practitioners who demand stability and comfort. The top surface in TPE with fine texture offers exceptional grip in balance poses and quick transitions. The FSC-certified natural rubber base provides floor isolation and joint cushioning. The 5mm thickness is the perfect balance between comfort and proprioceptive stability. Embroidered alignment marks for correct positioning. Hand washable with neutral detergent. Weight: 1.8 kg. Includes adjustable shoulder strap.",
     "image_url": "https://picsum.photos/seed/prod_26/600/600",
     "in_stock": true, "stock_count": 18, "rating": 4.7, "review_count": 43,
-    "tags": ["desporto", "yoga", "pilates", "tapete", "meditação"], "is_popular": true, "is_on_sale": true
+    "tags": ["sports", "yoga", "pilates", "mat", "meditation"], "is_popular": true, "is_on_sale": true
   },
   {
-    "id": "prod_27", "name": "Garrafa Térmica 750ml", "category_id": "cat_6",
+    "id": "prod_27", "name": "750ml Thermal Bottle", "category_id": "cat_6",
     "price": 32.00, "original_price": 32.00, "discount_percent": 0,
-    "description": "Garrafa em aço inoxidável 18/8 com isolamento de vácuo de dupla parede. Mantém bebidas quentes 12h e frias 24h. Boca larga para facilitar enchimento e limpeza. Sem BPA. Tampa de rosca estanque. Disponível em 6 cores.",
-    "full_description": "Feita em aço inoxidável de grau alimentar 18/8 (sem chumbo, sem BPA), esta garrafa é compatível com café, chá, sumos e água com gás. O isolamento de vácuo de dupla parede cria uma barreira térmica que mantém bebidas quentes até 12 horas a 60°C+ e bebidas frias até 24 horas abaixo de 6°C. A boca larga de 55mm aceita cubos de gelo e facilita a limpeza. A tampa de rosca inclui junta de silicone que previne fugas mesmo invertida. O exterior com pó epoxy mate é resistente a riscos. Capacidade: 750ml. Peso: 320g. 5 anos de garantia.",
+    "description": "Bottle in 18/8 stainless steel with double-wall vacuum insulation. Keeps drinks hot for 12 hours and cold for 24 hours. Wide mouth for easy filling and cleaning. BPA-free. Sealed screw cap. Available in 6 colors.",
+    "full_description": "Made in food-grade 18/8 stainless steel (lead-free, BPA-free), this bottle is compatible with coffee, tea, juices, and carbonated water. The double-wall vacuum insulation creates a thermal barrier that keeps drinks hot up to 12 hours at 60°C+ and cold up to 24 hours below 6°C. The wide 55mm mouth accepts ice cubes and facilitates cleaning. The screw cap includes a silicone gasket that prevents leaks even when inverted. The exterior with matte epoxy powder is scratch-resistant. Capacity: 750ml. Weight: 320g. 5-year warranty.",
     "image_url": "https://picsum.photos/seed/prod_27/600/600",
     "in_stock": true, "stock_count": 30, "rating": 4.6, "review_count": 55,
-    "tags": ["desporto", "garrafa", "térmica", "sustentável", "hidratação"], "is_popular": true, "is_on_sale": false
+    "tags": ["sports", "bottle", "thermal", "sustainable", "hydration"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_28", "name": "Set de Elásticos de Resistência", "category_id": "cat_6",
+    "id": "prod_28", "name": "Resistance Bands Set", "category_id": "cat_6",
     "price": 14.40, "original_price": 24.00, "discount_percent": 40,
-    "description": "Set de 5 elásticos de resistência em látex natural com diferentes níveis de resistência: extra leve (8kg), leve (14kg), médio (20kg), forte (28kg) e extra forte (35kg). Inclui saco de transporte e guia de exercícios.",
-    "full_description": "Os elásticos de resistência são uma das ferramentas de treino mais versáteis e completas. Este set de 5 níveis permite progredir gradualmente e treinar todo o corpo — desde o aquecimento com o extra leve até ao fortalecimento intensivo com o extra forte. Feitos em látex natural de alta elasticidade, cada elástico tem 208cm de comprimento fechado. As extremidades são reforçadas para prevenir rutura. Ideais para treino de força, reabilitação, yoga avançada e alongamentos. O guia de exercícios inclui 30 exercícios com foto e descrição de execução. Adequados para todos os níveis.",
+    "description": "Set of 5 resistance bands in natural latex with different resistance levels: extra light (8kg), light (14kg), medium (20kg), strong (28kg), and extra strong (35kg). Includes carry bag and exercise guide.",
+    "full_description": "Resistance bands are one of the most versatile and complete training tools. This 5-level set allows for gradual progression and full-body training — from warm-up with the extra light to intensive strengthening with the extra strong. Made in highly elastic natural latex, each band is 208cm long when closed. Ends are reinforced to prevent breakage. Ideal for strength training, rehabilitation, advanced yoga, and stretching. The exercise guide includes 30 exercises with photos and execution descriptions. Suitable for all levels.",
     "image_url": "https://picsum.photos/seed/prod_28/600/600",
     "in_stock": true, "stock_count": 45, "rating": 4.2, "review_count": 38,
-    "tags": ["desporto", "elásticos", "resistência", "treino", "fitness"], "is_popular": false, "is_on_sale": true
+    "tags": ["sports", "bands", "resistance", "training", "fitness"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_29", "name": "Mochila de Trilho 25L", "category_id": "cat_6",
+    "id": "prod_29", "name": "25L Trail Backpack", "category_id": "cat_6",
     "price": 85.00, "original_price": 85.00, "discount_percent": 0,
-    "description": "Mochila técnica para trail running e hiking, 25 litros, com sistema de hidratação compatível com reservatório de 2L (não incluído). Costas ventiladas AirMesh, suportes de trekking laterais e alças de compressão. Peso: 780g.",
-    "full_description": "Projetada com contribuição de trail runners portugueses da Serra da Estrela, esta mochila equilibra capacidade e leveza. O tecido principal em nylon ripstop de 210D é resistente a abrasão e repelente à água (DWR). As costas ventiladas com espuma perfurada e o painel lombar em AirMesh reduzem o calor e o suor nas longas subidas. A organização interna inclui: compartimento principal com bolso para hidratação, bolso frontal com organização (chaves, telemóvel, snacks), dois bolsos laterais para bastões e um bolso de acesso rápido na aba superior. Compatível com capa de chuva (incluída). Tamanhos S/M e M/L.",
+    "description": "Technical backpack for trail running and hiking, 25 liters, with hydration system compatible with 2L reservoir (not included). Ventilated AirMesh back, side trekking supports, and compression straps. Weight: 780g.",
+    "full_description": "Designed with input from Portuguese trail runners from Serra da Estrela, this backpack balances capacity and lightness. The main fabric in 210D ripstop nylon is abrasion-resistant and water-repellent (DWR). The ventilated back with perforated foam and AirMesh lumbar panel reduce heat and sweat on long climbs. Internal organization includes: main compartment with hydration pocket, front pocket with organization (keys, phone, snacks), two side pockets for poles, and quick-access pocket on upper flap. Compatible with rain cover (included). Sizes S/M and M/L.",
     "image_url": "https://picsum.photos/seed/prod_29/600/600",
     "in_stock": true, "stock_count": 10, "rating": 4.5, "review_count": 26,
-    "tags": ["desporto", "mochila", "trail", "montanha", "outdoor"], "is_popular": false, "is_on_sale": false
+    "tags": ["sports", "backpack", "trail", "mountain", "outdoor"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_30", "name": "Corda de Saltar Profissional", "category_id": "cat_6",
+    "id": "prod_30", "name": "Professional Jump Rope", "category_id": "cat_6",
     "price": 12.60, "original_price": 18.00, "discount_percent": 30,
-    "description": "Corda de saltar com cabo em aço revestido a PVC e rolamentos de esferas de alta velocidade. Cabo ajustável (máx. 3m). Punhos ergonómicos com espuma EVA. Ideal para CrossFit, boxe e cardio de alta intensidade.",
-    "full_description": "O cabo de aço revestido é 40% mais rápido que as cordas de nylon convencionais, permitindo double-unders com mais facilidade. Os rolamentos de esferas 608ZZ garantem uma rotação suave e sem resistência. O ajuste do comprimento é feito por parafuso de aperto sem ferramentas. Os punhos em EVA antiderrapante mantêm a pega firme mesmo com as mãos suadas. Peso total: 185g. Esta corda é usada por atletas de CrossFit, boxeadores e praticantes de jump rope fitness. O cabo é substituível (vendido separadamente). Inclui saco de transporte.",
+    "description": "Jump rope with steel cable coated in PVC and high-speed ball bearings. Adjustable cable (max. 3m). Ergonomic handles with EVA foam. Ideal for CrossFit, boxing, and high-intensity cardio.",
+    "full_description": "The coated steel cable is 40% faster than conventional nylon ropes, making double-unders easier. The 608ZZ ball bearings ensure smooth, frictionless rotation. Cable length adjustment is made by a thumb screw without tools. The EVA non-slip handles maintain firm grip even with sweaty hands. Total weight: 185g. This rope is used by CrossFit athletes, boxers, and jump rope fitness practitioners. The cable is replaceable (sold separately). Includes carry bag.",
     "image_url": "https://picsum.photos/seed/prod_30/600/600",
     "in_stock": true, "stock_count": 55, "rating": 4.1, "review_count": 19,
-    "tags": ["desporto", "corda", "crossfit", "cardio", "boxe"], "is_popular": false, "is_on_sale": true
+    "tags": ["sports", "rope", "crossfit", "cardio", "boxing"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_31", "name": "O Alquimista — Edição Especial", "category_id": "cat_7",
+    "id": "prod_31", "name": "The Alchemist - Special Edition", "category_id": "cat_7",
     "price": 22.00, "original_price": 22.00, "discount_percent": 0,
-    "description": "Edição de colecionador do romance mais vendido de Paulo Coelho, com capa dura em linho bordada, marcador de seda e papel de cor creme. Inclui prefácio inédito do autor sobre os 35 anos da obra. Em português de Portugal.",
-    "full_description": "Esta edição especial de aniversário foi produzida em tiragem limitada de 5000 exemplares numerados. A capa em linho natural com título em relevo dourado é protegida por uma sobrecapa ilustrada por um artista plástico português. O papel de 90g/m² com tonalidade creme é mais confortável para leitura prolongada. O texto usa a ortografia anterior ao Acordo Ortográfico de 1990 — uma escolha deliberada para preservar a musicalidade original da língua. Inclui uma análise de 20 páginas sobre os símbolos e temas da obra. Um objeto a guardar por gerações.",
+    "description": "Collector's edition of Paulo Coelho's bestselling novel, with hardcover in embroidered linen, silk bookmark, and cream-colored paper. Includes an unpublished preface from the author about the work's 35 years. In European Portuguese.",
+    "full_description": "This anniversary special edition was produced in a limited run of 5000 numbered copies. The natural linen cover with gold-embossed title is protected by a dust jacket illustrated by a Portuguese plastic artist. The 90g/m² paper with cream tone is more comfortable for extended reading. The text uses the spelling prior to the 1990 Orthographic Agreement — a deliberate choice to preserve the original musical quality of the language. Includes a 20-page analysis of the work's symbols and themes. An object to keep for generations.",
     "image_url": "https://picsum.photos/seed/prod_31/600/600",
     "in_stock": true, "stock_count": 30, "rating": 4.9, "review_count": 134,
-    "tags": ["livros", "Paulo Coelho", "ficção", "clássico", "coleção"], "is_popular": true, "is_on_sale": false
+    "tags": ["books", "Paulo Coelho", "fiction", "classic", "collection"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_32", "name": "Guia de Meditação para Principiantes", "category_id": "cat_7",
+    "id": "prod_32", "name": "Beginner's Meditation Guide", "category_id": "cat_7",
     "price": 18.00, "original_price": 18.00, "discount_percent": 0,
-    "description": "Guia prático de meditação mindfulness escrito por um professor português certificado pela Universidade de Oxford. 200 páginas com 40 práticas guiadas por QR code. Do básico ao avançado. Sem misticismo — baseado em evidência científica.",
-    "full_description": "Este livro nasceu de 15 anos de prática e 10 anos de ensino de meditação a contextos empresariais, hospitalares e escolares em Portugal. A abordagem é científica: cada técnica é apresentada com base no suporte de investigação (neurociência, psicologia clínica e medicina). Os QR codes ao longo do livro dão acesso a 40 áudios de práticas guiadas de 5 a 30 minutos, narrados pelo próprio autor. Capítulos incluem: Fundamentos, Atenção à Respiração, Body Scan, Meditação Compassiva, Meditação em Movimento e Aplicação no Dia a Dia. Ideal como primeiro livro sobre o tema.",
+    "description": "Practical guide to mindfulness meditation written by a Portuguese teacher certified by Oxford University. 200 pages with 40 guided practices via QR code. From beginner to advanced. No mysticism — based on scientific evidence.",
+    "full_description": "This book was born from 15 years of practice and 10 years of teaching meditation in corporate, hospital, and school settings in Portugal. The approach is scientific: each technique is presented based on research support (neuroscience, clinical psychology, and medicine). QR codes throughout the book provide access to 40 guided practice audios of 5 to 30 minutes, narrated by the author himself. Chapters include: Fundamentals, Breath Awareness, Body Scan, Loving-Kindness Meditation, Movement Meditation, and Daily Application. Ideal as your first book on the subject.",
     "image_url": "https://picsum.photos/seed/prod_32/600/600",
     "in_stock": true, "stock_count": 22, "rating": 4.4, "review_count": 41,
-    "tags": ["livros", "meditação", "mindfulness", "bem-estar", "autoajuda"], "is_popular": false, "is_on_sale": false
+    "tags": ["books", "meditation", "mindfulness", "wellness", "self-help"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_33", "name": "Receitas da Avó Portuguesa", "category_id": "cat_7",
+    "id": "prod_33", "name": "Portuguese Grandmother's Recipes", "category_id": "cat_7",
     "price": 21.25, "original_price": 25.00, "discount_percent": 15,
-    "description": "Livro de culinária com 120 receitas tradicionais portuguesas, recolhidas de avós de 18 concelhos diferentes. Com história e contexto cultural de cada receita. Fotografia de página inteira para cada prato. Capa dura.",
-    "full_description": "Durante 3 anos, a autora — jornalista gastronómica do Porto — viajou por Portugal continental e ilhas para recolher receitas de avós com mais de 70 anos. O resultado é um arquivo de saberes que estaria em risco de se perder. Cada receita vem acompanhada de uma fotografia da avó que a partilhou, da história da família e do contexto regional. As receitas incluem entradas, sopas, peixe, carne, legumes, doces e conservas — com versões adaptadas para cozinhas modernas sem perder a essência. Um livro que é simultaneamente um livro de cozinha e um documento etnográfico.",
+    "description": "Cookbook with 120 traditional Portuguese recipes collected from grandmothers in 18 different municipalities. With history and cultural context of each recipe. Full-page photography for each dish. Hardcover.",
+    "full_description": "Over 3 years, the author — a food journalist from Porto — traveled throughout mainland Portugal and the islands to collect recipes from grandmothers over 70 years old. The result is a repository of knowledge at risk of being lost. Each recipe is accompanied by a photo of the grandmother who shared it, the family's story, and regional context. Recipes include appetizers, soups, fish, meat, vegetables, desserts, and preserves — with versions adapted for modern kitchens without losing the essence. A book that is simultaneously a cookbook and an ethnographic document.",
     "image_url": "https://picsum.photos/seed/prod_33/600/600",
     "in_stock": true, "stock_count": 17, "rating": 4.6, "review_count": 38,
-    "tags": ["livros", "culinária", "receitas", "tradição", "portuguesa"], "is_popular": false, "is_on_sale": true
+    "tags": ["books", "culinary", "recipes", "tradition", "portuguese"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_34", "name": "Atlas do Mundo Ilustrado", "category_id": "cat_7",
+    "id": "prod_34", "name": "Illustrated World Atlas", "category_id": "cat_7",
     "price": 45.00, "original_price": 45.00, "discount_percent": 0,
-    "description": "Atlas mundial de grande formato (30x38 cm) com mais de 200 ilustrações originais, mapas topográficos detalhados e infografias sobre cultura, fauna, gastronomia e história de cada região do mundo. 384 páginas, capa dura.",
-    "full_description": "Este atlas foi cinco anos a ser produzido por uma equipa de 12 cartógrafos, ilustradores e investigadores. Vai além do atlas convencional: cada continente tem mapas temáticos sobre línguas, religiões, gastronomia, biodiversidade, música e tradições. As ilustrações originais foram criadas especialmente para este volume por artistas de 30 países. O texto está em português de Portugal, com glossário de termos geográficos e um índice detalhado de mais de 2000 entradas. Dimensões: 30x38 cm, peso 2,4 kg. Um objeto de referência e decoração para qualquer biblioteca.",
+    "description": "Large-format world atlas (30x38 cm) with over 200 original illustrations, detailed topographic maps, and infographics on culture, fauna, gastronomy, and history of each world region. 384 pages, hardcover.",
+    "full_description": "This atlas took five years to produce by a team of 12 cartographers, illustrators, and researchers. It goes beyond a conventional atlas: each continent has thematic maps on languages, religions, gastronomy, biodiversity, music, and traditions. The original illustrations were created specifically for this volume by artists from 30 countries. The text is in European Portuguese, with a glossary of geographic terms and a detailed index of over 2000 entries. Dimensions: 30x38 cm, weight 2.4 kg. A reference and decoration object for any library.",
     "image_url": "https://picsum.photos/seed/prod_34/600/600",
     "in_stock": true, "stock_count": 12, "rating": 4.7, "review_count": 29,
-    "tags": ["livros", "atlas", "geografia", "ilustrado", "coleção"], "is_popular": true, "is_on_sale": false
+    "tags": ["books", "atlas", "geography", "illustrated", "collection"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_35", "name": "Aprende Python em 30 Dias", "category_id": "cat_7",
+    "id": "prod_35", "name": "Learn Python in 30 Days", "category_id": "cat_7",
     "price": 28.00, "original_price": 35.00, "discount_percent": 20,
-    "description": "Guia prático de programação Python para iniciantes, estruturado em 30 lições diárias de 45 minutos. Código disponível num repositório GitHub. Exercícios progressivos com soluções comentadas. Focado em aplicações reais: dados, web e automação.",
-    "full_description": "Escrito por um engenheiro de software português com 15 anos de experiência em empresas como Unbabel e Feedzai, este livro foi testado com mais de 500 alunos em workshops. A metodologia 'learn by doing' garante que cada lição termina com um mini-projeto funcional. Os 30 capítulos cobrem: tipos de dados, controlo de fluxo, funções, POO, ficheiros, APIs REST, pandas, matplotlib e automatização de tarefas. O código de todos os exemplos e exercícios está no GitHub e atualizado para Python 3.12. Inclui apêndice de recursos online e como continuar a aprender após o livro.",
+    "description": "Practical Python programming guide for beginners, structured in 30 daily lessons of 45 minutes. Code available in a GitHub repository. Progressive exercises with commented solutions. Focused on real applications: data, web, and automation.",
+    "full_description": "Written by a Portuguese software engineer with 15 years of experience at companies like Unbabel and Feedzai, this book was tested with over 500 students in workshops. The 'learn by doing' methodology ensures each lesson ends with a functional mini-project. The 30 chapters cover: data types, flow control, functions, OOP, files, REST APIs, pandas, matplotlib, and task automation. Code for all examples and exercises is on GitHub and updated for Python 3.12. Includes appendix of online resources and how to keep learning after the book.",
     "image_url": "https://picsum.photos/seed/prod_35/600/600",
     "in_stock": true, "stock_count": 18, "rating": 4.5, "review_count": 45,
-    "tags": ["livros", "programação", "python", "tecnologia", "aprendizagem"], "is_popular": false, "is_on_sale": true
+    "tags": ["books", "programming", "python", "technology", "learning"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_36", "name": "Puzzle de Madeira 100 Peças", "category_id": "cat_8",
+    "id": "prod_36", "name": "100-Piece Wooden Puzzle", "category_id": "cat_8",
     "price": 18.20, "original_price": 28.00, "discount_percent": 35,
-    "description": "Puzzle em madeira de bétula cortado a laser com peças de formas únicas (animais, letras, flores). Ilustração de Lisboa em estilo art deco colorido. Adequado a partir dos 6 anos. Inclui tabuleiro de armazenamento com tampa.",
-    "full_description": "Ao contrário dos puzzles convencionais, este puzzle de madeira tem peças com formas únicas — alguns são silhuetas de animais, outros têm recortes decorativos — tornando a experiência mais rica e o resultado mais bonito. A ilustração foi criada por uma ilustradora lisboeta e mostra pontos icónicos de Lisboa em estilo art deco: a Torre de Belém, o elétrico 28, o Castelo de São Jorge e a Ponte 25 de Abril. A madeira é FSC-certificada, cortada a laser com precisão e pintada com tintas aquosas não tóxicas. O tabuleiro de armazenamento transforma-se em moldura para exibir o puzzle montado.",
+    "description": "Puzzle in birch wood laser-cut with unique-shaped pieces (animals, letters, flowers). Lisbon illustration in colorful art deco style. Suitable from age 6. Includes storage board with lid.",
+    "full_description": "Unlike conventional puzzles, this wooden puzzle has unique-shaped pieces — some are animal silhouettes, others have decorative cutouts — making the experience richer and the result more beautiful. The illustration was created by a Lisbon illustrator and shows iconic Lisbon points in art deco style: the Belém Tower, tram 28, the Castle of São Jorge, and the 25th of April Bridge. The wood is FSC-certified, laser-cut with precision, and painted with non-toxic watercolor paints. The storage board becomes a frame to display the completed puzzle.",
     "image_url": "https://picsum.photos/seed/prod_36/600/600",
     "in_stock": true, "stock_count": 25, "rating": 4.8, "review_count": 51,
-    "tags": ["crianças", "puzzle", "madeira", "Lisboa", "educativo"], "is_popular": true, "is_on_sale": true
+    "tags": ["children", "puzzle", "wood", "Lisbon", "educational"], "is_popular": true, "is_on_sale": true
   },
   {
-    "id": "prod_37", "name": "Kit de Pintura para Crianças", "category_id": "cat_8",
+    "id": "prod_37", "name": "Children's Painting Kit", "category_id": "cat_8",
     "price": 22.00, "original_price": 22.00, "discount_percent": 0,
-    "description": "Kit de pintura completo com 24 tintas de dedo não tóxicas, 6 pincéis de diferentes espessuras, 10 telas de algodão 15x20cm, paletas reutilizáveis e avental. Adequado para crianças dos 3 aos 10 anos. Tintas laváveis.",
-    "full_description": "Este kit foi desenvolvido com a input de educadoras de infância e terapeutas ocupacionais para maximizar o desenvolvimento criativo. As tintas de dedo têm consistência ideal — nem demasiado líquidas nem demasiado espessas — e são formuladas com pigmentos minerais não tóxicos, certificados EN71. As telas de algodão de 300g/m² têm textura suficiente para técnicas com pincel e espátula. O avental em poliéster com bolso frontal protege a roupa eficazmente. O kit inclui também um guia de 8 técnicas de pintura ilustradas para crianças. Perfeito para ocupação criativa em casa ou na escola.",
+    "description": "Complete painting kit with 24 non-toxic finger paints, 6 brushes of different sizes, 10 cotton canvases 15x20cm, reusable palettes, and apron. Suitable for children ages 3-10. Washable paints.",
+    "full_description": "This kit was developed with input from early childhood educators and occupational therapists to maximize creative development. The finger paints have ideal consistency — not too liquid or too thick — and are formulated with non-toxic mineral pigments, certified EN71. The 300g/m² cotton canvases have enough texture for brush and palette knife techniques. The polyester apron with front pocket effectively protects clothing. The kit also includes a guide with 8 illustrated painting techniques for children. Perfect for creative activity at home or school.",
     "image_url": "https://picsum.photos/seed/prod_37/600/600",
     "in_stock": true, "stock_count": 20, "rating": 4.4, "review_count": 33,
-    "tags": ["crianças", "pintura", "arte", "criatividade", "kit"], "is_popular": false, "is_on_sale": false
+    "tags": ["children", "painting", "art", "creativity", "kit"], "is_popular": false, "is_on_sale": false
   },
   {
-    "id": "prod_38", "name": "Peluche de Urso Orgânico", "category_id": "cat_8",
+    "id": "prod_38", "name": "Organic Bear Plush", "category_id": "cat_8",
     "price": 35.00, "original_price": 35.00, "discount_percent": 0,
-    "description": "Urso de peluche em algodão orgânico certificado GOTS, enchimento em fibra de algodão reciclado. Sem olhos plásticos soltos — olhos bordados. Adequado para recém-nascidos. Lavável a máquina a 40°C. Altura: 35 cm.",
-    "full_description": "Projetado para ser o primeiro amigo de um bebé, este urso foi pensado em cada detalhe de segurança. O tecido exterior em algodão orgânico GOTS certificado é macio, hipoalergénico e livre de substâncias nocivas (certificado Oeko-Tex Standard 100). O enchimento em fibra de algodão reciclado é uniformemente distribuído para manter a forma. Os olhos e nariz bordados eliminam o risco de asfixia por peças soltas. As costuras são reforçadas com dupla costura. Inclui etiqueta de origem com nome do artesão. Embalagem em caixa de cartão reciclado. Um presente que vai durar décadas.",
+    "description": "Bear plush in GOTS-certified organic cotton, filling in recycled cotton fiber. No loose plastic eyes — embroidered eyes. Suitable for newborns. Machine washable at 40°C. Height: 35 cm.",
+    "full_description": "Designed to be a baby's first friend, this bear was thought through in every safety detail. The exterior fabric in GOTS-certified organic cotton is soft, hypoallergenic, and free from harmful substances (Oeko-Tex Standard 100 certified). The recycled cotton fiber filling is evenly distributed to maintain shape. Embroidered eyes and nose eliminate suffocation risk from loose parts. Stitches are reinforced with double seaming. Includes origin label with craftsperson's name. Packaged in recycled cardboard box. A gift that will last for generations.",
     "image_url": "https://picsum.photos/seed/prod_38/600/600",
     "in_stock": true, "stock_count": 15, "rating": 4.7, "review_count": 44,
-    "tags": ["crianças", "peluche", "orgânico", "bebé", "presente"], "is_popular": true, "is_on_sale": false
+    "tags": ["children", "plush", "organic", "baby", "gift"], "is_popular": true, "is_on_sale": false
   },
   {
-    "id": "prod_39", "name": "Livro de Histórias Bilingue PT/EN", "category_id": "cat_8",
+    "id": "prod_39", "name": "Bilingual Story Book PT/EN", "category_id": "cat_8",
     "price": 13.50, "original_price": 15.00, "discount_percent": 10,
-    "description": "Colecção de 5 contos tradicionais portugueses (O Gato das Botas, A Bela e o Monstro, etc.) apresentados em páginas bilingues PT/EN com ilustrações originais. Papel grosso de 250g. Adequado para dos 3 aos 8 anos.",
-    "full_description": "Este livro foi criado para famílias portuguesas que querem que os filhos cresçam bilingues sem perder contacto com a tradição literária portuguesa. Cada página dupla apresenta o texto em português no lado esquerdo e em inglês no lado direito, com a mesma ilustração. As histórias foram reescritas numa linguagem acessível a crianças, mantendo a essência dos contos originais. As ilustrações a guache foram criadas por uma ilustradora alentejana e têm uma paleta de cores quentes e reconfortantes. O papel de 250g com acabamento mate é resistente ao manuseamento infantil. Dimensões: 25x25 cm, 96 páginas.",
+    "description": "Collection of 5 traditional Portuguese tales (The Puss in Boots, Beauty and the Beast, etc.) presented in bilingual pages PT/EN with original illustrations. Thick 250g paper. Suitable for ages 3-8.",
+    "full_description": "This book was created for Portuguese families who want their children to grow up bilingual without losing touch with Portuguese literary tradition. Each double-page presents the text in Portuguese on the left and English on the right, with the same illustration. The stories were rewritten in language accessible to children, maintaining the essence of the original tales. The gouache illustrations were created by an Alentejo illustrator and feature a palette of warm and comforting colors. The 250g paper with matte finish resists children's handling. Dimensions: 25x25 cm, 96 pages.",
     "image_url": "https://picsum.photos/seed/prod_39/600/600",
     "in_stock": true, "stock_count": 30, "rating": 4.5, "review_count": 28,
-    "tags": ["crianças", "livro", "bilingue", "histórias", "educação"], "is_popular": false, "is_on_sale": true
+    "tags": ["children", "book", "bilingual", "stories", "education"], "is_popular": false, "is_on_sale": true
   },
   {
-    "id": "prod_40", "name": "Blocos de Construção Coloridos 120 peças", "category_id": "cat_8",
+    "id": "prod_40", "name": "Colorful Building Blocks 120 Pieces", "category_id": "cat_8",
     "price": 42.00, "original_price": 42.00, "discount_percent": 0,
-    "description": "Set de 120 blocos de construção em madeira de faia com 12 formas diferentes e 6 cores. Certificado EN71, sem tinta tóxica. Inclui saco de algodão para armazenamento. Desenvolve raciocínio espacial e criatividade. A partir dos 18 meses.",
-    "full_description": "Feitos em madeira de faia macissa da Europa Central, estes blocos são polidos à mão para eliminar arestas e garantir uma superfície suave ao toque da criança. As 12 formas diferentes (cubos, cilindros, arcos, triângulos, paralelelepípedos...) oferecem possibilidades de construção quase ilimitadas. As 6 cores são obtidas com tintas aquosas à base de água, certificadas Oeko-Tex e EN71 — completamente seguras se a criança as colocar na boca. O saco de algodão facilita a arrumação e estimula a criança a organizar e categorizar. Compatíveis com outros sets de blocos de madeira standard. Um brinquedo para durar gerações.",
+    "description": "Set of 120 building blocks in beech wood with 12 different shapes and 6 colors. EN71 certified, no toxic paint. Includes cotton storage bag. Develops spatial reasoning and creativity. From 18 months old.",
+    "full_description": "Made in solid beech wood from Central Europe, these blocks are hand-polished to remove rough edges and guarantee a smooth surface for the child's touch. The 12 different shapes (cubes, cylinders, arches, triangles, parallelepipeds...) offer almost unlimited building possibilities. The 6 colors are made with water-based aqueous paints, certified Oeko-Tex and EN71 — completely safe if the child puts them in their mouth. The cotton bag facilitates storage and encourages the child to organize and categorize. Compatible with other standard wooden block sets. A toy to last generations.",
     "image_url": "https://picsum.photos/seed/prod_40/600/600",
     "in_stock": true, "stock_count": 22, "rating": 4.3, "review_count": 37,
-    "tags": ["crianças", "blocos", "construção", "madeira", "educativo"], "is_popular": false, "is_on_sale": false
+    "tags": ["children", "blocks", "construction", "wood", "educational"], "is_popular": false, "is_on_sale": false
   }
 ]

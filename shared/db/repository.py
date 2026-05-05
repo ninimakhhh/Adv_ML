@@ -244,6 +244,124 @@ class TicketRepository:
     # 9. get_metrics
     # ------------------------------------------------------------------
 
+    def list_pending_escalations(self) -> list[Ticket]:
+        """Escalated tickets that have not yet been human-verified."""
+        con = self._conn()
+        rows = con.execute(
+            "SELECT * FROM tickets "
+            "WHERE resolution_path LIKE 'escalated%' AND human_verified = 0 "
+            "ORDER BY created_at DESC"
+        ).fetchall()
+        return [_row_to_ticket(r) for r in rows]
+
+    def list_auto_classified(
+        self,
+        *,
+        status: Optional[str] = None,
+        intent: Optional[str] = None,
+        days: Optional[int] = None,
+        limit: int = 200,
+    ) -> list[Ticket]:
+        """All tickets with optional filters; no intent restriction so all tickets appear."""
+        where, params = [], []
+        if status:
+            where.append("final_status = ?")
+            params.append(status)
+        if intent:
+            where.append("classified_intent = ?")
+            params.append(intent)
+        if days:
+            where.append("created_at >= DATETIME('now', ?)")
+            params.append(f"-{days} days")
+        clause = ("WHERE " + " AND ".join(where)) if where else ""
+        params.append(limit)
+        con = self._conn()
+        rows = con.execute(
+            f"SELECT * FROM tickets {clause} ORDER BY created_at DESC LIMIT ?",
+            params,
+        ).fetchall()
+        return [_row_to_ticket(r) for r in rows]
+
+    def update_classification(
+        self,
+        ticket_id: str,
+        intent_id: str,
+        confidence: float = 1.0,
+    ) -> Optional[Ticket]:
+        """Human-override a ticket's classification and mark it as verified."""
+        return self.update_ticket(
+            ticket_id,
+            classified_intent=intent_id,
+            classification_confidence=confidence,
+            human_verified=1,
+        )
+
+    def get_daily_counts(self, days: int = 30) -> list[dict]:
+        """Return [{date, created, resolved}] for the last *days* calendar days."""
+        con = self._conn()
+        created_rows = con.execute(
+            "SELECT DATE(created_at) AS d, COUNT(*) AS cnt FROM tickets "
+            "WHERE created_at >= DATETIME('now', ?) GROUP BY DATE(created_at)",
+            (f"-{days} days",),
+        ).fetchall()
+        resolved_rows = con.execute(
+            "SELECT DATE(resolved_at) AS d, COUNT(*) AS cnt FROM tickets "
+            "WHERE resolved_at IS NOT NULL AND resolved_at >= DATETIME('now', ?) "
+            "GROUP BY DATE(resolved_at)",
+            (f"-{days} days",),
+        ).fetchall()
+        created_map = {r["d"]: r["cnt"] for r in created_rows}
+        resolved_map = {r["d"]: r["cnt"] for r in resolved_rows}
+        all_dates = sorted(set(created_map) | set(resolved_map))
+        return [
+            {"date": d, "created": created_map.get(d, 0), "resolved": resolved_map.get(d, 0)}
+            for d in all_dates
+        ]
+
+    def get_escalation_insight(self) -> Optional[dict]:
+        """
+        Find the intent with the largest week-over-week escalation increase.
+        Returns {intent_id, this_week, last_week, change_pct, insight_text} or None.
+        """
+        con = self._conn()
+        rows = con.execute(
+            """
+            SELECT classified_intent,
+                   SUM(CASE WHEN created_at >= DATETIME('now','-7 days') THEN 1 ELSE 0 END)  AS this_week,
+                   SUM(CASE WHEN created_at >= DATETIME('now','-14 days')
+                             AND created_at <  DATETIME('now','-7 days') THEN 1 ELSE 0 END) AS last_week
+            FROM tickets
+            WHERE resolution_path LIKE 'escalated%'
+              AND classified_intent IS NOT NULL
+              AND created_at >= DATETIME('now','-14 days')
+            GROUP BY classified_intent
+            """,
+        ).fetchall()
+        if not rows:
+            return None
+        best = max(rows, key=lambda r: r["this_week"] - r["last_week"])
+        this_w, last_w = best["this_week"], best["last_week"]
+        change_pct = round((this_w - last_w) / max(last_w, 1) * 100)
+        intent_label = (best["classified_intent"] or "unknown").replace("_", " ").title()
+        if change_pct > 0:
+            text = (
+                f"**{intent_label}** escalated {change_pct}% more this week vs last "
+                f"({this_w} vs {last_w} escalations) — consider reviewing the bot's responses for this category."
+            )
+        else:
+            text = (
+                f"**{intent_label}** is your most-escalated intent this week ({this_w} escalations). "
+                f"Review bot responses to reduce handoffs."
+            )
+        return {
+            "intent_id": best["classified_intent"],
+            "intent_label": intent_label,
+            "this_week": this_w,
+            "last_week": last_w,
+            "change_pct": change_pct,
+            "insight_text": text,
+        }
+
     def get_metrics(self) -> dict:
         con = self._conn()
 
@@ -262,27 +380,80 @@ class TicketRepository:
                 "ORDER BY cnt DESC LIMIT 10"
             ).fetchall()
         }
+        by_channel = {
+            r["channel"]: r["cnt"]
+            for r in con.execute(
+                "SELECT channel, COUNT(*) AS cnt FROM tickets GROUP BY channel"
+            ).fetchall()
+        }
+        by_sentiment = {
+            r["sentiment"]: r["cnt"]
+            for r in con.execute(
+                "SELECT sentiment, COUNT(*) AS cnt FROM tickets "
+                "WHERE sentiment IS NOT NULL GROUP BY sentiment"
+            ).fetchall()
+        }
         avg_csat = con.execute(
             "SELECT AVG(csat_score) FROM tickets WHERE csat_score IS NOT NULL"
         ).fetchone()[0]
-        escalation_rate_row = con.execute(
+        escalated = con.execute(
             "SELECT COUNT(*) FROM tickets WHERE resolution_path LIKE 'escalated%'"
         ).fetchone()[0]
         bot_resolved = con.execute(
             "SELECT COUNT(*) FROM tickets WHERE resolution_path = 'bot_resolved'"
         ).fetchone()[0]
+        classified_total = con.execute(
+            "SELECT COUNT(*) FROM tickets WHERE classified_intent IS NOT NULL"
+        ).fetchone()[0]
+        human_verified_count = con.execute(
+            "SELECT COUNT(*) FROM tickets WHERE human_verified = 1"
+        ).fetchone()[0]
+
+        # Avg first reply time (minutes): time from first user msg to first bot msg
+        reply_row = con.execute(
+            """
+            SELECT AVG((julianday(bot_first) - julianday(user_first)) * 24 * 60) AS avg_min
+            FROM (
+                SELECT
+                    MIN(CASE WHEN role = 'user' THEN sent_at END) AS user_first,
+                    MIN(CASE WHEN role = 'bot'  THEN sent_at END) AS bot_first
+                FROM messages GROUP BY ticket_id
+            ) WHERE user_first IS NOT NULL AND bot_first IS NOT NULL
+            """
+        ).fetchone()[0]
+
+        # Avg resolution time (hours): from first user msg to resolved_at
+        resolution_row = con.execute(
+            """
+            SELECT AVG((julianday(t.resolved_at) - julianday(m.user_first)) * 24) AS avg_hrs
+            FROM tickets t
+            JOIN (
+                SELECT ticket_id, MIN(sent_at) AS user_first
+                FROM messages WHERE role = 'user' GROUP BY ticket_id
+            ) m ON m.ticket_id = t.ticket_id
+            WHERE t.resolved_at IS NOT NULL
+            """
+        ).fetchone()[0]
+
+        ai_accuracy_pct = (
+            round((classified_total - human_verified_count) / classified_total * 100, 1)
+            if classified_total else 0.0
+        )
 
         return {
             "total_tickets": total,
             "by_status": by_status,
             "top_intents": by_intent,
+            "by_channel": by_channel,
+            "by_sentiment": by_sentiment,
             "avg_csat": round(avg_csat, 2) if avg_csat else None,
-            "escalated": escalation_rate_row,
+            "escalated": escalated,
             "bot_resolved": bot_resolved,
-            "escalation_rate_pct": (
-                round(escalation_rate_row / total * 100, 1) if total else 0.0
-            ),
-            "bot_resolution_rate_pct": (
-                round(bot_resolved / total * 100, 1) if total else 0.0
-            ),
+            "classified_total": classified_total,
+            "human_verified_count": human_verified_count,
+            "escalation_rate_pct": round(escalated / total * 100, 1) if total else 0.0,
+            "bot_resolution_rate_pct": round(bot_resolved / total * 100, 1) if total else 0.0,
+            "ai_accuracy_pct": ai_accuracy_pct,
+            "avg_first_reply_min": round(reply_row, 1) if reply_row else 0.0,
+            "avg_resolution_hours": max(0.0, round(resolution_row, 2)) if resolution_row else 0.0,
         }

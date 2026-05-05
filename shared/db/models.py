@@ -23,6 +23,7 @@ class Ticket(BaseModel):
     agent_id: Optional[str] = None
     tags: list[str] = Field(default_factory=list)
     sentiment: Optional[str] = None
+    human_verified: bool = False
 
     @field_validator("tags", mode="before")
     @classmethod
@@ -30,6 +31,11 @@ class Ticket(BaseModel):
         if isinstance(v, str):
             return json.loads(v)
         return v
+
+    @field_validator("human_verified", mode="before")
+    @classmethod
+    def _parse_human_verified(cls, v):
+        return bool(v)
 
     def tags_as_json(self) -> str:
         return json.dumps(self.tags)

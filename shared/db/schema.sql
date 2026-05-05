@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS tickets (
     csat_score              INTEGER     CHECK (csat_score BETWEEN 1 AND 5),
     agent_id                TEXT,
     tags                    TEXT        NOT NULL DEFAULT '[]',
-    sentiment               TEXT        CHECK (sentiment IN ('positive', 'neutral', 'negative'))
+    sentiment               TEXT        CHECK (sentiment IN ('positive', 'neutral', 'negative')),
+    human_verified          INTEGER     NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS messages (

@@ -23,9 +23,19 @@ def migrate(db_path: Path = _DB_PATH) -> None:
     try:
         con.executescript(ddl)
         con.commit()
+        # Additive column migrations (idempotent via exception swallow)
+        _add_column_if_missing(con, "tickets", "human_verified", "INTEGER NOT NULL DEFAULT 0")
         print(f"[OK] Schema applied -> {db_path}")
     finally:
         con.close()
+
+
+def _add_column_if_missing(con: sqlite3.Connection, table: str, column: str, typedef: str) -> None:
+    try:
+        con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {typedef}")
+        con.commit()
+    except sqlite3.OperationalError:
+        pass  # column already exists
 
 
 if __name__ == "__main__":

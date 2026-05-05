@@ -100,12 +100,12 @@ class TestHappyPath:
         assert "order" in t1.bot_response.lower()
         assert state.waiting_for_slot == "order_id"
 
-        # Turn 2 — provide order_id, bot asks for email
-        t2 = orch.handle_message("ORD-1001", state)
+        # Turn 2 — provide order_id (numeric; backend normalises to ORD-1001)
+        t2 = orch.handle_message("1001", state)
         assert not t2.should_escalate
         assert "email" in t2.bot_response.lower()
         assert state.waiting_for_slot == "email"
-        assert state.collected_slots.get("order_id") == "ORD-1001"
+        assert state.collected_slots.get("order_id") == "1001"
 
         # Turn 3 — provide email, resolved
         t3 = orch.handle_message("test@example.com", state)
@@ -246,8 +246,8 @@ class TestEscalationPath:
         state = fresh_state()
         # Turn 1 — classify
         orch.handle_message("cancel my order", state)
-        # Turn 2 — provide shipped order ID → resolution fires trigger → escalation
-        t2 = orch.handle_message("ORD-1002", state)
+        # Turn 2 — provide shipped order ID (numeric; backend normalises to ORD-1002)
+        t2 = orch.handle_message("1002", state)
         assert t2.should_escalate
         ticket = repo.get_ticket(state.ticket_id)
         assert "escalated" in ticket.resolution_path
@@ -302,9 +302,9 @@ class TestForceIntent:
         t1 = orch.handle_message("Track order", state, force_intent="order_status")
         assert state.waiting_for_slot == "order_id"
 
-        # Next turn — user provides order_id (no classifier call)
-        t2 = orch.handle_message("ORD-1005", state)
-        assert state.collected_slots.get("order_id") == "ORD-1005"
+        # Next turn — user provides order_id (numeric; backend normalises to ORD-1005)
+        t2 = orch.handle_message("1005", state)
+        assert state.collected_slots.get("order_id") == "1005"
         assert state.waiting_for_slot == "email"
 
         # No classifier calls after force_intent for the first turn — only 0 or 1 call
@@ -334,8 +334,8 @@ class TestSlotValidation:
         state = fresh_state()
         orch.handle_message("where is my order", state)
 
-        t2 = orch.handle_message("ORD-1001", state)
-        assert state.collected_slots.get("order_id") == "ORD-1001"
+        t2 = orch.handle_message("1001", state)
+        assert state.collected_slots.get("order_id") == "1001"
         # Now waiting for email
         assert state.waiting_for_slot == "email"
 
@@ -392,10 +392,10 @@ class TestDebugDict:
         orch = _orchestrator(db_path, [("order_status", 0.92)])
         state = fresh_state()
         orch.handle_message("track order", state)
-        orch.handle_message("ORD-1001", state)
+        orch.handle_message("1001", state)
         t3 = orch.handle_message("user@example.com", state)
         assert "slots" in t3.debug
-        assert t3.debug["slots"]["order_id"] == "ORD-1001"
+        assert t3.debug["slots"]["order_id"] == "1001"
 
     def test_escalation_debug_contains_handoff_summary(self, db_path, repo):
         orch = _orchestrator(db_path, [("order_status", 0.88)])
@@ -418,11 +418,11 @@ class TestGuidedFlowOrchestration:
         t1 = orch.handle_message("cancel my order", state)
         assert state.waiting_for_slot == "order_id"
 
-        # Turn 2 — provide order_id (ORD-1001 is processing → cancellable)
-        t2 = orch.handle_message("ORD-1001", state)
+        # Turn 2 — provide order_id (backend normalises 1001 → ORD-1001, which is processing)
+        t2 = orch.handle_message("1001", state)
         # Step 0: confirmation prompt
         assert not t2.should_escalate
-        assert "ORD-1001" in t2.bot_response or "confirm" in t2.bot_response.lower()
+        assert "1001" in t2.bot_response or "confirm" in t2.bot_response.lower()
         assert state.waiting_for_slot == "guided_step_0"
 
         # Turn 3 — confirm
@@ -449,7 +449,7 @@ class TestGuidedFlowOrchestration:
         orch = _orchestrator(db_path, [("cancel_order", 0.88)])
         state = fresh_state()
         orch.handle_message("cancel my order", state)
-        orch.handle_message("ORD-1001", state)  # slot + step 0
+        orch.handle_message("1001", state)  # slot + step 0
         orch.handle_message("yes", state)         # step 1
         orch.handle_message("changed my mind", state)  # step 2 (final)
         msgs = repo.get_messages(state.ticket_id)

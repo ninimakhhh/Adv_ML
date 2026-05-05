@@ -185,6 +185,9 @@ class ChatbotOrchestrator:
         self._repo.add_message(state.ticket_id, "bot", bot_text)
         state.add_message("bot", bot_text)
 
+        # Snapshot slots before any reset so the debug dict always carries them
+        final_slots = dict(state.collected_slots)
+
         # Track what slot/step the bot is now waiting for
         state.waiting_for_slot = result.missing_slot  # None when resolved
 
@@ -207,7 +210,7 @@ class ChatbotOrchestrator:
                 "confidence": clf.confidence,
                 "reasoning": clf.reasoning,
                 "alternatives": clf.top_3_alternatives,
-                "slots": dict(state.collected_slots),
+                "slots": final_slots,
                 "resolution_status": result.status,
                 "missing_slot": result.missing_slot,
                 "guided_flow_step": state.guided_flow_step,

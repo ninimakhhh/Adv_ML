@@ -19,6 +19,9 @@ from components.chatbot_widget import render_admin_chatbot_widget
 from shared.db.repository import TicketRepository
 from shared.db.migrate import _DB_PATH, migrate
 from chatbot.registry.loader import load_intents
+from chatbot.feedback.analyzer import weekly_review, export_labeled_jsonl
+
+_ROOT = _FRONTEND.parent
 
 # ── Page config ─────────────────────────────────────────────────────────────
 st.set_page_config(layout="wide", page_title="Olá Market — Admin Dashboard")
@@ -68,7 +71,7 @@ st.markdown("""
 
 selected_tab = st.radio(
     "Navigation",
-    ["Dashboard", "Tickets", "LLM Dashboard"],
+    ["Dashboard", "Tickets", "Bot Improvement", "LLM Dashboard"],
     horizontal=True,
     key="main_tabs",
     label_visibility="collapsed",
@@ -528,7 +531,338 @@ elif selected_tab == "Tickets":
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# TAB 3: LLM Dashboard
+# TAB 3: BOT IMPROVEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+elif selected_tab == "Bot Improvement":
+    st.markdown("### Bot Improvement — Weekly Review")
+
+    # Cache report for this render cycle (ttl=0 means re-run each page load)
+    @st.cache_data(ttl=60, show_spinner="Running analysis…")
+    def _get_report():
+        return weekly_review(_DB_PATH)
+
+    report = _get_report()
+    low_conf   = report["low_confidence_messages"]
+    escalated  = report["attempted_but_escalated"]
+    thumbs_dn  = report["thumbs_down"]
+    no_intent  = report["no_intent_messages"]
+
+    # ── Summary cards ────────────────────────────────────────────────────────
+    c1, c2, c3, c4 = st.columns(4)
+    for col, label, val, colour in [
+        (c1, "Low-Conf Messages",     len(low_conf),  "#F59E0B"),
+        (c2, "Struggling Intents",    len(escalated), "#EF4444"),
+        (c3, "Thumbs-Down Tickets",   len(thumbs_dn), "#EF4444"),
+        (c4, "Unmatched Messages",    len(no_intent), "#6B7280"),
+    ]:
+        with col:
+            st.markdown(f"""
+            <div style="background:#FFF;border:1px solid #E5E7EB;border-radius:8px;
+                        padding:16px;text-align:center;">
+              <p style="color:#6B7280;font-size:12px;margin:0">{label}</p>
+              <p style="color:{colour};font-size:28px;font-weight:700;margin:8px 0 0 0">{val}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown(f"*Report generated at {report['generated_at'][:19]} UTC*")
+    st.markdown("---")
+
+    # ── Section 1: Low-confidence messages ──────────────────────────────────
+    st.markdown("### 🎯 Low-Confidence Messages (< 70%)")
+    st.caption("Candidates for new intents or improved few-shot examples.")
+
+    if low_conf:
+        df_lc = pd.DataFrame(low_conf)
+        df_lc["confidence_%"] = df_lc["classification_confidence"].apply(
+            lambda v: f"{v*100:.0f}%" if v else "—"
+        )
+        df_lc["intent"] = df_lc["classified_intent"].apply(_intent_label)
+        st.dataframe(
+            df_lc[["user_message", "intent", "confidence_%", "resolution_path", "created_at"]],
+            hide_index=True,
+            use_container_width=True,
+            column_config={
+                "user_message":   st.column_config.TextColumn("User Message",   width=320),
+                "intent":         st.column_config.TextColumn("Matched Intent", width=160),
+                "confidence_%":   st.column_config.TextColumn("Confidence",     width=90),
+                "resolution_path":st.column_config.TextColumn("Outcome",        width=160),
+                "created_at":     st.column_config.TextColumn("Date",           width=140),
+            },
+        )
+    else:
+        st.success("No low-confidence messages — the classifier is performing well.")
+
+    st.markdown("---")
+
+    # ── Section 2: Intents with high escalation rate ─────────────────────────
+    st.markdown("### 🔥 Intents with Highest Escalation Rate")
+    st.caption("Bot attempted resolution but the conversation still escalated.")
+
+    if escalated:
+        df_esc = pd.DataFrame(escalated)
+        df_esc["Intent"] = df_esc["intent_id"].apply(_intent_label)
+        df_esc["Escalation Rate"] = df_esc["escalation_rate_pct"].apply(lambda v: f"{v}%")
+        df_esc["Escalated / Total"] = df_esc.apply(
+            lambda r: f"{r['esc_count']} / {r['total']}", axis=1
+        )
+        st.dataframe(
+            df_esc[["Intent", "Escalated / Total", "Escalation Rate"]],
+            hide_index=True,
+            use_container_width=True,
+        )
+
+        # Mini bar chart
+        fig = go.Figure(go.Bar(
+            x=df_esc["escalation_rate_pct"],
+            y=df_esc["Intent"],
+            orientation="h",
+            marker_color="#EF4444",
+        ))
+        fig.update_layout(
+            title="Escalation Rate by Intent (%)",
+            xaxis_title="Escalation Rate (%)",
+            height=260,
+            margin=dict(l=0, r=0, t=40, b=0),
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            yaxis=dict(autorange="reversed"),
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.success("No intents with escalation issues found.")
+
+    st.markdown("---")
+
+    # ── Section 3: Thumbs-down feedback + suggest better response ───────────
+    st.markdown("### 👎 Thumbs-Down Feedback")
+    st.caption("For each thumbs-down ticket, suggest a better bot response.")
+
+    if thumbs_dn:
+        for item in thumbs_dn:
+            tid_short = item["ticket_id"][:8]
+            with st.expander(
+                f"Ticket {tid_short}… — Intent: {_intent_label(item['classified_intent'])}"
+            ):
+                col_msg, col_resp = st.columns(2)
+                with col_msg:
+                    st.markdown("**User said:**")
+                    st.info(item["user_message"])
+                with col_resp:
+                    st.markdown("**Bot replied:**")
+                    st.warning(item["bot_response"] or "*(no bot message recorded)*")
+
+                st.markdown("**Suggest a better response:**")
+                suggestion = st.text_area(
+                    "Improved response:",
+                    placeholder="Type the ideal bot response for this message…",
+                    key=f"suggest_{item['ticket_id']}",
+                    label_visibility="collapsed",
+                )
+                col_save, col_skip = st.columns([1, 5])
+                with col_save:
+                    if st.button("💾 Save suggestion", key=f"save_sug_{item['ticket_id']}"):
+                        if suggestion.strip():
+                            # Persist as a tag on the ticket for now
+                            repo.update_ticket(
+                                item["ticket_id"],
+                                tags=["has_suggested_response"],
+                            )
+                            # Write to a side-file for export pipeline
+                            sug_dir = _ROOT / "data" / "response_suggestions"
+                            sug_dir.mkdir(parents=True, exist_ok=True)
+                            sug_file = sug_dir / f"{item['ticket_id']}.json"
+                            import json as _json
+                            sug_file.write_text(
+                                _json.dumps({
+                                    "ticket_id":     item["ticket_id"],
+                                    "user_message":  item["user_message"],
+                                    "bot_response":  item["bot_response"],
+                                    "suggested_response": suggestion.strip(),
+                                    "intent":        item["classified_intent"],
+                                    "saved_at":      datetime.utcnow().isoformat(),
+                                }, indent=2, ensure_ascii=False),
+                                encoding="utf-8",
+                            )
+                            st.success("Suggestion saved.")
+                        else:
+                            st.warning("Please type a suggestion first.")
+    else:
+        st.success("No thumbs-down tickets yet.")
+
+    st.markdown("---")
+
+    # ── Section 4: Unmatched messages → Create new intent ───────────────────
+    st.markdown("### ❓ Unmatched Messages — Create New Intent")
+    st.caption("Messages that didn't match any intent. Promote recurring ones to new intents.")
+
+    if no_intent:
+        df_ni = pd.DataFrame(no_intent)
+        df_ni["created_at"] = df_ni["created_at"].astype(str).str[:16]
+        st.dataframe(
+            df_ni[["user_message", "created_at", "ticket_id"]],
+            hide_index=True,
+            use_container_width=True,
+            column_config={
+                "user_message": st.column_config.TextColumn("User Message", width=380),
+                "created_at":   st.column_config.TextColumn("Date",         width=140),
+                "ticket_id":    st.column_config.TextColumn("Ticket ID",    width=200),
+            },
+        )
+
+        st.markdown("#### ➕ Draft a New Intent from a Message")
+
+        # Let admin pick one message to promote
+        ni_options = {f"{r['ticket_id'][:8]}… | {r['user_message'][:60]}": r
+                      for r in no_intent}
+        chosen_key = st.selectbox(
+            "Select a message to use as the first example utterance:",
+            list(ni_options.keys()),
+            key="ni_select",
+        )
+        seed_msg = ni_options[chosen_key]["user_message"]
+
+        with st.form("create_intent_form"):
+            st.markdown("**New Intent Definition**")
+
+            col_a, col_b = st.columns(2)
+            with col_a:
+                new_intent_id = st.text_input(
+                    "intent_id (snake_case):",
+                    placeholder="e.g. check_loyalty_points",
+                    key="ni_id",
+                )
+                new_display   = st.text_input(
+                    "display_name:",
+                    placeholder="e.g. Check Loyalty Points",
+                    key="ni_display",
+                )
+                new_category  = st.selectbox(
+                    "category:",
+                    ["orders", "returns", "products", "account", "other"],
+                    key="ni_cat",
+                )
+            with col_b:
+                new_res_type = st.selectbox(
+                    "resolution_type:",
+                    ["faq_answer", "api_call", "guided_flow"],
+                    key="ni_res",
+                )
+                new_answer = st.text_area(
+                    "Initial answer / response template:",
+                    placeholder="TODO: Write the response the bot should give…",
+                    height=100,
+                    key="ni_answer",
+                )
+
+            st.markdown("**Example utterances** (seed message is pre-filled; add at least 4 more):")
+            utt_1 = st.text_input("Utterance 1:", value=seed_msg,  key="u1")
+            utt_2 = st.text_input("Utterance 2:", placeholder="…", key="u2")
+            utt_3 = st.text_input("Utterance 3:", placeholder="…", key="u3")
+            utt_4 = st.text_input("Utterance 4:", placeholder="…", key="u4")
+            utt_5 = st.text_input("Utterance 5:", placeholder="…", key="u5")
+
+            submitted = st.form_submit_button("💾 Save Draft Intent", type="primary")
+
+        if submitted:
+            import re, json as _json
+
+            errors = []
+            if not re.match(r"^[a-z][a-z0-9_]*$", new_intent_id or ""):
+                errors.append("intent_id must be snake_case (e.g. check_loyalty_points)")
+            if not new_display.strip():
+                errors.append("display_name is required")
+
+            utterances = [u for u in [utt_1, utt_2, utt_3, utt_4, utt_5] if u.strip()]
+            if len(utterances) < 5:
+                errors.append("At least 5 example utterances are required")
+
+            if errors:
+                for e in errors:
+                    st.error(e)
+            else:
+                resolution_config: dict = {}
+                if new_res_type == "faq_answer":
+                    resolution_config = {"answer": new_answer.strip() or "TODO: fill in answer."}
+                elif new_res_type == "api_call":
+                    resolution_config = {
+                        "endpoint": "/api/v1/TODO",
+                        "method": "GET",
+                        "response_template": new_answer.strip() or "TODO",
+                    }
+                elif new_res_type == "guided_flow":
+                    resolution_config = {
+                        "steps": [
+                            {"prompt": new_answer.strip() or "TODO", "expected_input_type": "text"}
+                        ]
+                    }
+
+                draft = {
+                    "intent_id": new_intent_id,
+                    "display_name": new_display.strip(),
+                    "category": new_category,
+                    "example_utterances": utterances,
+                    "required_slots": [],
+                    "resolution_type": new_res_type,
+                    "resolution_config": resolution_config,
+                    "escalation_triggers": [],
+                    "confidence_threshold": 0.70,
+                    "is_button_visible": False,
+                }
+
+                _DRAFTS_DIR = _ROOT / "chatbot" / "registry" / "intents" / "_drafts"
+                _DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
+                draft_path = _DRAFTS_DIR / f"{new_intent_id}.json"
+                draft_path.write_text(
+                    _json.dumps(draft, indent=2, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                st.success(
+                    f"Draft intent saved to `chatbot/registry/intents/_drafts/{new_intent_id}.json`. "
+                    f"Run `python -m chatbot.registry.validate` after moving it to `intents/` to promote it."
+                )
+                st.json(draft)
+    else:
+        st.success("No unmatched messages — the classifier is covering all inputs.")
+
+    st.markdown("---")
+
+    # ── Export for Fine-Tuning ───────────────────────────────────────────────
+    st.markdown("### 📤 Export Labeled Tickets for Fine-Tuning")
+    st.markdown(
+        "Exports human-verified tickets as a JSONL fine-tuning dataset — "
+        "`(user_message, correct_intent, bot_response)` triples where a human has confirmed the label."
+    )
+
+    col_export, col_info = st.columns([1, 3])
+    with col_export:
+        if st.button("🔄 Generate Export", key="gen_export"):
+            st.session_state["export_jsonl"] = export_labeled_jsonl(_DB_PATH)
+
+    jsonl_content = st.session_state.get("export_jsonl", "")
+    if jsonl_content:
+        line_count = jsonl_content.count("\n") + 1 if jsonl_content.strip() else 0
+        with col_info:
+            st.info(f"{line_count} labeled example(s) ready for download.")
+        st.download_button(
+            label="⬇️ Download labeled_tickets.jsonl",
+            data=jsonl_content.encode("utf-8"),
+            file_name="labeled_tickets.jsonl",
+            mime="application/jsonlines",
+            key="dl_jsonl",
+        )
+        with st.expander("Preview first 3 lines"):
+            for line in jsonl_content.split("\n")[:3]:
+                st.code(line, language="json")
+    elif jsonl_content == "" and "export_jsonl" in st.session_state:
+        st.warning(
+            "No human-verified tickets found yet. "
+            "Approve ticket classifications in the Tickets tab first."
+        )
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TAB 4: LLM Dashboard
 # ═══════════════════════════════════════════════════════════════════════════
 
 elif selected_tab == "LLM Dashboard":

@@ -1,8 +1,20 @@
 """
-chatbot_widget.py — Real chat panel backed by ChatbotOrchestrator.
+chatbot_widget.py — Floating chat widget backed by ChatbotOrchestrator.
 
-Renders as a Streamlit sidebar-style expander anchored to the bottom-right
-of the page.  Call render_chatbot_widget() at the end of every page.
+Architecture
+------------
+* A round FAB button (💬) is rendered via st.button and then repositioned to
+  the viewport's bottom-right corner by a tiny JS snippet injected through
+  st.components.v1.html (same-origin iframe → window.parent.document access).
+
+* Clicking the FAB opens an @st.dialog — a first-class Streamlit modal that
+  runs as its own fragment.  Widget interactions inside the dialog (button
+  clicks, chat_input submissions) rerun ONLY the dialog, so it stays open and
+  updates in-place without touching the rest of the page.
+
+* All quick-action buttons, the message history, CSAT thumbs, and the text
+  input are rendered INSIDE the dialog with native Streamlit widgets.  No
+  widgets live outside the popup.
 """
 
 from __future__ import annotations
@@ -17,361 +29,254 @@ for _p in (str(_ROOT), str(_FRONTEND)):
         sys.path.insert(0, _p)
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from chatbot.ui_adapter import (
+    _messages,
     get_button_intents,
     get_or_create_session,
     reset_chat,
     send_button_action,
     send_user_message,
     submit_feedback,
-    _messages,
 )
 
 # ---------------------------------------------------------------------------
-# Floating button + panel CSS (injected once)
+# FAB positioning — runs once per page render
 # ---------------------------------------------------------------------------
 
-_CHAT_CSS = """
+_FAB_JS = """
+<script>
+(function () {
+  function style(el, css) {
+    Object.assign(el.style, css);
+  }
+
+  function positionFAB() {
+    var parentDoc = window.parent.document;
+
+    // Find the Streamlit button whose text is exactly the chat emoji
+    var allBtns = parentDoc.querySelectorAll('[data-testid="stButton"] button');
+    for (var i = 0; i < allBtns.length; i++) {
+      var btn = allBtns[i];
+      if (btn.textContent.trim() === '💬') {   // 💬
+        var wrapper = btn.closest('[data-testid="stButton"]');
+        if (!wrapper) continue;
+
+        // Position the wrapper div at the corner
+        style(wrapper, {
+          position:   'fixed',
+          bottom:     '28px',
+          right:      '28px',
+          zIndex:     '99999',
+          width:      'auto',
+          height:     'auto',
+          marginTop:  '0',
+          marginBottom: '0',
+        });
+
+        // Style the button itself as a round FAB
+        style(btn, {
+          borderRadius:    '50%',
+          width:           '62px',
+          height:          '62px',
+          fontSize:        '26px',
+          lineHeight:      '1',
+          padding:         '0',
+          minHeight:       'unset',
+          border:          'none',
+          background:      'linear-gradient(135deg, #FF6B35, #c84b1e)',
+          color:           'white',
+          boxShadow:       '0 4px 18px rgba(255,107,53,0.50)',
+          transition:      'transform 0.18s, box-shadow 0.18s',
+          cursor:          'pointer',
+        });
+
+        btn.onmouseenter = function () {
+          style(this, { transform: 'scale(1.08)', boxShadow: '0 6px 22px rgba(255,107,53,0.65)' });
+        };
+        btn.onmouseleave = function () {
+          style(this, { transform: 'scale(1.0)',  boxShadow: '0 4px 18px rgba(255,107,53,0.50)' });
+        };
+      }
+    }
+  }
+
+  // Run immediately and re-run whenever Streamlit mutates the DOM
+  positionFAB();
+  var observer = new MutationObserver(positionFAB);
+  observer.observe(window.parent.document.body, { childList: true, subtree: true });
+})();
+</script>
+"""
+
+_DIALOG_CSS = """
 <style>
-/* ── Floating action button ─────────────────────────────────── */
-#chat-fab-anchor {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 9999;
+/* Tighten spacing inside the chat dialog */
+div[data-testid="stDialog"] div[data-testid="stVerticalBlock"] {
+    gap: 0.4rem;
 }
-.chat-fab-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FF6B35, #e85d25);
-    border: none;
-    cursor: pointer;
-    font-size: 26px;
-    box-shadow: 0 4px 16px rgba(255,107,53,0.45);
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-.chat-fab-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(255,107,53,0.55);
-}
-
-/* ── Chat panel container ───────────────────────────────────── */
-.chat-panel {
-    position: fixed;
-    bottom: 100px;
-    right: 28px;
-    width: 380px;
-    max-height: 600px;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 9998;
-    animation: slideUp 0.25s ease;
-}
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Panel header ───────────────────────────────────────────── */
-.chat-header {
-    background: linear-gradient(135deg, #1A1A2E, #0F3460);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
-}
-.chat-avatar { font-size: 28px; }
-.chat-header-info { flex: 1; }
-.chat-header-name { color: #fff; font-weight: 700; font-size: 15px; }
-.chat-header-status { color: #4ade80; font-size: 12px; margin-top: 2px; }
-.chat-header-close {
-    color: rgba(255,255,255,0.7);
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 6px;
-    transition: background 0.15s;
-}
-.chat-header-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
-
-/* ── Message list ───────────────────────────────────────────── */
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 380px;
-}
-
-/* ── Individual messages ────────────────────────────────────── */
-.chat-msg-bot {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-.chat-msg-bot-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FF6B35, #e85d25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-}
-.chat-bubble-bot {
-    background: #F5F5F5;
-    color: #1a1a1a;
-    padding: 10px 14px;
-    border-radius: 0 14px 14px 14px;
-    font-size: 13.5px;
-    line-height: 1.5;
-    max-width: 280px;
-    word-wrap: break-word;
-}
-.chat-bubble-user {
-    background: linear-gradient(135deg, #FF6B35, #e85d25);
-    color: #fff;
-    padding: 10px 14px;
-    border-radius: 14px 14px 0 14px;
-    font-size: 13.5px;
-    line-height: 1.5;
-    max-width: 280px;
-    word-wrap: break-word;
-    margin-left: auto;
-}
-
-/* ── Escalation banner ──────────────────────────────────────── */
-.escalation-banner {
-    background: #FFF3CD;
-    border: 1px solid #FFD166;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 12.5px;
-    color: #856404;
-    margin: 4px 0;
-    text-align: center;
-}
-
-/* ── CSAT thumbs ────────────────────────────────────────────── */
-.csat-prompt {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* ── Quick action buttons ───────────────────────────────────── */
-.quick-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 12px 16px 0;
-}
-.quick-btn {
-    background: #fff;
-    border: 1.5px solid #FF6B35;
-    color: #FF6B35;
+/* Quick-action buttons */
+div[data-testid="stDialog"] [data-testid="stButton"] button {
     border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
+    font-size: 13px;
+    padding: 6px 14px;
+    border: 1.5px solid #FF6B35 !important;
+    color: #FF6B35 !important;
+    background: #fff !important;
     transition: background 0.15s, color 0.15s;
-    white-space: nowrap;
 }
-.quick-btn:hover { background: #FF6B35; color: #fff; }
-
-/* ── Input area ─────────────────────────────────────────────── */
-.chat-input-area {
-    padding: 12px 16px;
-    border-top: 1px solid #f0f0f0;
-    flex-shrink: 0;
-    background: #fff;
+div[data-testid="stDialog"] [data-testid="stButton"] button:hover {
+    background: #FF6B35 !important;
+    color: #fff !important;
+}
+/* Escalation / info banners inside dialog */
+div[data-testid="stDialog"] [data-testid="stAlert"] {
+    font-size: 13px;
+    padding: 8px 12px;
 }
 </style>
 """
 
 # ---------------------------------------------------------------------------
-# Public entry points
+# Dialog — the actual chat UI
 # ---------------------------------------------------------------------------
 
-def render_chatbot_widget() -> None:
-    """Render the full chatbot widget (FAB + panel) on any page."""
-    st.markdown(_CHAT_CSS, unsafe_allow_html=True)
-
-    # Initialise open/close state
-    if "chat_open" not in st.session_state:
-        st.session_state.chat_open = False
-
+@st.dialog("🤖 Oli — Store Assistant", width="small")
+def _chat_dialog() -> None:
+    """Full chat rendered inside Streamlit's native modal (fragment-scoped)."""
+    st.markdown(_DIALOG_CSS, unsafe_allow_html=True)
     get_or_create_session()
-
-    # ── Floating action button ──────────────────────────────────────────────
-    st.markdown('<div id="chat-fab-anchor">', unsafe_allow_html=True)
-
-    fab_label = "✕" if st.session_state.chat_open else "💬"
-    if st.button(fab_label, key="chat_fab", help="Open / close chat", type="primary"):
-        st.session_state.chat_open = not st.session_state.chat_open
-        st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    if not st.session_state.chat_open:
-        return
-
-    # ── Chat panel ──────────────────────────────────────────────────────────
-    with st.container():
-        st.markdown("""
-        <div class="chat-panel">
-          <div class="chat-header">
-            <div class="chat-avatar">🤖</div>
-            <div class="chat-header-info">
-              <div class="chat-header-name">Store Assistant</div>
-              <div class="chat-header-status">● Online</div>
-            </div>
-          </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        _render_panel_body()
-
-
-def _render_panel_body() -> None:
     msgs = _messages()
     escalated = any(m.get("escalated") for m in msgs if m["role"] == "bot")
 
-    # ── Message history ─────────────────────────────────────────────────────
-    if msgs:
-        for i, msg in enumerate(msgs):
-            if msg["role"] == "user":
-                st.markdown(
-                    f'<div style="display:flex;justify-content:flex-end;margin:4px 0">'
-                    f'<div class="chat-bubble-user">{msg["content"]}</div></div>',
-                    unsafe_allow_html=True,
-                )
-            else:
-                st.markdown(
-                    f'<div class="chat-msg-bot">'
-                    f'<div class="chat-msg-bot-avatar">🤖</div>'
-                    f'<div class="chat-bubble-bot">{msg["content"]}</div></div>',
-                    unsafe_allow_html=True,
-                )
-                # Escalation banner
-                if msg.get("escalated"):
-                    st.markdown(
-                        '<div class="escalation-banner">'
-                        '⚡ Connecting you with a human agent…</div>',
-                        unsafe_allow_html=True,
-                    )
+    # ── Status line ────────────────────────────────────────────────────────
+    st.markdown(
+        '<p style="margin:0 0 8px;color:#10B981;font-size:12px;">● Online — typically replies instantly</p>',
+        unsafe_allow_html=True,
+    )
 
-                # CSAT after resolved turns
-                if msg.get("resolved") and not msg.get("csat_done"):
-                    mid = msg["message_id"]
-                    st.markdown(
-                        '<div class="csat-prompt">Was this helpful?</div>',
-                        unsafe_allow_html=True,
-                    )
-                    c1, c2, _ = st.columns([1, 1, 6])
-                    with c1:
-                        if st.button("👍", key=f"up_{mid}"):
-                            submit_feedback(mid, "up")
-                            st.rerun()
-                    with c2:
-                        if st.button("👎", key=f"dn_{mid}"):
-                            submit_feedback(mid, "down")
-                            st.rerun()
-    else:
-        # Welcome message on first open
+    # ── Empty state: welcome + quick-action buttons ─────────────────────────
+    if not msgs:
+        with st.chat_message("assistant", avatar="🤖"):
+            st.markdown(
+                "Hi! I'm **Oli**, your Olá Market assistant. "
+                "How can I help you today?"
+            )
+
         st.markdown(
-            '<div class="chat-msg-bot">'
-            '<div class="chat-msg-bot-avatar">🤖</div>'
-            '<div class="chat-bubble-bot">Hi! I\'m Oli, your Ola Market assistant. '
-            'How can I help you today?</div></div>',
+            '<p style="margin:8px 0 4px;font-size:13px;color:#555;font-weight:600;">'
+            "Quick actions:</p>",
             unsafe_allow_html=True,
         )
 
-    # ── Quick-action buttons (only when no conversation yet) ────────────────
-    if not msgs:
         button_intents = get_button_intents()
-        st.markdown('<div class="quick-actions">', unsafe_allow_html=True)
-        cols = st.columns(len(button_intents))
-        for col, intent in zip(cols, button_intents):
-            with col:
-                if st.button(
-                    intent["display_name"],
-                    key=f"qb_{intent['intent_id']}",
-                    use_container_width=True,
-                ):
-                    send_button_action(intent["intent_id"])
-                    st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+        # Two-column grid for quick-action buttons
+        col_pairs = [button_intents[i : i + 2] for i in range(0, len(button_intents), 2)]
+        for pair in col_pairs:
+            cols = st.columns(len(pair))
+            for col, intent in zip(cols, pair):
+                with col:
+                    if st.button(
+                        intent["display_name"],
+                        key=f"qa_{intent['intent_id']}",
+                        use_container_width=True,
+                    ):
+                        send_button_action(intent["intent_id"])
+                        # No st.rerun() — dialog fragment reruns automatically
 
-    # ── Input area ──────────────────────────────────────────────────────────
-    if escalated:
-        st.info("A human agent has been notified. Please wait for a response via email.", icon="ℹ️")
-        if st.button("Start new conversation", key="chat_reset"):
-            reset_chat()
-            st.rerun()
+    # ── Conversation history ────────────────────────────────────────────────
     else:
-        with st.form(key="chat_form", clear_on_submit=True):
-            col_input, col_send = st.columns([5, 1])
-            with col_input:
-                user_input = st.text_input(
-                    "Message",
-                    placeholder="Type a message…",
-                    label_visibility="collapsed",
-                    key="chat_input_text",
-                )
-            with col_send:
-                submitted = st.form_submit_button("➤")
+        for msg in msgs:
+            role = "user" if msg["role"] == "user" else "assistant"
+            avatar = None if role == "user" else "🤖"
+            with st.chat_message(role, avatar=avatar):
+                st.markdown(msg["content"])
 
-        if submitted and user_input.strip():
+            # Escalation banner
+            if msg.get("escalated"):
+                st.warning(
+                    "⚡ A human agent has been notified and will be in touch via email.",
+                    icon="⚡",
+                )
+
+            # CSAT thumbs after a resolved turn
+            if msg.get("resolved") and not msg.get("csat_done"):
+                mid = msg["message_id"]
+                c1, c2, c3 = st.columns([1, 1, 6])
+                with c1:
+                    if st.button("👍", key=f"up_{mid}"):
+                        submit_feedback(mid, "up")
+                with c2:
+                    if st.button("👎", key=f"dn_{mid}"):
+                        submit_feedback(mid, "down")
+                with c3:
+                    st.caption("Was this helpful?")
+
+    st.divider()
+
+    # ── Input / post-escalation footer ─────────────────────────────────────
+    if escalated:
+        st.info("Conversation handed off to a human agent. We'll email you shortly.")
+        if st.button("Start new conversation", use_container_width=True, key="reset_chat"):
+            reset_chat()
+            # Closing the dialog after reset: don't call st.rerun() — let the
+            # next user-triggered open start fresh.
+    else:
+        user_input = st.chat_input("Type a message…", key="chat_dialog_input")
+        if user_input:
             send_user_message(user_input.strip())
-            st.rerun()
+            # No st.rerun() — dialog fragment reruns after chat_input submit
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+def render_chatbot_widget() -> None:
+    """
+    Render FAB + dialog on any storefront page.
+
+    Call this at the end of every page render.  The FAB button is placed in
+    the page flow and then teleported to the viewport corner by the JS snippet.
+    """
+    get_or_create_session()
+
+    # ── Inject FAB positioning JS (zero-height iframe) ──────────────────────
+    components.html(_FAB_JS, height=0, scrolling=False)
+
+    # ── Actual Streamlit button (label must be exactly 💬 for JS to find it) ─
+    if st.button("💬", key="chat_fab", help="Chat with Oli"):
+        _chat_dialog()
 
 
 def render_admin_chatbot_widget() -> None:
-    """Render floating chatbot widget for admin dashboard (unchanged)."""
-    widget_html = """
-    <style>
-        .admin-chatbot-widget { position:fixed;bottom:24px;right:24px;z-index:999; }
-        .admin-chatbot-button {
-            width:60px;height:60px;border-radius:50%;background-color:#4F46E5;
-            border:none;cursor:pointer;display:flex;align-items:center;
-            justify-content:center;font-size:28px;
-            box-shadow:0 4px 12px rgba(79,70,229,0.4);transition:all 0.3s ease;
-        }
-        .admin-chatbot-button:hover {
-            background-color:#4338CA;box-shadow:0 6px 16px rgba(79,70,229,0.5);
-            transform:scale(1.1);
-        }
-    </style>
-    <div class="admin-chatbot-widget">
-        <button class="admin-chatbot-button"
-            onclick="alert('Test Mode - Coming Soon');" title="Chat with AI">💬</button>
-    </div>
-    """
-    st.markdown(widget_html, unsafe_allow_html=True)
+    """Render floating chatbot widget for the admin dashboard (decorative)."""
+    st.markdown(
+        """
+        <style>
+            .admin-chat-fab {
+                position: fixed; bottom: 24px; right: 24px; z-index: 999;
+                width: 58px; height: 58px; border-radius: 50%;
+                background: #4F46E5; display: flex; align-items: center;
+                justify-content: center; font-size: 26px; cursor: pointer;
+                box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .admin-chat-fab:hover {
+                transform: scale(1.1);
+                box-shadow: 0 6px 18px rgba(79,70,229,0.55);
+            }
+        </style>
+        <div class="admin-chat-fab"
+             onclick="alert('Sandbox mode — chatbot available on the storefront.')">
+          💬
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
-# Keep old name as alias so existing imports don't break
+# Keep legacy alias so existing page imports still work
 def render_chatbot_placeholder() -> None:
     render_chatbot_widget()

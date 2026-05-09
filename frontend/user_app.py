@@ -154,7 +154,7 @@ def _render_home() -> None:
         unsafe_allow_html=True,
     )
 
-    cat_cols = st.columns(8)
+    cat_cols = st.columns(len(categories) or 1)
     for i, cat in enumerate(categories):
         with cat_cols[i]:
             st.markdown(

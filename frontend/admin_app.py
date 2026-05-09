@@ -1,3 +1,13 @@
+import sys
+from pathlib import Path
+
+# ── Path bootstrap ─────────────────────────────────────────────────────────
+_ROOT = Path(__file__).parent.parent
+_FRONTEND = Path(__file__).parent
+for _p in (str(_ROOT), str(_FRONTEND)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 import streamlit as st
 import json
 import pandas as pd
@@ -7,6 +17,7 @@ from datetime import datetime, timedelta
 from components.admin_sidebar import render_admin_sidebar
 from components.metric_card import metric_card, small_metric
 from components.chatbot_widget import render_admin_chatbot_widget
+from ticket_routing import CATEGORY_TO_QUEUE, classify_ticket
 
 # Page config
 st.set_page_config(layout="wide", page_title="Olá Market - Admin Dashboard")
@@ -351,10 +362,32 @@ elif selected_tab == "Tickets":
     
     # SECTION 1: MANUAL CLASSIFICATION
     st.markdown("### 🔍 Manual Classification (To Review)")
-    
+
     if len(st.session_state.pending_reviews) > 0:
-        st.markdown(f"**{len(st.session_state.pending_reviews)} tickets pending review**")
-        
+        header_col, btn_col = st.columns([3, 1])
+        with header_col:
+            st.markdown(f"**{len(st.session_state.pending_reviews)} tickets pending review**")
+        with btn_col:
+            if st.button("🤖 Auto-classify pending", key="auto_classify_all", width="stretch"):
+                with st.status("Classifying tickets with Claude...", expanded=True) as status:
+                    for t in st.session_state.pending_reviews:
+                        st.write(f"→ {t['id']}: {t['subject']}")
+                        try:
+                            result = classify_ticket(t["subject"], t["raw_text"])
+                        except Exception as exc:
+                            status.update(label=f"Failed on {t['id']}: {exc}", state="error")
+                            st.exception(exc)
+                            break
+                        t["suggested_category"] = result.category
+                        t["confidence"] = result.confidence
+                        t["sentiment"] = result.sentiment
+                        t["urgency"] = result.urgency
+                        t["assigned_queue"] = result.assigned_queue
+                        t["reasoning"] = result.reasoning
+                    else:
+                        status.update(label="All tickets classified ✅", state="complete")
+                st.rerun()
+
         for idx, ticket in enumerate(st.session_state.pending_reviews):
             with st.container(border=True):
                 col1, col2, col3, col4 = st.columns([1, 2, 2, 2])
@@ -375,17 +408,37 @@ elif selected_tab == "Tickets":
                 # Expand to show details
                 with st.expander("View Details"):
                     st.markdown(f"**Raw Text:**\n\n{ticket['raw_text']}")
-                    
+
+                    if ticket.get("reasoning"):
+                        st.markdown(f"**AI reasoning:** _{ticket['reasoning']}_")
+
+                    if ticket.get("sentiment") or ticket.get("urgency"):
+                        badges = []
+                        if ticket.get("sentiment"):
+                            badges.append(f"💬 Sentiment: **{ticket['sentiment']}**")
+                        if ticket.get("urgency"):
+                            badges.append(f"⏱️ Urgency: **{ticket['urgency']}**")
+                        if ticket.get("assigned_queue"):
+                            badges.append(f"📥 Queue: **{ticket['assigned_queue']}**")
+                        st.markdown(" &nbsp;·&nbsp; ".join(badges))
+
                     col1, col2 = st.columns(2)
-                    
+
                     with col1:
                         st.markdown(f"**Suggested Category:** {ticket['suggested_category']} ({ticket['confidence']}%)")
+                        category_options = ["Bug", "Shipping", "Returns", "Payments", "Other"]
+                        default_idx = (
+                            category_options.index(ticket["suggested_category"])
+                            if ticket["suggested_category"] in category_options
+                            else 0
+                        )
                         selected_category = st.selectbox(
                             "Confirm or change category:",
-                            ["Bug", "Shipping", "Returns", "Payments", "Other"],
+                            category_options,
+                            index=default_idx,
                             key=f"category_{idx}"
                         )
-                    
+
                     with col2:
                         st.markdown("**Actions:**")
                         if st.button("✅ Approve Classification", key=f"approve_{idx}", width="stretch"):
@@ -395,9 +448,12 @@ elif selected_tab == "Tickets":
                                 "customer": ticket["customer"],
                                 "subject": ticket["subject"],
                                 "category": selected_category,
-                                "sentiment": "Neutral",
+                                "sentiment": ticket.get("sentiment", "Neutral"),
                                 "confidence": ticket["confidence"],
-                                "assigned_queue": f"{selected_category} Support",
+                                "assigned_queue": ticket.get(
+                                    "assigned_queue",
+                                    CATEGORY_TO_QUEUE.get(selected_category, "General"),
+                                ),
                                 "status": "In Progress",
                                 "created_at": datetime.now().isoformat() + "Z",
                                 "resolved_at": None

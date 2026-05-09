@@ -1,66 +1,26 @@
 [
   {
-    "id": "cat_1",
-    "name": "Home & Décor",
-    "slug": "home-decor",
-    "icon_emoji": "🏠",
-    "image_url": "https://picsum.photos/seed/casa-decoracao/400/300",
-    "product_count": 5
-  },
-  {
-    "id": "cat_2",
-    "name": "Fashion",
-    "slug": "fashion",
-    "icon_emoji": "👗",
-    "image_url": "https://picsum.photos/seed/moda-fashion/400/300",
-    "product_count": 5
-  },
-  {
-    "id": "cat_3",
+    "id": "cat_beauty",
     "name": "Beauty",
     "slug": "beauty",
     "icon_emoji": "✨",
-    "image_url": "https://picsum.photos/seed/beleza-beauty/400/300",
-    "product_count": 5
+    "image_url": "https://loremflickr.com/600/300/beauty,cosmetics?lock=100",
+    "product_count": 15
   },
   {
-    "id": "cat_4",
-    "name": "Electronics",
-    "slug": "electronics",
-    "icon_emoji": "📱",
-    "image_url": "https://picsum.photos/seed/eletronica-tech/400/300",
-    "product_count": 5
-  },
-  {
-    "id": "cat_5",
-    "name": "Food & Gourmet",
-    "slug": "food-gourmet",
-    "icon_emoji": "🧺",
-    "image_url": "https://picsum.photos/seed/alimentacao-food/400/300",
-    "product_count": 5
-  },
-  {
-    "id": "cat_6",
-    "name": "Sports",
-    "slug": "sports",
-    "icon_emoji": "🏃",
-    "image_url": "https://picsum.photos/seed/desporto-sports/400/300",
-    "product_count": 5
-  },
-  {
-    "id": "cat_7",
+    "id": "cat_books",
     "name": "Books",
     "slug": "books",
     "icon_emoji": "📚",
-    "image_url": "https://picsum.photos/seed/livros-books/400/300",
-    "product_count": 5
+    "image_url": "https://loremflickr.com/600/300/books,library?lock=101",
+    "product_count": 15
   },
   {
-    "id": "cat_8",
-    "name": "Kids",
-    "slug": "kids",
-    "icon_emoji": "🧸",
-    "image_url": "https://picsum.photos/seed/criancas-kids/400/300",
-    "product_count": 5
+    "id": "cat_fashion",
+    "name": "Fashion",
+    "slug": "fashion",
+    "icon_emoji": "👗",
+    "image_url": "https://loremflickr.com/600/300/fashion,clothing?lock=102",
+    "product_count": 15
   }
 ]

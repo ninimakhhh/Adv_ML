@@ -29,6 +29,8 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    [data-testid="stSidebarNav"] { display: none !important; }
+    [data-testid="stSidebarNavItems"] { display: none !important; }
     
     /* Overall styling */
     body {

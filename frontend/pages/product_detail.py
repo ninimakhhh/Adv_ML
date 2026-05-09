@@ -270,24 +270,19 @@ def render_product_detail() -> None:
                     if rev.get("verified_purchase")
                     else ""
                 )
-                st.markdown(
-                    f"""
-                    <div class="review-item">
-                      <div class="review-hd">
-                        <div>
-                          <span class="review-author">{rev['author_name']}</span>
-                          {verified_badge}
-                        </div>
-                        <span class="review-date">{rev['date']}</span>
-                      </div>
-                      <div class="review-stars">{stars_r}</div>
-                      <div class="review-title">{rev['title']}</div>
-                      <div class="review-body">{rev['body']}</div>
-                      <div class="helpful-count">👍 {rev['helpful_count']} people found this helpful</div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
+                review_html = (
+                    f'<div class="review-item">'
+                    f'<div class="review-hd">'
+                    f'<div><span class="review-author">{rev["author_name"]}</span> {verified_badge}</div>'
+                    f'<span class="review-date">{rev["date"]}</span>'
+                    f'</div>'
+                    f'<div class="review-stars">{stars_r}</div>'
+                    f'<div class="review-title">{rev["title"]}</div>'
+                    f'<div class="review-body">{rev["body"]}</div>'
+                    f'<div class="helpful-count">👍 {rev["helpful_count"]} people found this helpful</div>'
+                    f'</div>'
                 )
+                st.markdown(review_html, unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
 

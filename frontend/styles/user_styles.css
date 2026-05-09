@@ -9,6 +9,9 @@ header { visibility: hidden; }
 [data-testid="stDecoration"] { display: none !important; }
 [data-testid="stStatusWidget"] { display: none !important; }
 [data-testid="stSidebar"] { display: none !important; }
+[data-testid="stSidebarNav"] { display: none !important; }
+[data-testid="stSidebarNavItems"] { display: none !important; }
+[data-testid="stSidebarCollapsedControl"] { display: none !important; }
 .stAppViewBlockContainer section[data-testid="stSidebarContent"] { display: none !important; }
 
 /* ─── GLOBAL ─────────────────────────────────────────────────────────────── */

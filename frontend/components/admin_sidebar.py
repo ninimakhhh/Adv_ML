@@ -15,13 +15,6 @@ def render_admin_sidebar():
         
         st.markdown("---")
         
-        # Navigation Links
-        st.markdown("#### Navigation")
-        if st.button("⚙️ Settings", key="sidebar_settings", width="stretch"):
-            st.switch_page("pages/admin_settings.py")
-        
-        st.markdown("---")
-        
         # System Status
         st.markdown("#### System Status")
         col1, col2 = st.columns([0.2, 0.8])

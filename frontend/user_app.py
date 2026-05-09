@@ -13,7 +13,7 @@ import streamlit as st
 # ── Page config — must be FIRST Streamlit call ──────────────────────────────
 st.set_page_config(
     layout="wide",
-    page_title="Olá Market — Estilo Português",
+    page_title="Olá Market — Portuguese Lifestyle",
     page_icon="🛒",
     initial_sidebar_state="collapsed",
 )
@@ -42,8 +42,8 @@ def _render_footer() -> None:
             <div>
               <div class="footer-brand-name">🛒 Olá Market</div>
               <p class="footer-brand-desc">
-                A sua loja de estilo de vida portuguesa. Produtos selecionados com
-                cuidado de marcas artesanais e sustentáveis — do Minho ao Algarve.
+                Your Portuguese lifestyle store. Products carefully curated
+                from artisanal and sustainable brands — from Minho to Algarve.
               </p>
               <div style="display:flex;gap:10px;margin-top:16px">
                 <a href="#" style="color:#888;font-size:18px;text-decoration:none">📘</a>
@@ -52,27 +52,27 @@ def _render_footer() -> None:
               </div>
             </div>
             <div class="footer-col">
-              <h4>Sobre Nós</h4>
+              <h4>About Us</h4>
               <ul>
-                <li><a href="#">A Nossa História</a></li>
-                <li><a href="#">Sustentabilidade</a></li>
-                <li><a href="#">Marcas Parceiras</a></li>
-                <li><a href="#">Imprensa</a></li>
-                <li><a href="#">Carreiras</a></li>
+                <li><a href="#">Our Story</a></li>
+                <li><a href="#">Sustainability</a></li>
+                <li><a href="#">Partner Brands</a></li>
+                <li><a href="#">Press</a></li>
+                <li><a href="#">Careers</a></li>
               </ul>
             </div>
             <div class="footer-col">
-              <h4>Apoio ao Cliente</h4>
+              <h4>Customer Support</h4>
               <ul>
                 <li><a href="#">FAQ</a></li>
-                <li><a href="#">Devoluções &amp; Trocas</a></li>
-                <li><a href="#">Envios &amp; Prazos</a></li>
-                <li><a href="#">Acompanhar Encomenda</a></li>
-                <li><a href="#">Contactar Suporte</a></li>
+                <li><a href="#">Returns &amp; Exchanges</a></li>
+                <li><a href="#">Shipping &amp; Delivery</a></li>
+                <li><a href="#">Track Order</a></li>
+                <li><a href="#">Contact Support</a></li>
               </ul>
             </div>
             <div class="footer-col">
-              <h4>Ligações</h4>
+              <h4>Links</h4>
               <ul>
                 <li><a href="#">Instagram</a></li>
                 <li><a href="#">Facebook</a></li>
@@ -83,8 +83,8 @@ def _render_footer() -> None:
             </div>
           </div>
           <div class="footer-bottom">
-            <span>© 2025 Olá Market · Lisboa, Portugal. Todos os direitos reservados.</span>
-            <span style="color:#555">Desenvolvido para <strong style="color:#FF6B35">Nova SBE</strong> · Advanced Topics in Machine Learning 2026</span>
+            <span>© 2025 Olá Market · Lisbon, Portugal. All rights reserved.</span>
+            <span style="color:#555">Developed for <strong style="color:#FF6B35">Nova SBE</strong> · Advanced Topics in Machine Learning 2026</span>
           </div>
         </div>
         """,
@@ -101,13 +101,13 @@ def _render_home() -> None:
         """
         <div class="hero-banner">
           <div class="hero-inner">
-            <div class="hero-badge">✦ Nova Coleção Verão 2025</div>
-            <h1 class="hero-title">Essenciais de Estilo<br>com Alma Portuguesa</h1>
+            <div class="hero-badge">✦ New Summer 2025 Collection</div>
+            <h1 class="hero-title">Style Essentials<br>with Portuguese Soul</h1>
             <p class="hero-subtitle">
-              Produtos selecionados de marcas artesanais e sustentáveis —<br>
-              da cerâmica alentejana ao azeite do Ribatejo.
+              Curated products from artisanal and sustainable brands —<br>
+              from Alentejo ceramics to Ribatejo olive oil.
             </p>
-            <a class="hero-cta" href="#">Descobrir Agora →</a>
+            <a class="hero-cta" href="#">Discover Now →</a>
           </div>
         </div>
         """,
@@ -121,16 +121,16 @@ def _render_home() -> None:
           <div style="max-width:1400px;margin:0 auto;padding:16px 32px;display:flex;
                       justify-content:center;gap:48px;flex-wrap:wrap;">
             <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#555;font-weight:500">
-              🚚 <span>Envio grátis acima de €50</span>
+              🚚 <span>Free shipping over €50</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#555;font-weight:500">
-              ↩️ <span>Devoluções em 30 dias</span>
+              ↩️ <span>30-day returns</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#555;font-weight:500">
-              🔒 <span>Pagamento seguro</span>
+              🔒 <span>Secure payment</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#555;font-weight:500">
-              🇵🇹 <span>Produtos 100% portugueses</span>
+              🇵🇹 <span>100% Portuguese products</span>
             </div>
           </div>
         </div>
@@ -146,7 +146,7 @@ def _render_home() -> None:
         <div style="max-width:1400px;margin:0 auto;padding:52px 32px 18px">
           <div style="display:flex;align-items:center;justify-content:space-between">
             <h2 style="font-size:22px;font-weight:700;color:#111;margin:0;letter-spacing:-0.4px">
-              Comprar por Categoria
+              Shop by Category
             </h2>
           </div>
         </div>
@@ -179,9 +179,9 @@ def _render_home() -> None:
         """
         <div style="max-width:1400px;margin:56px auto 0;padding:0 32px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
-            <h2 style="font-size:22px;font-weight:700;color:#111;margin:0">🔥 Promoções de Hoje</h2>
+            <h2 style="font-size:22px;font-weight:700;color:#111;margin:0">🔥 Today's Deals</h2>
             <a href="#" style="font-size:13px;font-weight:500;color:#FF6B35;text-decoration:none">
-              Ver todas as promoções →
+              See all deals →
             </a>
           </div>
         </div>
@@ -201,9 +201,9 @@ def _render_home() -> None:
         """
         <div style="max-width:1400px;margin:56px auto 0;padding:0 32px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
-            <h2 style="font-size:22px;font-weight:700;color:#111;margin:0">⭐ Popular Agora</h2>
+            <h2 style="font-size:22px;font-weight:700;color:#111;margin:0">⭐ Popular Now</h2>
             <a href="#" style="font-size:13px;font-weight:500;color:#FF6B35;text-decoration:none">
-              Ver todos →
+              See all →
             </a>
           </div>
         </div>
@@ -225,22 +225,22 @@ def _render_home() -> None:
                       flex-wrap:wrap;gap:24px">
             <div>
               <div style="color:#FF9A7A;font-size:12px;font-weight:700;text-transform:uppercase;
-                          letter-spacing:1.2px;margin-bottom:10px">Newsletter exclusiva</div>
+                          letter-spacing:1.2px;margin-bottom:10px">Exclusive Newsletter</div>
               <h3 style="color:#FFF;font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:-0.5px">
-                10% de desconto na primeira encomenda
+                10% off your first order
               </h3>
               <p style="color:rgba(255,255,255,0.6);font-size:14px;margin:0">
-                Subscreva e receba ofertas exclusivas diretamente na sua caixa de entrada.
+                Subscribe and receive exclusive offers straight to your inbox.
               </p>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <input type="email" placeholder="o-seu-email@exemplo.pt"
+              <input type="email" placeholder="your-email@example.com"
                      style="padding:12px 16px;border-radius:8px;border:none;font-size:14px;
                             width:260px;outline:none;font-family:inherit">
               <button style="background:#FF6B35;color:#FFF;border:none;padding:12px 24px;
                              border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
                              font-family:inherit">
-                Subscrever
+                Subscribe
               </button>
             </div>
           </div>

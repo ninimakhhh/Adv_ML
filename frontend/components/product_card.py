@@ -44,7 +44,7 @@ def render_product_card(product: dict, card_key: str, navigate_func) -> None:
             <div class="pc-name">{product['name']}</div>
             <div class="pc-rating-row">
               <span class="pc-stars">{stars}</span>
-              <span>{product['rating']} &nbsp;({product['review_count']} avaliações)</span>
+              <span>{product['rating']} &nbsp;({product['review_count']} reviews)</span>
             </div>
             <div class="pc-price">{price_html}</div>
           </div>
@@ -54,6 +54,6 @@ def render_product_card(product: dict, card_key: str, navigate_func) -> None:
     )
 
     st.markdown('<div class="pc-btn-wrap">', unsafe_allow_html=True)
-    if st.button("Ver Produto →", key=card_key, use_container_width=True):
+    if st.button("View Product →", key=card_key, use_container_width=True):
         navigate_func("product", selected_product_id=product["id"])
     st.markdown("</div>", unsafe_allow_html=True)

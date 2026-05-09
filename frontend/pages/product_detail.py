@@ -22,14 +22,14 @@ from shared.navigation import navigate_to
 _CSS = _FRONTEND / "styles" / "user_styles.css"
 
 _FAKE_SPECS: dict[str, list[tuple[str, str]]] = {
-    "cat_1": [("Material", "Madeira/Metal/Cerâmica"), ("Dimensões", "Variável"), ("Origem", "Portugal"), ("Garantia", "1 ano"), ("Cor", "Conforme imagem")],
-    "cat_2": [("Composição", "Ver etiqueta"), ("Lavagem", "30°C máx."), ("Tamanhos", "XS–XXL"), ("Origem", "Portugal"), ("Certificação", "GOTS / Oeko-Tex")],
-    "cat_3": [("Volume", "30–85 ml"), ("Origem", "Portugal / Marrocos"), ("Cruelty-free", "Sim"), ("Vegan", "Sim"), ("Prazo validade", "24 meses")],
-    "cat_4": [("Conectividade", "Bluetooth 5.0 / USB-C"), ("Bateria", "Ver descrição"), ("Resistência", "IPX6 / 5ATM"), ("Garantia", "2 anos"), ("Certificação", "CE / FCC")],
-    "cat_5": [("Peso", "Ver embalagem"), ("Origem", "Portugal"), ("Conservação", "Lugar fresco e seco"), ("Validade", "12–24 meses"), ("Certificação", "Biológico / Artesanal")],
-    "cat_6": [("Material", "TPE / Borracha / Aço inox"), ("Dimensões", "Ver descrição"), ("Peso", "Ver descrição"), ("Garantia", "2 anos"), ("Norma", "CE EN71")],
-    "cat_7": [("Páginas", "Ver descrição"), ("Encadernação", "Capa dura / Brochura"), ("Idioma", "Português PT"), ("Editora", "Edições Olá"), ("Ano", "2024–2025")],
-    "cat_8": [("Idade recomendada", "Ver descrição"), ("Material", "Madeira FSC / Algodão orgânico"), ("Certificação", "EN71 / Oeko-Tex"), ("Lavagem", "30°C máx."), ("Norma", "CE")],
+    "cat_1": [("Material", "Wood/Metal/Ceramic"), ("Dimensions", "Variable"), ("Origin", "Portugal"), ("Warranty", "1 year"), ("Color", "As shown")],
+    "cat_2": [("Composition", "See label"), ("Washing", "30°C max."), ("Sizes", "XS–XXL"), ("Origin", "Portugal"), ("Certification", "GOTS / Oeko-Tex")],
+    "cat_3": [("Volume", "30–85 ml"), ("Origin", "Portugal / Morocco"), ("Cruelty-free", "Yes"), ("Vegan", "Yes"), ("Shelf life", "24 months")],
+    "cat_4": [("Connectivity", "Bluetooth 5.0 / USB-C"), ("Battery", "See description"), ("Water resistance", "IPX6 / 5ATM"), ("Warranty", "2 years"), ("Certification", "CE / FCC")],
+    "cat_5": [("Weight", "See packaging"), ("Origin", "Portugal"), ("Storage", "Cool and dry place"), ("Best before", "12–24 months"), ("Certification", "Organic / Artisanal")],
+    "cat_6": [("Material", "TPE / Rubber / Stainless steel"), ("Dimensions", "See description"), ("Weight", "See description"), ("Warranty", "2 years"), ("Standard", "CE EN71")],
+    "cat_7": [("Pages", "See description"), ("Binding", "Hardcover / Paperback"), ("Language", "European Portuguese"), ("Publisher", "Edições Olá"), ("Year", "2024–2025")],
+    "cat_8": [("Recommended age", "See description"), ("Material", "FSC Wood / Organic cotton"), ("Certification", "EN71 / Oeko-Tex"), ("Washing", "30°C max."), ("Standard", "CE")],
 }
 
 
@@ -59,21 +59,21 @@ def render_product_detail() -> None:
     product = get_product_by_id(product_id) if product_id else None
 
     if not product:
-        st.error("Produto não encontrado.")
-        if st.button("← Voltar ao Início"):
+        st.error("Product not found.")
+        if st.button("← Back to Home"):
             navigate_to("home")
         return
 
     category = get_category_by_id(product["category_id"])
     reviews = get_reviews_by_product(product_id)
-    category_name = category["name"] if category else "Categoria"
+    category_name = category["name"] if category else "Category"
 
     # ── Breadcrumb ───────────────────────────────────────────────────────────
     st.markdown(
         f"""
         <div class="page-wrap" style="padding-bottom:8px">
           <div class="breadcrumb">
-            <a href="#" onclick="return false;">Início</a>
+            <a href="#" onclick="return false;">Home</a>
             <span class="sep">›</span>
             <a href="#" onclick="return false;">{category_name}</a>
             <span class="sep">›</span>
@@ -86,7 +86,7 @@ def render_product_detail() -> None:
 
     bcol1, bcol2, _ = st.columns([1, 1, 7])
     with bcol1:
-        if st.button("← Início", key="pd_back_home"):
+        if st.button("← Home", key="pd_back_home"):
             navigate_to("home")
     with bcol2:
         if category and st.button(f"← {category_name}", key="pd_back_cat"):
@@ -110,7 +110,7 @@ def render_product_detail() -> None:
                 f"""
                 <div style="margin-top:12px;background:#FFF5F2;border:1px solid #FFD5C5;
                      border-radius:8px;padding:10px 14px;font-size:13px;color:#C23B00;font-weight:600;text-align:center;">
-                  🔥 Poupa €{product['original_price'] - product['price']:.2f} — Promoção por tempo limitado
+                  🔥 Save €{product['original_price'] - product['price']:.2f} — Limited time offer
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -125,7 +125,7 @@ def render_product_detail() -> None:
             <h1 class="pd-name">{product['name']}</h1>
             <div class="pd-rating-row">
               <span class="pd-stars">{stars_html}</span>
-              <span>{product['rating']} &nbsp;·&nbsp; {product['review_count']} avaliações</span>
+              <span>{product['rating']} &nbsp;·&nbsp; {product['review_count']} reviews</span>
             </div>
             <div style="margin-bottom:16px">
               <span class="{price_class}">€{product['price']:.2f}</span>
@@ -140,20 +140,20 @@ def render_product_detail() -> None:
         if product["in_stock"]:
             if product["stock_count"] <= 5:
                 st.markdown(
-                    f'<div class="pd-stock-low">⚠️ Apenas {product["stock_count"]} em stock!</div>',
+                    f'<div class="pd-stock-low">⚠️ Only {product["stock_count"]} in stock!</div>',
                     unsafe_allow_html=True,
                 )
             else:
-                st.markdown('<div class="pd-stock-ok">✓ Em stock</div>', unsafe_allow_html=True)
+                st.markdown('<div class="pd-stock-ok">✓ In stock</div>', unsafe_allow_html=True)
         else:
-            st.markdown('<div class="pd-stock-no">✗ Esgotado</div>', unsafe_allow_html=True)
+            st.markdown('<div class="pd-stock-no">✗ Sold out</div>', unsafe_allow_html=True)
 
-        qty = st.number_input("Quantidade", min_value=1, max_value=max(1, product["stock_count"]), value=1, key="pd_qty")
+        qty = st.number_input("Quantity", min_value=1, max_value=max(1, product["stock_count"]), value=1, key="pd_qty")
 
         add_col, wish_col = st.columns([2, 1])
         with add_col:
             if st.button(
-                "🛒  Adicionar ao Cesto",
+                "🛒  Add to Cart",
                 key="pd_add_cart",
                 use_container_width=True,
                 disabled=not product["in_stock"],
@@ -161,15 +161,15 @@ def render_product_detail() -> None:
                 if "cart_items" not in st.session_state:
                     st.session_state.cart_items = []
                 st.session_state.cart_items.append({"product": product, "qty": qty})
-                st.success(f"✓ {product['name']} adicionado ao cesto!")
+                st.success(f"✓ {product['name']} added to cart!")
 
         with wish_col:
-            st.button("♡  Favorito", key="pd_wishlist", use_container_width=True)
+            st.button("♡  Favorite", key="pd_wishlist", use_container_width=True)
 
         st.markdown(
             """
-            <div class="pd-info-box">🚚 Entrega grátis em encomendas acima de €50</div>
-            <div class="pd-return-box">↩️ Devoluções gratuitas em 30 dias</div>
+            <div class="pd-info-box">🚚 Free delivery on orders over €50</div>
+            <div class="pd-return-box">↩️ Free returns within 30 days</div>
             """,
             unsafe_allow_html=True,
         )
@@ -188,7 +188,7 @@ def render_product_detail() -> None:
     # ── Tabs ─────────────────────────────────────────────────────────────────
     st.markdown('<div class="page-wrap" style="padding-top:12px">', unsafe_allow_html=True)
     tab_desc, tab_specs, tab_reviews = st.tabs(
-        ["📋 Descrição", "⚙️ Especificações", f"💬 Avaliações ({len(reviews)})"]
+        ["📋 Description", "⚙️ Specifications", f"💬 Reviews ({len(reviews)})"]
     )
 
     with tab_desc:
@@ -216,7 +216,7 @@ def render_product_detail() -> None:
 
     with tab_reviews:
         if not reviews:
-            st.info("Este produto ainda não tem avaliações.")
+            st.info("This product has no reviews yet.")
         else:
             breakdown = _rating_breakdown(reviews)
             avg = sum(r["rating"] for r in reviews) / len(reviews)
@@ -228,7 +228,7 @@ def render_product_detail() -> None:
                   <div class="big-rating">
                     <div class="big-rating-num">{avg:.1f}</div>
                     <div class="big-rating-stars">{"★" * round(avg)}{"☆" * (5 - round(avg))}</div>
-                    <div class="big-rating-count">{len(reviews)} avaliações</div>
+                    <div class="big-rating-count">{len(reviews)} reviews</div>
                   </div>
                   <div class="rating-bars">
                     {"".join(
@@ -247,26 +247,26 @@ def render_product_detail() -> None:
 
             # Sort
             sort_reviews = st.selectbox(
-                "Ordenar avaliações",
-                ["Mais úteis", "Mais recentes", "Melhor avaliação", "Pior avaliação"],
+                "Sort reviews",
+                ["Most helpful", "Most recent", "Best rating", "Worst rating"],
                 key="pd_review_sort",
                 label_visibility="collapsed",
             )
 
             sorted_reviews = list(reviews)
-            if sort_reviews == "Mais úteis":
+            if sort_reviews == "Most helpful":
                 sorted_reviews.sort(key=lambda r: r["helpful_count"], reverse=True)
-            elif sort_reviews == "Mais recentes":
+            elif sort_reviews == "Most recent":
                 sorted_reviews.sort(key=lambda r: r["date"], reverse=True)
-            elif sort_reviews == "Melhor avaliação":
+            elif sort_reviews == "Best rating":
                 sorted_reviews.sort(key=lambda r: r["rating"], reverse=True)
-            elif sort_reviews == "Pior avaliação":
+            elif sort_reviews == "Worst rating":
                 sorted_reviews.sort(key=lambda r: r["rating"])
 
             for rev in sorted_reviews:
                 stars_r = "★" * rev["rating"] + "☆" * (5 - rev["rating"])
                 verified_badge = (
-                    '<span class="verified">✓ Compra verificada</span>'
+                    '<span class="verified">✓ Verified purchase</span>'
                     if rev.get("verified_purchase")
                     else ""
                 )
@@ -283,7 +283,7 @@ def render_product_detail() -> None:
                       <div class="review-stars">{stars_r}</div>
                       <div class="review-title">{rev['title']}</div>
                       <div class="review-body">{rev['body']}</div>
-                      <div class="helpful-count">👍 {rev['helpful_count']} pessoas acharam útil</div>
+                      <div class="helpful-count">👍 {rev['helpful_count']} people found this helpful</div>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -303,7 +303,7 @@ def render_product_detail() -> None:
             """
             <div class="page-wrap" style="padding-top:32px">
               <h2 style="font-size:20px;font-weight:700;color:#111;margin-bottom:20px;letter-spacing:-0.3px">
-                Produtos relacionados
+                Related products
               </h2>
             </div>
             """,

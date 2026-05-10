@@ -118,36 +118,59 @@ if selected_tab == "Dashboard":
     # Row 1: Tickets
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        metric_card("Created", f"{kpi['tickets']['created']}", icon="📥")
+        metric_card(
+            "Created", f"{kpi['tickets']['created']}", icon="📥",
+            description="Total new support tickets submitted in the selected period.",
+        )
     with col2:
-        metric_card("Solved", f"{kpi['tickets']['solved']}", icon="✅")
+        metric_card(
+            "Solved", f"{kpi['tickets']['solved']}", icon="✅",
+            description="Tickets marked resolved — by the bot or a human agent.",
+        )
     with col3:
-        metric_card("Open", f"{kpi['tickets']['open']}", icon="🔓")
+        metric_card(
+            "Open", f"{kpi['tickets']['open']}", icon="🔓",
+            description="Tickets still awaiting a first or final response.",
+        )
     with col4:
-        metric_card("Reopened", f"{kpi['tickets']['reopened']}", icon="🔄")
-    
+        metric_card(
+            "Reopened", f"{kpi['tickets']['reopened']}", icon="🔄",
+            description="Previously resolved tickets re-opened by the customer.",
+        )
+
     # Row 2: AI Performance
     col1, col2, col3 = st.columns(3)
     with col1:
-        metric_card("Auto-Resolution", f"{kpi['ai_performance']['auto_resolution_rate']}%", icon="🤖")
+        metric_card(
+            "Auto-Resolution", f"{kpi['ai_performance']['auto_resolution_rate']}%", icon="🤖",
+            description="Share of tickets fully resolved by the bot with no human intervention.",
+        )
     with col2:
-        metric_card("Auto-Routed", f"{kpi['ai_performance']['tickets_auto_routed']}", icon="📊")
+        metric_card(
+            "Auto-Routed", f"{kpi['ai_performance']['tickets_auto_routed']}", icon="📊",
+            description="Tickets automatically classified and assigned to the correct queue.",
+        )
     with col3:
-        metric_card("AI Accuracy", f"{kpi['ai_performance']['accuracy']}%", icon="🎯")
-    
+        metric_card(
+            "AI Accuracy", f"{kpi['ai_performance']['accuracy']}%", icon="🎯",
+            description="Intent classification accuracy verified against human-reviewed labels.",
+        )
+
     # Row 3: Response Times
     col1, col2 = st.columns(2)
     with col1:
         metric_card(
             "Avg First Reply",
             f"{kpi['response_times']['avg_first_reply_minutes']}m",
-            icon="⏱️"
+            icon="⏱️",
+            description="Median time from ticket creation to the first bot or agent response.",
         )
     with col2:
         metric_card(
             "Avg Resolution Time",
             f"{kpi['response_times']['avg_full_resolution_hours']:.1f}h",
-            icon="⏲️"
+            icon="⏲️",
+            description="Median time from ticket creation to final resolution or closure.",
         )
     
     st.markdown("---")

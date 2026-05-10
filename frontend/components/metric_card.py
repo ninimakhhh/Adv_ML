@@ -1,33 +1,30 @@
 import streamlit as st
 
-def metric_card(label, value, change=None, icon="📊", color="accent"):
+def metric_card(label, value, change=None, icon="📊", color="accent", description=None):
     """
-    Display a metric card with label, value, and optional change indicator.
-    
+    Display a metric card with label, value, optional change indicator, and description.
+
     Args:
         label: The metric label
         value: The metric value
         change: Optional change indicator (e.g., "+12%" or "-5%")
         icon: Optional emoji icon
         color: Color context ("accent", "success", "warning", "danger")
+        description: Optional short explanation shown below the value
     """
-    
-    # Color mapping
-    color_map = {
-        "accent": "#4F46E5",
-        "success": "#10B981",
-        "warning": "#F59E0B",
-        "danger": "#EF4444",
-    }
-    
+
     change_color = ""
     if change:
         if change.startswith("+"):
             change_color = "color: #10B981"
         elif change.startswith("-"):
             change_color = "color: #EF4444"
-    
-    # Create the card
+
+    desc_html = (
+        f'<p style="color:#9CA3AF;font-size:11px;margin:6px 0 0 0;line-height:1.4;">{description}</p>'
+        if description else ""
+    )
+
     card_html = f"""
     <div style="
         background-color: #FFFFFF;
@@ -45,6 +42,7 @@ def metric_card(label, value, change=None, icon="📊", color="accent"):
                     {value}
                 </p>
                 {f'<p style="{change_color}; font-size: 14px; margin: 8px 0 0 0; font-weight: 500;">{change}</p>' if change else ''}
+                {desc_html}
             </div>
             <div style="font-size: 32px;">
                 {icon}
@@ -52,7 +50,7 @@ def metric_card(label, value, change=None, icon="📊", color="accent"):
         </div>
     </div>
     """
-    
+
     st.markdown(card_html, unsafe_allow_html=True)
 
 

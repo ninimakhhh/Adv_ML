@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 # --- LLM keys ---
-ANTHROPIC_API_KEY: str = os.environ["ANTHROPIC_API_KEY"]
+GOOGLE_API_KEY: str = os.environ["GOOGLE_API_KEY"]
 OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
 
 # --- Reddit ---

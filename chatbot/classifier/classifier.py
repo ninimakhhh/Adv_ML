@@ -1,5 +1,5 @@
 """
-Intent classifier — maps a user message to a registry intent via Claude.
+Intent classifier — maps a user message to a registry intent via Gemini.
 
 Usage:
     from chatbot.classifier.classifier import IntentClassifier
@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import os
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
@@ -22,12 +22,12 @@ ROOT = Path(__file__).parent.parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import anthropic
+from google import genai
 
 from chatbot.registry.loader import load_intents
 
-_MODEL = "claude-sonnet-4-6"
-_MAX_CONTEXT_TURNS = 6  # last N conversation turns included in prompt
+_MODEL = "gemini-2.0-flash"
+_MAX_CONTEXT_TURNS = 6
 
 
 @dataclass
@@ -62,12 +62,10 @@ def _build_prompt(
     intent_list = _build_intent_list(intents)
     intent_ids = ", ".join(f'"{k}"' for k in intents)
 
-    ctx_lines = ""
     if conversation_context:
         recent = conversation_context[-_MAX_CONTEXT_TURNS:]
         ctx_lines = "\n".join(
-            f"  [{t.get('role','?')}]: {t.get('content','')}"
-            for t in recent
+            f"  [{t.get('role','?')}]: {t.get('content','')}" for t in recent
         )
         ctx_section = f"\nConversation context (most recent turns first):\n{ctx_lines}\n"
     else:
@@ -105,8 +103,8 @@ Rules:
 
 class IntentClassifier:
     def __init__(self, api_key: Optional[str] = None) -> None:
-        key = api_key or os.getenv("ANTHROPIC_API_KEY", "")
-        self._client = anthropic.Anthropic(api_key=key)
+        key = api_key or os.getenv("GOOGLE_API_KEY", "")
+        self._client = genai.Client(api_key=key)
         self._intents = load_intents()
 
     def classify(
@@ -118,12 +116,11 @@ class IntentClassifier:
         prompt = _build_prompt(self._intents, user_message, context)
 
         try:
-            response = self._client.messages.create(
+            response = self._client.models.generate_content(
                 model=_MODEL,
-                max_tokens=512,
-                messages=[{"role": "user", "content": prompt}],
+                contents=prompt,
             )
-            raw = response.content[0].text.strip()
+            raw = response.text.strip()
         except Exception as exc:
             return ClassificationResult(
                 intent_id=None,
@@ -137,7 +134,6 @@ class IntentClassifier:
 
 def _parse_response(raw: str, intents: dict[str, dict]) -> ClassificationResult:
     try:
-        # Strip optional markdown fences the model might still emit
         text = raw
         if text.startswith("```"):
             text = text.split("```")[1]

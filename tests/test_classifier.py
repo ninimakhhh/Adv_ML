@@ -1,5 +1,5 @@
 """
-Tests for IntentClassifier — Anthropic API is mocked throughout.
+Tests for IntentClassifier — Gemini API is mocked throughout.
 
 Run:
     pytest tests/test_classifier.py -v
@@ -25,17 +25,15 @@ from chatbot.registry.loader import load_intents
 # ---------------------------------------------------------------------------
 
 def _mock_response(intent_id, confidence, alternatives=None, reasoning="test"):
-    """Build a fake anthropic response object."""
+    """Build a fake Gemini response object."""
     payload = {
         "intent_id": intent_id,
         "confidence": confidence,
         "alternatives": alternatives or [],
         "reasoning": reasoning,
     }
-    content_block = MagicMock()
-    content_block.text = json.dumps(payload)
     response = MagicMock()
-    response.content = [content_block]
+    response.text = json.dumps(payload)
     return response
 
 
@@ -46,18 +44,18 @@ def intents():
 
 @pytest.fixture
 def classifier():
-    """IntentClassifier with a mocked Anthropic client."""
-    with patch("chatbot.classifier.classifier.anthropic.Anthropic") as MockAnthropicClass:
+    """IntentClassifier with a mocked Gemini client."""
+    with patch("chatbot.classifier.classifier.genai.Client") as MockClientClass:
         mock_client = MagicMock()
-        MockAnthropicClass.return_value = mock_client
-        clf = IntentClassifier(api_key="sk-test-fake")
-        clf._mock_client = mock_client   # expose for test-level control
+        MockClientClass.return_value = mock_client
+        clf = IntentClassifier(api_key="fake-key")
+        clf._mock_client = mock_client
         yield clf
 
 
 def _set_reply(classifier, intent_id, confidence, alternatives=None, reasoning="test"):
-    """Configure what the mock Anthropic client will return for the next call."""
-    classifier._mock_client.messages.create.return_value = _mock_response(
+    """Configure what the mock Gemini client will return for the next call."""
+    classifier._mock_client.models.generate_content.return_value = _mock_response(
         intent_id, confidence, alternatives, reasoning
     )
 
@@ -79,7 +77,7 @@ class TestClassifyOrderStatus:
         assert isinstance(result, ClassificationResult)
 
     def test_confidence_is_clamped_between_0_and_1(self, classifier):
-        _set_reply(classifier, "order_status", 1.5)   # model returned > 1
+        _set_reply(classifier, "order_status", 1.5)
         result = classifier.classify("status of my delivery")
         assert 0.0 <= result.confidence <= 1.0
 
@@ -91,8 +89,6 @@ class TestClassifyOrderStatus:
 
 
 class TestVariedPhrasings:
-    """Different phrasings of the same intent should all classify to order_status."""
-
     @pytest.mark.parametrize("message", [
         "track my package",
         "when will my stuff arrive",
@@ -150,11 +146,9 @@ class TestAlternatives:
 
 class TestInvalidModelResponse:
     def test_json_parse_failure_returns_fallback(self, classifier):
-        classifier._mock_client.messages.create.return_value = _mock_response(
-            "order_status", 0.9
-        )
-        # Overwrite the text with garbage
-        classifier._mock_client.messages.create.return_value.content[0].text = "not json at all"
+        bad_response = MagicMock()
+        bad_response.text = "not json at all"
+        classifier._mock_client.models.generate_content.return_value = bad_response
         result = classifier.classify("hello")
         assert result.intent_id is None
         assert result.confidence == 0.0
@@ -165,7 +159,7 @@ class TestInvalidModelResponse:
         assert result.intent_id is None
 
     def test_api_exception_returns_fallback(self, classifier):
-        classifier._mock_client.messages.create.side_effect = RuntimeError("network error")
+        classifier._mock_client.models.generate_content.side_effect = RuntimeError("network error")
         result = classifier.classify("where is my order")
         assert result.intent_id is None
         assert result.confidence == 0.0
@@ -197,9 +191,7 @@ class TestParseResponse:
         raw = json.dumps({
             "intent_id": "return_policy",
             "confidence": 0.87,
-            "alternatives": [
-                {"intent_id": "refund_status", "confidence": 0.45}
-            ],
+            "alternatives": [{"intent_id": "refund_status", "confidence": 0.45}],
             "reasoning": "Matches return policy examples.",
         })
         result = _parse_response(raw, intents)

@@ -18,6 +18,7 @@ from components.admin_sidebar import render_admin_sidebar
 from components.metric_card import metric_card, small_metric
 from components.chatbot_widget import render_admin_chatbot_widget
 from ticket_routing import CATEGORY_TO_QUEUE, classify_ticket
+from sentiment_analysis.llm_dashboard import render_llm_dashboard
 
 # Page config
 st.set_page_config(layout="wide", page_title="Olá Market - Admin Dashboard")
@@ -546,28 +547,7 @@ elif selected_tab == "Tickets":
 # ═══════════════════════════════════════════════════════════════════════════════
 
 elif selected_tab == "LLM Dashboard":
-    st.markdown("### LLM Performance Dashboard")
-    
-    st.markdown("""
-    ✨ **Coming soon** — advanced LLM monitoring and optimization insights
-    
-    # TODO: Add features
-    - Token usage analytics
-    - Latency monitoring
-    - Cost tracking
-    - Prompt performance analysis
-    - Model A/B testing results
-    - Cache hit rates
-    """)
-    
-    st.info("""
-    This dashboard will provide detailed insights into LLM performance, including:
-    - Real-time token consumption tracking
-    - API latency and response time analysis
-    - Cost optimization recommendations
-    - Prompt effectiveness metrics
-    - Model comparison data
-    """)
+    render_llm_dashboard()
 
 # Render chatbot widget
 render_admin_chatbot_widget()

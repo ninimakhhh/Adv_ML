@@ -51,7 +51,7 @@ def metric_card(label, value, change=None, icon="📊", color="accent", descript
     </div>
     """
 
-    st.markdown(card_html, unsafe_allow_html=True)
+    st.html(card_html)
 
 
 def small_metric(label, value, suffix=""):
@@ -72,4 +72,4 @@ def small_metric(label, value, suffix=""):
         </p>
     </div>
     """
-    st.markdown(html, unsafe_allow_html=True)
+    st.html(html)

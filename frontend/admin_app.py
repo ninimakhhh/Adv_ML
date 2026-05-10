@@ -305,36 +305,36 @@ if selected_tab == "Dashboard":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Positive</p>
             <p style="color: #10B981; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{sentiment_data['Positive']}</p>
             <p style="color: #6B7280; font-size: 12px; margin: 4px 0 0 0;">{int(sentiment_data['Positive'] / sum(sentiment_data.values()) * 100)}%</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col2:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Neutral</p>
             <p style="color: #6B7280; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{sentiment_data['Neutral']}</p>
             <p style="color: #6B7280; font-size: 12px; margin: 4px 0 0 0;">{int(sentiment_data['Neutral'] / sum(sentiment_data.values()) * 100)}%</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col3:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Negative</p>
             <p style="color: #EF4444; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{sentiment_data['Negative']}</p>
             <p style="color: #6B7280; font-size: 12px; margin: 4px 0 0 0;">{int(sentiment_data['Negative'] / sum(sentiment_data.values()) * 100)}%</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     
     st.markdown("---")
     
     # AI INSIGHT BANNER
-    st.markdown("""
+    st.html("""
     <div style="
         background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
         border-radius: 8px;
@@ -348,22 +348,10 @@ if selected_tab == "Dashboard":
                 <p style="margin: 0; line-height: 1.5;">
                     Negative sentiment about shipping increased 23% this week. Consider proactive communication about delivery times or offering expedited shipping options.
                 </p>
-                <button style="
-                    background-color: rgba(255,255,255,0.2);
-                    color: white;
-                    border: 1px solid rgba(255,255,255,0.4);
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    margin-top: 12px;
-                    font-weight: 500;
-                ">
-                    View Details →
-                </button>
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TAB 2: TICKETS (HUMAN-IN-THE-LOOP)
@@ -537,33 +525,33 @@ elif selected_tab == "Tickets":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Auto-Classified</p>
             <p style="color: #4F46E5; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{int(auto_classified_pct)}%</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col2:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Pending Review</p>
             <p style="color: #F59E0B; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{len(st.session_state.pending_reviews)}</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col3:
         avg_confidence = (
             sum(t["confidence"] for t in st.session_state.pending_reviews) / len(st.session_state.pending_reviews)
             if len(st.session_state.pending_reviews) > 0
             else 0
         )
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Avg Confidence</p>
             <p style="color: #10B981; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{int(avg_confidence)}%</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TAB 3: LLM DASHBOARD (PLACEHOLDER)

@@ -16,7 +16,6 @@ import plotly.express as px
 from datetime import datetime, timedelta
 from components.admin_sidebar import render_admin_sidebar
 from components.metric_card import metric_card, small_metric
-from components.chatbot_widget import render_admin_chatbot_widget
 from ticket_routing import CATEGORY_TO_QUEUE, classify_ticket
 from sentiment_analysis.llm_dashboard import render_llm_dashboard
 
@@ -561,4 +560,3 @@ elif selected_tab == "LLM Dashboard":
     render_llm_dashboard()
 
 # Render chatbot widget
-render_admin_chatbot_widget()

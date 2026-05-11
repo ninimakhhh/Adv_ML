@@ -23,6 +23,10 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from statistics import mean
 
+from shared.logger import get_logger
+
+logger = get_logger(__name__)
+
 # ── Paths ────────────────────────────────────────────────────────────────────
 
 _ROOT  = Path(__file__).resolve().parents[1]
@@ -35,9 +39,12 @@ PRODUCTS_PATH = _DATA / "products.json"
 
 def load_events() -> list[dict]:
     if not EVENTS_PATH.exists():
+        logger.warning(f"Events file not found at {EVENTS_PATH}")
         return []
     with open(EVENTS_PATH, encoding="utf-8") as f:
-        return json.load(f)
+        events = json.load(f)
+    logger.info(f"Loaded {len(events)} sentiment events")
+    return events
 
 
 def load_product_map() -> dict[str, dict]:
@@ -78,6 +85,8 @@ def aspect_heatmap(events: list[dict] | None = None) -> dict[str, dict[str, floa
     Mean is None when no event mentions the aspect for that category.
     """
     events = events or load_events()
+    logger.debug(f"Computing aspect heatmap for {len(events)} events")
+    
     # {category: {aspect: [scores]}}
     buckets: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
 
@@ -96,6 +105,8 @@ def aspect_heatmap(events: list[dict] | None = None) -> dict[str, dict[str, floa
             asp: round(mean(asp_map[asp]), 3) if asp_map.get(asp) else None
             for asp in ASPECTS
         }
+    
+    logger.info(f"Aspect heatmap computed for {len(result)} categories")
     return result
 
 
@@ -114,6 +125,8 @@ def top_problem_products(
       {product_id, product_name, category_id, negative_count,
        dominant_problems, avg_severity_score, avg_aspect_scores}
     """
+    logger.debug(f"Computing top problem products (window={window_days} days, top={n})")
+    
     events   = events or load_events()
     products = load_product_map()
     cutoff   = datetime.now(timezone.utc) - timedelta(days=window_days)
@@ -159,6 +172,7 @@ def top_problem_products(
         })
 
     rows.sort(key=lambda r: r["negative_count"], reverse=True)
+    logger.info(f"Found {len(rows)} problem products, returning top {min(n, len(rows))}")
     return rows[:n]
 
 

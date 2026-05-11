@@ -23,6 +23,9 @@ from pathlib import Path
 from typing import Iterator
 
 from sentiment_analysis.analyzer import analyse_text, AspectSentiment
+from shared.logger import get_logger
+
+logger = get_logger(__name__)
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 
@@ -169,14 +172,18 @@ def run(
     Returns:
         List of all events (existing + newly created).
     """
+    logger.info(f"Starting pipeline: max_reviews={max_reviews}, max_tickets={max_tickets}")
+    
     events = _load_events()
     initial_count = len(events)
+    logger.info(f"Loaded {initial_count} existing events")
 
     def _process(source: str, source_id: str, text: str, meta: dict) -> None:
         event_id = f"sa_{source}_{source_id}"
         if event_id in events:
             if verbose:
                 print(f"  skip  {event_id} (already processed)")
+            logger.debug(f"Skipping {event_id}: already processed")
             return
 
         if verbose:
@@ -198,9 +205,11 @@ def run(
             _save_events(events)  # write-through after each item
             if verbose:
                 print(f"✓  [{result.overall_sentiment}] {result.summary[:50]}")
+            logger.info(f"Processed {event_id}: {result.overall_sentiment}")
         except Exception as exc:
             if verbose:
                 print(f"✗  ERROR: {exc}")
+            logger.error(f"Failed to process {event_id}: {exc}", exc_info=True)
 
         time.sleep(delay_seconds)
 
@@ -211,6 +220,7 @@ def run(
             break
         _process("review", source_id, text, meta)
         review_count += 1
+    logger.info(f"Processed {review_count} reviews")
 
     # --- Tickets ---
     ticket_count = 0
@@ -219,10 +229,12 @@ def run(
             break
         _process("ticket", source_id, text, meta)
         ticket_count += 1
+    logger.info(f"Processed {ticket_count} tickets")
 
     new_count = len(events) - initial_count
     if verbose:
         print(f"\nDone. {new_count} new events written. Total: {len(events)}.")
+    logger.info(f"Pipeline complete: {new_count} new events, {len(events)} total")
 
     return list(events.values())
 

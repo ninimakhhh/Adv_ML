@@ -18,12 +18,14 @@ Each aspect gets a score in [-1.0, 1.0] or None if not mentioned.
 from __future__ import annotations
 
 import json
-import random
 from dataclasses import dataclass
 from typing import Literal
 
 from shared.config import DEFAULT_DEEPSEEK_MODEL
 from shared.llm_client import get_deepseek_client
+from shared.logger import get_logger
+
+logger = get_logger(__name__)
 
 # ── Types ────────────────────────────────────────────────────────────────────
 
@@ -156,132 +158,65 @@ RESPOND WITH ONLY A VALID JSON OBJECT (no markdown, no extra text):
 
 def analyse_text(text: str) -> AspectSentiment:
     """
-    Run ABSA on a single piece of customer text (MOCK VERSION - no API calls).
-    
-    Generates realistic sentiment data based on keyword detection in the text.
-    This allows testing the dashboard without API credits.
+    Run ABSA on a single piece of customer text using DeepSeek API.
 
     Args:
         text: raw review body or ticket text.
 
     Returns:
-        AspectSentiment dataclass with synthesized scores.
+        AspectSentiment dataclass with all aspect scores and metadata.
+
+    Raises:
+        RuntimeError: if the API call fails or returns invalid JSON.
     """
-    text_lower = text.lower()
+    logger.debug(f"Analyzing text: {text[:100]}...")
     
-    # ── Keyword mapping for aspect detection ───────────────────────────────
-    delivery_keywords = ["delivery", "shipping", "arrived", "late", "fast", "slow", "tracking"]
-    quality_keywords = ["quality", "durable", "build", "material", "broke", "broken", "excellent"]
-    accuracy_keywords = ["wrong", "correct", "expected", "description", "accurate", "matched"]
-    packaging_keywords = ["packaging", "box", "wrap", "bubble", "damaged", "crushed", "protected"]
-    service_keywords = ["service", "support", "help", "helpful", "rude", "agent", "response"]
-    value_keywords = ["price", "value", "worth", "expensive", "cheap", "fair", "overpriced"]
+    client = get_deepseek_client()
+
+    try:
+        response = client.chat.completions.create(
+            model=DEFAULT_DEEPSEEK_MODEL,
+            max_tokens=512,
+            temperature=0,
+            messages=[
+                {"role": "system", "content": _SYSTEM_PROMPT},
+                {"role": "user", "content": text},
+            ],
+        )
+        logger.debug(f"API response received for text: {text[:50]}...")
+    except Exception as e:
+        logger.error(f"API call failed: {str(e)}")
+        raise
+
+    # Extract the JSON response
+    content = response.choices[0].message.content.strip()
     
-    negative_keywords = ["bad", "terrible", "awful", "poor", "disappointing", "never", "worst"]
-    positive_keywords = ["excellent", "great", "amazing", "perfect", "love", "best", "highly"]
-    
-    # ── Score aspects based on keywords ────────────────────────────────────
-    def score_aspect(keywords: list[str]) -> float | None:
-        found = any(k in text_lower for k in keywords)
-        if not found:
-            return None
-        
-        # Check sentiment polarity
-        has_positive = any(p in text_lower for p in positive_keywords)
-        has_negative = any(n in text_lower for n in negative_keywords)
-        
-        if has_negative and not has_positive:
-            return random.uniform(-1.0, -0.3)
-        elif has_positive and not has_negative:
-            return random.uniform(0.3, 1.0)
-        else:
-            return random.uniform(-0.2, 0.2)
-    
-    # ── Determine dominant problem ─────────────────────────────────────────
-    problems_found = []
-    if "late" in text_lower or "delay" in text_lower:
-        problems_found.append("late_delivery")
-    if "lost" in text_lower or "missing" in text_lower:
-        problems_found.append("lost_package")
-    if "wrong" in text_lower or "incorrect" in text_lower:
-        problems_found.append("wrong_item")
-    if ("broke" in text_lower or "broken" in text_lower or "damaged" in text_lower):
-        problems_found.append("broken_on_arrival")
-    if "poor" in text_lower or "cheap" in text_lower or "low" in text_lower:
-        problems_found.append("poor_quality")
-    if "packaging" in text_lower or "box" in text_lower or "wrap" in text_lower:
-        problems_found.append("bad_packaging")
-    if "payment" in text_lower or "charge" in text_lower or "billing" in text_lower:
-        problems_found.append("payment_issue")
-    if "support" in text_lower or "service" in text_lower or "agent" in text_lower:
-        problems_found.append("bad_service")
-    if "description" in text_lower or "advertise" in text_lower or "different" in text_lower:
-        problems_found.append("not_as_described")
-    
-    dominant_problem = random.choice(problems_found) if problems_found else "none"
-    
-    # ── Overall sentiment ──────────────────────────────────────────────────
-    positive_count = sum(1 for p in positive_keywords if p in text_lower)
-    negative_count = sum(1 for n in negative_keywords if n in text_lower)
-    
-    if negative_count > positive_count + 1:
-        overall_sentiment: Sentiment = "Negative"
-    elif positive_count > negative_count + 1:
-        overall_sentiment = "Positive"
-    else:
-        overall_sentiment = "Neutral"
-    
-    # ── Severity ──────────────────────────────────────────────────────────
-    if overall_sentiment == "Negative" and dominant_problem != "none":
-        severity: Severity = random.choice(["high", "high", "medium"])
-    elif overall_sentiment == "Negative":
-        severity = "low"
-    else:
-        severity = "low"
-    
-    # ── Summary ───────────────────────────────────────────────────────────
-    if dominant_problem == "late_delivery":
-        summary = "Customer reports delayed package delivery."
-    elif dominant_problem == "lost_package":
-        summary = "Customer's package did not arrive."
-    elif dominant_problem == "wrong_item":
-        summary = "Customer received incorrect item."
-    elif dominant_problem == "broken_on_arrival":
-        summary = "Product arrived damaged or broken."
-    elif dominant_problem == "poor_quality":
-        summary = "Product quality below expectations."
-    elif dominant_problem == "bad_packaging":
-        summary = "Packaging quality inadequate for protection."
-    elif dominant_problem == "payment_issue":
-        summary = "Customer experienced payment difficulties."
-    elif dominant_problem == "bad_service":
-        summary = "Customer service support was insufficient."
-    elif dominant_problem == "not_as_described":
-        summary = "Product differs from listing description."
-    else:
-        if overall_sentiment == "Positive":
-            summary = "Customer satisfied with purchase."
-        elif overall_sentiment == "Negative":
-            summary = "Customer experienced issues with order."
-        else:
-            summary = "Customer provided feedback on purchase."
-    
-    # ── Confidence ────────────────────────────────────────────────────────
-    confidence = random.randint(65, 95)
-    
-    return AspectSentiment(
-        delivery=score_aspect(delivery_keywords),
-        quality=score_aspect(quality_keywords),
-        accuracy=score_aspect(accuracy_keywords),
-        packaging=score_aspect(packaging_keywords),
-        customer_service=score_aspect(service_keywords),
-        value=score_aspect(value_keywords),
-        dominant_problem=dominant_problem,
-        overall_sentiment=overall_sentiment,
-        severity=severity,
-        summary=summary,
-        confidence=confidence,
+    # Try to parse JSON
+    try:
+        payload = json.loads(content)
+        logger.debug(f"JSON parsed successfully: sentiment={payload.get('overall_sentiment')}")
+    except json.JSONDecodeError as e:
+        logger.error(f"JSON decode failed. Response: {content[:200]}")
+        raise RuntimeError(
+            f"Model did not return valid JSON. Response: {content[:200]}"
+        ) from e
+
+    result = AspectSentiment(
+        delivery=payload.get("delivery"),
+        quality=payload.get("quality"),
+        accuracy=payload.get("accuracy"),
+        packaging=payload.get("packaging"),
+        customer_service=payload.get("customer_service"),
+        value=payload.get("value"),
+        dominant_problem=payload.get("dominant_problem", "none"),
+        overall_sentiment=payload.get("overall_sentiment", "Neutral"),
+        severity=payload.get("severity", "low"),
+        summary=payload.get("summary", ""),
+        confidence=int(payload.get("confidence", 0)),
     )
+    
+    logger.info(f"Analyzed text: sentiment={result.overall_sentiment}, severity={result.severity}")
+    return result
 
 
 # ── Quick smoke-test ─────────────────────────────────────────────────────────

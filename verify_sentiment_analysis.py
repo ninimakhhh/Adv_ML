@@ -117,9 +117,9 @@ for filepath, desc in data_files.items():
                 count = len(data) if isinstance(data, list) else len(data.get('to_review', []) + data.get('classified', []))
                 status = "✓"
                 info = f"{count} items"
-            except:
+            except (json.JSONDecodeError, ValueError) as e:
                 status = "✗"
-                info = "invalid JSON"
+                info = f"invalid JSON: {str(e)[:20]}"
     else:
         status = "✗"
         info = "missing"

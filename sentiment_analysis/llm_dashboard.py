@@ -32,6 +32,9 @@ from sentiment_analysis.aggregator import (
     top_problem_products,
     ASPECTS,
 )
+from shared.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 # ── Helper: convert hex to rgba with transparency ────────────────────────────
@@ -74,17 +77,22 @@ _EVENTS_PATH = Path(__file__).resolve().parents[1] / "data" / "mock" / "sentimen
 
 def render_llm_dashboard() -> None:
     st.markdown("### LLM Sentiment Analysis Dashboard")
+    logger.info("Rendering LLM Dashboard")
 
     # Guard: events file must exist
     if not _EVENTS_PATH.exists():
+        logger.warning(f"Events file not found at {_EVENTS_PATH}")
         _render_setup_guide()
         return
 
     events = load_events()
     if not events:
+        logger.warning("sentiment_events.json is empty")
         st.warning("sentiment_events.json is empty. Run the pipeline to populate it.")
         _render_setup_guide()
         return
+
+    logger.info(f"Rendering dashboard with {len(events)} events")
 
     # ── Top KPI strip ────────────────────────────────────────────────────────
     _render_kpi_strip(events)

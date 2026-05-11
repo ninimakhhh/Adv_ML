@@ -225,8 +225,24 @@ def _chat_dialog() -> None:
     else:
         user_input = st.chat_input("Type a message…", key="chat_dialog_input")
         if user_input:
-            send_user_message(user_input.strip())
-            # No st.rerun() — dialog fragment reruns after chat_input submit
+            # Render user message immediately — don't wait for next fragment rerun
+            with st.chat_message("user"):
+                st.markdown(user_input.strip())
+
+            # Call orchestrator (blocks during API call)
+            turn = send_user_message(user_input.strip())
+
+            # Render bot response immediately in the same cycle
+            bot_msg = _messages()[-1]
+            with st.chat_message("assistant", avatar="🤖"):
+                st.markdown(bot_msg["content"])
+
+            # Show escalation banner immediately if triggered
+            if bot_msg.get("escalated"):
+                st.warning(
+                    "⚡ A human agent has been notified and will be in touch via email.",
+                    icon="⚡",
+                )
 
 
 # ---------------------------------------------------------------------------

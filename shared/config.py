@@ -5,22 +5,27 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 # --- LLM keys ---
-GOOGLE_API_KEY: str = os.environ["GOOGLE_API_KEY"]
+DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY", "")
+DEEPSEEK_BASE_URL: str = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+DEEPSEEK_MODEL: str = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+
+ANTHROPIC_API_KEY: str | None = os.getenv("ANTHROPIC_API_KEY")
 OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
 
-# --- Reddit ---
-REDDIT_CLIENT_ID: str | None = os.getenv("REDDIT_CLIENT_ID")
-REDDIT_CLIENT_SECRET: str | None = os.getenv("REDDIT_CLIENT_SECRET")
-REDDIT_USER_AGENT: str = os.getenv("REDDIT_USER_AGENT", "cx-platform/1.0")
+if not DEEPSEEK_API_KEY:
+    raise EnvironmentError(
+        "DEEPSEEK_API_KEY is not set. "
+        "Add it to your .env file — see .env.example for the required variables."
+    )
+
+# --- Model defaults ---
+DEFAULT_DEEPSEEK_MODEL = DEEPSEEK_MODEL
+DEFAULT_CLAUDE_MODEL = "claude-sonnet-4-6"
 
 # --- Paths ---
 ROOT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT_DIR / "data"
 CHROMADB_DIR = ROOT_DIR / "chromadb_store"
-
-# --- Model defaults ---
-DEFAULT_CLAUDE_MODEL = "claude-sonnet-4-6"
-DEFAULT_EMBED_MODEL = "all-MiniLM-L6-v2"
 
 # --- RAG ---
 CHUNK_SIZE = 500

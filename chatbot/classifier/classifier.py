@@ -1,5 +1,5 @@
 """
-Intent classifier — maps a user message to a registry intent via Gemini.
+Intent classifier — maps a user message to a registry intent via LLMClient (DeepSeek).
 
 Usage:
     from chatbot.classifier.classifier import IntentClassifier
@@ -11,8 +11,6 @@ Usage:
 
 from __future__ import annotations
 
-import json
-import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,11 +20,9 @@ ROOT = Path(__file__).parent.parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from google import genai
-
+from shared.llm_client import LLMClient
 from chatbot.registry.loader import load_intents
 
-_MODEL = "gemini-2.0-flash"
 _MAX_CONTEXT_TURNS = 6
 
 
@@ -54,11 +50,11 @@ def _build_intent_list(intents: dict[str, dict]) -> str:
     return "\n".join(lines)
 
 
-def _build_prompt(
+def _build_messages(
     intents: dict[str, dict],
     user_message: str,
     conversation_context: list[dict],
-) -> str:
+) -> list[dict[str, str]]:
     intent_list = _build_intent_list(intents)
     intent_ids = ", ".join(f'"{k}"' for k in intents)
 
@@ -71,77 +67,48 @@ def _build_prompt(
     else:
         ctx_section = ""
 
-    return f"""You are an intent classifier for a customer service chatbot for a Portuguese e-commerce store.
+    system_prompt = f"""You are an intent classifier for a customer service chatbot for a Portuguese e-commerce store.
 
 Available intents and representative example phrases:
 {intent_list}
 
 Valid intent IDs: {intent_ids}
-{ctx_section}
-Latest user message: "{user_message}"
-
-Your task: classify the user message into the single best matching intent.
-
-Respond with ONLY valid JSON — no markdown fences, no extra text:
-{{
-  "intent_id": "<one of the valid intent IDs, or null if nothing fits>",
-  "confidence": <float 0.00–1.00>,
-  "alternatives": [
-    {{"intent_id": "<second best>", "confidence": <float>}},
-    {{"intent_id": "<third best>", "confidence": <float>}}
-  ],
-  "reasoning": "<one sentence: why this intent was chosen>"
-}}
 
 Rules:
 - intent_id must be exactly one of the valid IDs listed above, or null.
 - Set intent_id to null and confidence below 0.40 if no intent fits.
 - alternatives must be from the valid IDs; never repeat the chosen intent.
 - Calibrate confidence honestly — do not always return 0.99.
-- reasoning is for internal debugging only; keep it concise."""
+- reasoning is for internal debugging only; keep it concise.
+
+Respond with ONLY valid JSON matching this exact shape:
+{{
+  "intent_id": "<one of the valid intent IDs, or null>",
+  "confidence": <float 0.00-1.00>,
+  "alternatives": [
+    {{"intent_id": "<second best>", "confidence": <float>}},
+    {{"intent_id": "<third best>", "confidence": <float>}}
+  ],
+  "reasoning": "<one sentence>"
+}}"""
+
+    user_content = f"{ctx_section}Latest user message: \"{user_message}\""
+
+    return [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_content},
+    ]
 
 
-class IntentClassifier:
-    def __init__(self, api_key: Optional[str] = None) -> None:
-        key = api_key or os.getenv("GOOGLE_API_KEY", "")
-        self._client = genai.Client(api_key=key)
-        self._intents = load_intents()
-
-    def classify(
-        self,
-        user_message: str,
-        conversation_context: list[dict] | None = None,
-    ) -> ClassificationResult:
-        context = conversation_context or []
-        prompt = _build_prompt(self._intents, user_message, context)
-
-        try:
-            response = self._client.models.generate_content(
-                model=_MODEL,
-                contents=prompt,
-            )
-            raw = response.text.strip()
-        except Exception as exc:
-            return ClassificationResult(
-                intent_id=None,
-                confidence=0.0,
-                top_3_alternatives=[],
-                reasoning=f"API error: {exc}",
-            )
-
-        return _parse_response(raw, self._intents)
-
-
-def _parse_response(raw: str, intents: dict[str, dict]) -> ClassificationResult:
-    try:
-        text = raw
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        data = json.loads(text)
-    except (json.JSONDecodeError, IndexError):
-        return _FALLBACK
+def _parse_response(data: dict, intents: dict[str, dict]) -> ClassificationResult:
+    """Convert a parsed JSON dict into a ClassificationResult, validating all fields."""
+    if "error" in data:
+        return ClassificationResult(
+            intent_id=None,
+            confidence=0.0,
+            top_3_alternatives=[],
+            reasoning=f"API error: {data.get('error')}",
+        )
 
     valid_ids = set(intents.keys())
 
@@ -160,11 +127,34 @@ def _parse_response(raw: str, intents: dict[str, dict]) -> ClassificationResult:
         if alt_id in valid_ids and alt_id != intent_id:
             alternatives.append((alt_id, max(0.0, min(1.0, alt_conf))))
 
-    reasoning = str(data.get("reasoning", ""))
-
     return ClassificationResult(
         intent_id=intent_id,
         confidence=confidence,
         top_3_alternatives=alternatives,
-        reasoning=reasoning,
+        reasoning=str(data.get("reasoning", "")),
     )
+
+
+class IntentClassifier:
+    def __init__(self, llm: LLMClient | None = None) -> None:
+        self._llm = llm or LLMClient()
+        self._intents = load_intents()
+
+    def classify(
+        self,
+        user_message: str,
+        conversation_context: list[dict] | None = None,
+    ) -> ClassificationResult:
+        messages = _build_messages(self._intents, user_message, conversation_context or [])
+
+        try:
+            data = self._llm.chat(messages, response_format="json")
+        except Exception as exc:
+            return ClassificationResult(
+                intent_id=None,
+                confidence=0.0,
+                top_3_alternatives=[],
+                reasoning=f"API error: {exc}",
+            )
+
+        return _parse_response(data, self._intents)

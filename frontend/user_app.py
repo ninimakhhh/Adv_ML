@@ -23,7 +23,7 @@ from shared.data_loader import load_categories, get_sale_products, get_popular_p
 from shared.navigation import navigate_to
 from components.header import render_header
 from components.product_card import render_product_card
-from components.chatbot_widget import render_chatbot_placeholder
+from components.chatbot_widget import render_chatbot_widget
 
 _CSS_FILE = _FRONTEND / "styles" / "user_styles.css"
 
@@ -250,7 +250,7 @@ def _render_home() -> None:
     )
 
     _render_footer()
-    render_chatbot_placeholder()
+    render_chatbot_widget()
 
 
 # ── Routing ──────────────────────────────────────────────────────────────────

@@ -26,7 +26,7 @@ if str(ROOT) not in sys.path:
 from chatbot.classifier.classifier import ClassificationResult
 from chatbot.registry.loader import load_intents
 
-_DEFAULT_CONFIDENCE_THRESHOLD = 0.70
+_DEFAULT_CONFIDENCE_THRESHOLD = 0.85
 
 # Rule (b): user explicitly asks for a human
 _HANDOFF_KEYWORDS: list[str] = [

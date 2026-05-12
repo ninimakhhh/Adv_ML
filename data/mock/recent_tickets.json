@@ -6,7 +6,8 @@
       "subject": "Product stopped working after update",
       "raw_text": "I purchased the wireless charger last week and it worked fine for 5 days. After the latest software update on my phone, it stops charging completely. I've tried different cables and outlets. Very frustrated. Please help!",
       "suggested_category": "Bug",
-      "confidence": 92
+      "confidence": 92,
+      "product_id": null
     },
     {
       "id": "TCK-1002",
@@ -14,7 +15,8 @@
       "subject": "Refund request for wrong item",
       "raw_text": "Hi, I ordered the red phone case but received the blue one instead. I want to return it and get the correct color. Can you arrange a return label? I need this ASAP as a gift.",
       "suggested_category": "Returns",
-      "confidence": 88
+      "confidence": 88,
+      "product_id": null
     },
     {
       "id": "TCK-1003",
@@ -22,7 +24,8 @@
       "subject": "Package tracking issue - where is my order?",
       "raw_text": "My order #ORD-456789 was supposed to arrive 3 days ago. The tracking number shows it left the facility on April 28th but I haven't received it yet. It's showing as 'in transit' for 5 days now. Very concerning.",
       "suggested_category": "Shipping",
-      "confidence": 85
+      "confidence": 85,
+      "product_id": "prod_k09"
     },
     {
       "id": "TCK-1004",
@@ -30,7 +33,8 @@
       "subject": "Cannot process my credit card",
       "raw_text": "I tried to check out 4 times but keep getting an error message saying 'payment declined' even though I have sufficient funds and my card works everywhere else. This is very frustrating. What's wrong?",
       "suggested_category": "Payments",
-      "confidence": 90
+      "confidence": 90,
+      "product_id": null
     },
     {
       "id": "TCK-1005",
@@ -38,7 +42,8 @@
       "subject": "Your customer service is amazing!",
       "raw_text": "Just wanted to say thank you! I had an issue with my order and the support team resolved it within 2 hours. I've been a customer for 3 years and this is why I keep coming back. Keep it up!",
       "suggested_category": "Other",
-      "confidence": 72
+      "confidence": 72,
+      "product_id": null
     }
   ],
   "classified": [
@@ -52,7 +57,8 @@
       "assigned_queue": "Technical Support",
       "status": "In Progress",
       "created_at": "2026-05-02T14:30:00Z",
-      "resolved_at": null
+      "resolved_at": null,
+      "product_id": null
     },
     {
       "id": "TCK-0951",
@@ -64,7 +70,8 @@
       "assigned_queue": "Logistics",
       "status": "Resolved",
       "created_at": "2026-05-01T10:15:00Z",
-      "resolved_at": "2026-05-02T16:45:00Z"
+      "resolved_at": "2026-05-02T16:45:00Z",
+      "product_id": "prod_b11"
     },
     {
       "id": "TCK-0952",
@@ -76,7 +83,8 @@
       "assigned_queue": "Returns",
       "status": "In Progress",
       "created_at": "2026-05-02T09:20:00Z",
-      "resolved_at": null
+      "resolved_at": null,
+      "product_id": "prod_f07"
     },
     {
       "id": "TCK-0953",
@@ -88,7 +96,8 @@
       "assigned_queue": "Payments",
       "status": "Resolved",
       "created_at": "2026-04-30T18:50:00Z",
-      "resolved_at": "2026-05-01T11:30:00Z"
+      "resolved_at": "2026-05-01T11:30:00Z",
+      "product_id": null
     },
     {
       "id": "TCK-0954",
@@ -100,7 +109,8 @@
       "assigned_queue": "General",
       "status": "Resolved",
       "created_at": "2026-05-02T12:00:00Z",
-      "resolved_at": "2026-05-02T13:45:00Z"
+      "resolved_at": "2026-05-02T13:45:00Z",
+      "product_id": null
     },
     {
       "id": "TCK-0955",
@@ -110,9 +120,10 @@
       "sentiment": "Negative",
       "confidence": 88,
       "assigned_queue": "Logistics",
-      "status": "Waiting",
+      "status": "In Progress",
       "created_at": "2026-05-01T15:30:00Z",
-      "resolved_at": null
+      "resolved_at": null,
+      "product_id": "prod_k15"
     },
     {
       "id": "TCK-0956",
@@ -124,7 +135,8 @@
       "assigned_queue": "Technical Support",
       "status": "In Progress",
       "created_at": "2026-05-02T08:20:00Z",
-      "resolved_at": null
+      "resolved_at": null,
+      "product_id": null
     },
     {
       "id": "TCK-0957",
@@ -136,7 +148,8 @@
       "assigned_queue": "Returns",
       "status": "Resolved",
       "created_at": "2026-05-02T11:45:00Z",
-      "resolved_at": "2026-05-02T12:30:00Z"
+      "resolved_at": "2026-05-02T12:30:00Z",
+      "product_id": null
     }
   ]
 }

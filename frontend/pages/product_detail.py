@@ -127,6 +127,9 @@ def render_product_detail() -> None:
               <span class="pd-stars">{stars_html}</span>
               <span>{product['rating']} &nbsp;·&nbsp; {product['review_count']} reviews</span>
             </div>
+            <div style="font-size:12px;color:#888;margin:4px 0 12px 0">
+              Product code: <code style="background:#F5F5F5;padding:1px 6px;border-radius:4px;color:#555">{product['id']}</code>
+            </div>
             <div style="margin-bottom:16px">
               <span class="{price_class}">€{product['price']:.2f}</span>
               {"<span class='pd-price-orig'>€" + f"{product['original_price']:.2f}" + "</span>" if product.get('is_on_sale') else ""}

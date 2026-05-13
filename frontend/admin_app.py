@@ -12,6 +12,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
+import json
 
 from components.admin_sidebar import render_admin_sidebar
 from components.metric_card import metric_card, small_metric
@@ -21,6 +22,8 @@ from shared.db.repository import TicketRepository
 from shared.db.migrate import _DB_PATH, migrate
 from chatbot.registry.loader import load_intents
 from chatbot.feedback.analyzer import weekly_review, export_labeled_jsonl
+
+from sentiment_analysis.llm_dashboard import render_llm_dashboard
 
 # Page config
 st.set_page_config(layout="wide", page_title="Olá Market - Admin Dashboard")
@@ -91,7 +94,7 @@ st.markdown("""
 
 selected_tab = st.radio(
     "Navigation",
-    ["Dashboard", "Tickets", "Bot Improvement", "LLM Dashboard"],
+    ["Dashboard", "Tickets", "LLM Dashboard"],
     horizontal=True,
     key="main_tabs",
     label_visibility="collapsed",
@@ -128,114 +131,178 @@ def _path_badge(path: str) -> str:
 # ═══════════════════════════════════════════════════════════════════════════
 
 if selected_tab == "Dashboard":
-    m = repo.get_metrics()
-    daily = repo.get_daily_counts(days=30)
-    insight = repo.get_escalation_insight()
+    kpi = metrics_data["kpi_summary"]
+    
+    # TOP KPI STRIP
+    st.markdown("### Key Performance Indicators · Last 30 days")
+    st.caption("Historical aggregates from the last 30 days of support activity. These numbers reflect the full ticket volume, not the smaller live queue shown in the Tickets tab.")
 
-    open_count      = m["by_status"].get("open", 0)
-    resolved_count  = m["by_status"].get("resolved", 0) + m["by_status"].get("closed", 0)
-
-    # ── KPI strip ───────────────────────────────────────────────────────────
-    st.markdown("### Key Performance Indicators")
-
+    # Row 1: Tickets
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        metric_card("Total Tickets", str(m["total_tickets"]), icon="📥")
+        metric_card(
+            "Created", f"{kpi['tickets']['created']}", icon="📥",
+            description="Total support tickets submitted in the last 30 days (historical aggregate).",
+        )
     with col2:
-        metric_card("Resolved", str(resolved_count), icon="✅")
+        metric_card(
+            "Solved", f"{kpi['tickets']['solved']}", icon="✅",
+            description="Tickets marked resolved over the last 30 days — by the bot or a human agent.",
+        )
     with col3:
-        metric_card("Open", str(open_count), icon="🔓")
+        metric_card(
+            "Open", f"{kpi['tickets']['open']}", icon="🔓",
+            description="Tickets from the last 30 days still awaiting a first or final response.",
+        )
     with col4:
-        metric_card("Escalated", str(m["escalated"]), icon="🔄")
+        metric_card(
+            "Reopened", f"{kpi['tickets']['reopened']}", icon="🔄",
+            description="Previously resolved tickets re-opened by the customer in the last 30 days.",
+        )
 
+    # Row 2: AI Performance
     col1, col2, col3 = st.columns(3)
     with col1:
-        metric_card("Auto-Resolution Rate", f"{m['bot_resolution_rate_pct']}%", icon="🤖")
+        metric_card(
+            "Auto-Resolution", f"{kpi['ai_performance']['auto_resolution_rate']}%", icon="🤖",
+            description="Share of tickets fully resolved by the bot with no human intervention (last 30 days).",
+        )
     with col2:
-        metric_card("AI Accuracy", f"{m['ai_accuracy_pct']}%", icon="🎯")
+        metric_card(
+            "Auto-Routed", f"{kpi['ai_performance']['tickets_auto_routed']}", icon="📊",
+            description="Tickets automatically classified and assigned to the correct queue (last 30 days).",
+        )
     with col3:
-        csat = m["avg_csat"]
-        metric_card("Avg CSAT", f"{csat:.1f} / 5" if csat else "—", icon="⭐")
+        metric_card(
+            "AI Accuracy", f"{kpi['ai_performance']['accuracy']}%", icon="🎯",
+            description="Intent classification accuracy verified against human-reviewed labels (last 30 days).",
+        )
 
+    # Row 3: Response Times
     col1, col2 = st.columns(2)
     with col1:
-        metric_card("Avg First Reply", f"{m['avg_first_reply_min']}m", icon="⏱️")
+        metric_card(
+            "Avg First Reply",
+            f"{kpi['response_times']['avg_first_reply_minutes']}m",
+            icon="⏱️",
+            description="Median time from ticket creation to the first bot or agent response (last 30 days).",
+        )
     with col2:
-        metric_card("Avg Resolution Time", f"{m['avg_resolution_hours']}h", icon="⏲️")
-
+        metric_card(
+            "Avg Resolution Time",
+            f"{kpi['response_times']['avg_full_resolution_hours']:.1f}h",
+            icon="⏲️",
+            description="Median time from ticket creation to final resolution or closure (last 30 days).",
+        )
+    
     st.markdown("---")
-
-    # ── Tickets Created vs Solved (30 days) ─────────────────────────────────
+    
+    # ROW 1: MAIN CHARTS
     st.markdown("### Trends")
-
-    if daily:
-        df_daily = pd.DataFrame(daily)
-        df_daily["date"] = pd.to_datetime(df_daily["date"])
-
-        col1, col2 = st.columns([0.6, 0.4])
-        with col1:
-            fig = go.Figure()
-            fig.add_trace(go.Bar(
-                x=df_daily["date"], y=df_daily["created"],
-                name="Created", marker_color="#4F46E5", opacity=0.85,
-            ))
-            fig.add_trace(go.Scatter(
-                x=df_daily["date"], y=df_daily["resolved"],
-                name="Resolved", mode="lines+markers",
-                line=dict(color="#10B981", width=3),
-            ))
-            fig.update_layout(
-                title="Tickets Created vs Resolved (30 Days)",
-                xaxis_title="Date", yaxis_title="Count",
-                hovermode="x unified",
-                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=380, margin=dict(l=0, r=0, t=40, b=0),
-            )
-            st.plotly_chart(fig, use_container_width=True)
-
-        with col2:
-            # Resolution path breakdown
-            path_labels = list(m["top_intents"].keys()) or ["(none)"]
-            path_values = list(m["top_intents"].values()) or [1]
-            fig2 = go.Figure(data=[go.Bar(
-                x=path_values, y=[_intent_label(l) for l in path_labels],
-                orientation="h",
-                marker_color="#4F46E5",
-            )])
-            fig2.update_layout(
-                title="Tickets by Intent (Top 10)",
-                height=380, margin=dict(l=0, r=0, t=40, b=0),
-                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                yaxis=dict(autorange="reversed"),
-            )
-            st.plotly_chart(fig2, use_container_width=True)
-    else:
-        st.info("No ticket data in the last 30 days yet. Send some chatbot messages to populate the charts.")
-
-    st.markdown("---")
-
-    # ── Distribution charts ──────────────────────────────────────────────────
-    st.markdown("### Distributions")
-    col1, col2, col3 = st.columns(3)
-
+    
+    col1, col2 = st.columns([0.6, 0.4])
+    
+    # LEFT: Tickets Created vs Solved
     with col1:
-        ch = m["by_channel"] or {"chat": 1}
-        fig = go.Figure(data=[go.Pie(
-            labels=list(ch.keys()), values=list(ch.values()),
-            hole=0.4, marker_colors=["#4F46E5","#10B981","#F59E0B","#EF4444"],
-        )])
-        fig.update_layout(title="Tickets by Channel", height=320, margin=dict(l=0,r=0,t=40,b=0))
+        daily_data = pd.DataFrame(metrics_data["daily_metrics"])
+        daily_data["date"] = pd.to_datetime(daily_data["date"])
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=daily_data["date"],
+            y=daily_data["created"],
+            name="Created",
+            marker_color="#4F46E5",
+            opacity=0.8
+        ))
+        fig.add_trace(go.Scatter(
+            x=daily_data["date"],
+            y=daily_data["solved"],
+            name="Solved",
+            mode="lines",
+            line=dict(color="#10B981", width=3)
+        ))
+        fig.update_layout(
+            title="Tickets Created vs Solved (30 Days)",
+            xaxis_title="Date",
+            yaxis_title="Count",
+            hovermode="x unified",
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            height=400,
+            margin=dict(l=0, r=0, t=40, b=0)
+        )
         st.plotly_chart(fig, use_container_width=True)
-
+    
+    # RIGHT: Response Time Trends
     with col2:
-        st_ = m["by_status"] or {"open": 1}
-        fig = go.Figure(data=[go.Pie(
-            labels=list(st_.keys()), values=list(st_.values()),
-            hole=0.4, marker_colors=["#F59E0B","#3B82F6","#10B981","#6B7280"],
-        )])
-        fig.update_layout(title="Tickets by Status", height=320, margin=dict(l=0,r=0,t=40,b=0))
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=daily_data["date"],
+            y=daily_data["first_reply_time"],
+            name="First Reply",
+            fill="tozeroy",
+            line=dict(color="#F59E0B"),
+        ))
+        fig.add_trace(go.Scatter(
+            x=daily_data["date"],
+            y=daily_data["resolution_time"],
+            name="Full Resolution",
+            fill="tozeroy",
+            line=dict(color="#EF4444"),
+        ))
+        fig.update_layout(
+            title="Response Time Trends",
+            xaxis_title="Date",
+            yaxis_title="Minutes/Hours",
+            hovermode="x unified",
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            height=400,
+            margin=dict(l=0, r=0, t=40, b=0)
+        )
         st.plotly_chart(fig, use_container_width=True)
-
+    
+    st.markdown("---")
+    
+    # ROW 2: DISTRIBUTIONS
+    st.markdown("### Distributions")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    # Tickets by Channel
+    with col1:
+        channel_data = metrics_data["channel_distribution"]
+        fig = go.Figure(data=[go.Pie(
+            labels=list(channel_data.keys()),
+            values=list(channel_data.values()),
+            hole=0.4,
+            marker_colors=["#4F46E5", "#10B981", "#F59E0B", "#EF4444"]
+        )])
+        fig.update_layout(
+            title="Tickets by Channel",
+            height=350,
+            margin=dict(l=0, r=0, t=40, b=0)
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    
+    # Tickets by Type
+    with col2:
+        type_data = metrics_data["ticket_type_distribution"]
+        fig = go.Figure(data=[go.Pie(
+            labels=list(type_data.keys()),
+            values=list(type_data.values()),
+            hole=0.4,
+            marker_colors=["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#6366F1"]
+        )])
+        fig.update_layout(
+            title="Tickets by Type",
+            height=350,
+            margin=dict(l=0, r=0, t=40, b=0)
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    
+    # Satisfaction Score
     with col3:
         satisfaction = metrics_data["satisfaction_score"]
         fig = go.Figure(data=[go.Pie(
@@ -260,36 +327,36 @@ if selected_tab == "Dashboard":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Positive</p>
             <p style="color: #10B981; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{sentiment_data['Positive']}</p>
             <p style="color: #6B7280; font-size: 12px; margin: 4px 0 0 0;">{int(sentiment_data['Positive'] / sum(sentiment_data.values()) * 100)}%</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col2:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Neutral</p>
             <p style="color: #6B7280; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{sentiment_data['Neutral']}</p>
             <p style="color: #6B7280; font-size: 12px; margin: 4px 0 0 0;">{int(sentiment_data['Neutral'] / sum(sentiment_data.values()) * 100)}%</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col3:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Negative</p>
             <p style="color: #EF4444; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{sentiment_data['Negative']}</p>
             <p style="color: #6B7280; font-size: 12px; margin: 4px 0 0 0;">{int(sentiment_data['Negative'] / sum(sentiment_data.values()) * 100)}%</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     
     st.markdown("---")
     
     # AI INSIGHT BANNER
-    st.markdown("""
+    st.html("""
     <div style="
         background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
         border-radius: 8px;
@@ -303,27 +370,15 @@ if selected_tab == "Dashboard":
                 <p style="margin: 0; line-height: 1.5;">
                     Negative sentiment about shipping increased 23% this week. Consider proactive communication about delivery times or offering expedited shipping options.
                 </p>
-                <button style="
-                    background-color: rgba(255,255,255,0.2);
-                    color: white;
-                    border: 1px solid rgba(255,255,255,0.4);
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    margin-top: 12px;
-                    font-weight: 500;
-                ">
-                    View Details →
-                </button>
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# TAB 2: TICKETS (HUMAN-IN-THE-LOOP)
+# ═══════════════════════════════════════════════════════════════════════════════
 
-# ═══════════════════════════════════════════════════════════════════════════
-# TAB 2: TICKETS
-# ═══════════════════════════════════════════════════════════════════════════
 
 elif selected_tab == "Tickets":
     st.markdown("### Ticket Management")
@@ -494,27 +549,6 @@ elif selected_tab == "Tickets":
 # ═══════════════════════════════════════════════════════════════════════════
 
 elif selected_tab == "LLM Dashboard":
-    st.markdown("### LLM Performance Dashboard")
-    
-    st.markdown("""
-    ✨ **Coming soon** — advanced LLM monitoring and optimization insights
-    
-    # TODO: Add features
-    - Token usage analytics
-    - Latency monitoring
-    - Cost tracking
-    - Prompt performance analysis
-    - Model A/B testing results
-    - Cache hit rates
-    """)
-    
-    st.info("""
-    This dashboard will provide detailed insights into LLM performance, including:
-    - Real-time token consumption tracking
-    - API latency and response time analysis
-    - Cost optimization recommendations
-    - Prompt effectiveness metrics
-    - Model comparison data
-    """)
+    render_llm_dashboard()
 
 # Render chatbot widget

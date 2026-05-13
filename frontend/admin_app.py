@@ -80,6 +80,9 @@ with open("data/mock/admin_metrics.json") as f:
 with open("data/mock/recent_chats.json") as f:
     chats_data = json.load(f)
 
+with open("data/mock/products.json") as f:
+    products_by_id = {p["id"]: p["name"] for p in json.load(f)}
+
 # Render sidebar
 render_admin_sidebar()
 
@@ -383,70 +386,127 @@ if selected_tab == "Dashboard":
 elif selected_tab == "Tickets":
     st.markdown("### Ticket Management")
 
-     # ── Filter bar ───────────────────────────────────────────────────────────
-    STATUS_OPTIONS = {
-        "All": None,
-        "Open": "open",
-        "In Progress": "in_progress",
-        "Resolved": "resolved",
-        "Closed": "closed",
-    }
+    # Build the union of product_ids referenced by any ticket (for the Product filter)
+    all_tickets_for_products = st.session_state.pending_reviews + st.session_state.auto_classified
+    product_ids_in_tickets = sorted({t.get("product_id") for t in all_tickets_for_products if t.get("product_id")})
+    product_filter_options = ["All"] + product_ids_in_tickets
 
-    col1, col2, col3, col4 = st.columns(4)
+    def _format_product_option(pid: str) -> str:
+        if pid == "All":
+            return "All"
+        return f"{pid} — {products_by_id.get(pid, 'Unknown')}"
+
+    # TOP FILTER BAR
+    col1, col2, col3, col4, col5 = st.columns(5)
+
     with col1:
-        filter_status_label = st.selectbox(
-            "Status", list(STATUS_OPTIONS.keys()), key="f_status"
-        )
-        filter_status = STATUS_OPTIONS[filter_status_label]      
-
+        filter_status = st.selectbox("Status", ["All", "Open", "In Progress", "Resolved"])
     with col2:
-        intent_options = {"All": "All"} | INTENT_OPTIONS
-        filter_intent_label = st.selectbox("Intent / Category", list(intent_options.values()), key="f_intent")
-        filter_intent = next((k for k, v in intent_options.items() if v == filter_intent_label), "All")
+        filter_urgency = st.selectbox("Urgency", ["All", "High", "Medium", "Low"])
     with col3:
-        filter_date = st.selectbox("Time Range", ["All time", "Last 7 days", "Last 30 days"], key="f_date")
+        filter_category = st.selectbox("Category", ["All", "Bug", "Shipping", "Returns", "Payments", "Other"])
     with col4:
         filter_date = st.selectbox("Time Range", ["Last 7 days", "Last 30 days", "All time"])
-    
+    with col5:
+        filter_product = st.selectbox("Product", product_filter_options, format_func=_format_product_option)
+
     st.markdown("---")
-    
+
     # SECTION 1: MANUAL CLASSIFICATION
     st.markdown("### 🔍 Manual Classification (To Review)")
-    
-    if len(st.session_state.pending_reviews) > 0:
-        st.markdown(f"**{len(st.session_state.pending_reviews)} tickets pending review**")
-        
-        for idx, ticket in enumerate(st.session_state.pending_reviews):
+
+    # The Product filter also applies to pending review tickets.
+    if filter_product != "All":
+        pending_visible_indices = [
+            i for i, t in enumerate(st.session_state.pending_reviews)
+            if t.get("product_id") == filter_product
+        ]
+    else:
+        pending_visible_indices = list(range(len(st.session_state.pending_reviews)))
+
+    if len(st.session_state.pending_reviews) == 0:
+        st.info("✨ No pending reviews! All tickets have been classified.")
+    elif len(pending_visible_indices) == 0:
+        st.info("No pending tickets match the selected product filter.")
+    else:
+        header_col, btn_col = st.columns([3, 1])
+        with header_col:
+            st.markdown(f"**{len(pending_visible_indices)} of {len(st.session_state.pending_reviews)} tickets pending review**")
+        with btn_col:
+            if st.button("🤖 Auto-classify pending", key="auto_classify_all", width="stretch"):
+                with st.status("Classifying tickets with Claude...", expanded=True) as status:
+                    for t in st.session_state.pending_reviews:
+                        st.write(f"→ {t['id']}: {t['subject']}")
+                        try:
+                            result = classify_ticket(t["subject"], t["raw_text"])
+                        except Exception as exc:
+                            status.update(label=f"Failed on {t['id']}: {exc}", state="error")
+                            st.exception(exc)
+                            break
+                        t["suggested_category"] = result.category
+                        t["confidence"] = result.confidence
+                        t["sentiment"] = result.sentiment
+                        t["urgency"] = result.urgency
+                        t["assigned_queue"] = result.assigned_queue
+                        t["reasoning"] = result.reasoning
+                    else:
+                        status.update(label="All tickets classified ✅", state="complete")
+                st.rerun()
+
+        for idx in pending_visible_indices:
+            ticket = st.session_state.pending_reviews[idx]
             with st.container(border=True):
                 col1, col2, col3, col4 = st.columns([1, 2, 2, 2])
-                
+
                 with col1:
                     st.caption(f"**{ticket['id']}**")
-                
+
                 with col2:
                     st.caption(f"👤 {ticket['customer']}")
-                
+
                 with col3:
                     st.caption(f"**{ticket['subject']}**")
-                
+
                 with col4:
-                    confidence_color = "#10B981" if ticket['confidence'] > 85 else "#F59E0B"
                     st.caption(f"🤖 {ticket['confidence']}%")
-                
+
+                if ticket.get("product_id"):
+                    st.caption(f"📦 {ticket['product_id']} — {products_by_id.get(ticket['product_id'], 'Unknown')}")
+
                 # Expand to show details
                 with st.expander("View Details"):
                     st.markdown(f"**Raw Text:**\n\n{ticket['raw_text']}")
-                    
+
+                    if ticket.get("reasoning"):
+                        st.markdown(f"**AI reasoning:** _{ticket['reasoning']}_")
+
+                    if ticket.get("sentiment") or ticket.get("urgency"):
+                        badges = []
+                        if ticket.get("sentiment"):
+                            badges.append(f"💬 Sentiment: **{ticket['sentiment']}**")
+                        if ticket.get("urgency"):
+                            badges.append(f"⏱️ Urgency: **{ticket['urgency']}**")
+                        if ticket.get("assigned_queue"):
+                            badges.append(f"📥 Queue: **{ticket['assigned_queue']}**")
+                        st.markdown(" &nbsp;·&nbsp; ".join(badges))
+
                     col1, col2 = st.columns(2)
-                    
+
                     with col1:
                         st.markdown(f"**Suggested Category:** {ticket['suggested_category']} ({ticket['confidence']}%)")
+                        category_options = ["Bug", "Shipping", "Returns", "Payments", "Other"]
+                        default_idx = (
+                            category_options.index(ticket["suggested_category"])
+                            if ticket["suggested_category"] in category_options
+                            else 0
+                        )
                         selected_category = st.selectbox(
                             "Confirm or change category:",
-                            ["Bug", "Shipping", "Returns", "Payments", "Other"],
+                            category_options,
+                            index=default_idx,
                             key=f"category_{idx}"
                         )
-                    
+
                     with col2:
                         st.markdown("**Actions:**")
                         if st.button("✅ Approve Classification", key=f"approve_{idx}", width="stretch"):
@@ -455,59 +515,198 @@ elif selected_tab == "Tickets":
                                 "id": ticket["id"],
                                 "customer": ticket["customer"],
                                 "subject": ticket["subject"],
+                                "raw_text": ticket.get("raw_text", ""),
                                 "category": selected_category,
-                                "sentiment": "Neutral",
+                                "sentiment": ticket.get("sentiment", "Neutral"),
+                                "urgency": ticket.get("urgency", "Medium"),
                                 "confidence": ticket["confidence"],
-                                "assigned_queue": f"{selected_category} Support",
+                                "assigned_queue": ticket.get(
+                                    "assigned_queue",
+                                    CATEGORY_TO_QUEUE.get(selected_category, "General"),
+                                ),
                                 "status": "In Progress",
                                 "created_at": datetime.now().isoformat() + "Z",
-                                "resolved_at": None
+                                "resolved_at": None,
+                                "product_id": ticket.get("product_id"),
                             }
                             st.session_state.auto_classified.append(classified_ticket)
                             st.session_state.pending_reviews.pop(idx)
                             st.rerun()
-    else:
-        st.info("✨ No pending reviews! All tickets have been classified.")
-    
-    st.markdown("---")
-    
-    # SECTION 2: AUTOMATICALLY CLASSIFIED
-    st.markdown("### ✅ Automatically Classified Tickets")
-    
-    if len(st.session_state.auto_classified) > 0:
-        st.markdown(f"**{len(st.session_state.auto_classified)} automatically classified tickets**")
-        
-        # Create dataframe for display
-        classified_df = pd.DataFrame(st.session_state.auto_classified)
-        
-        # Format for display
-        display_df = classified_df[[
-            "id", "customer", "subject", "category", "sentiment", "confidence", "assigned_queue", "status"
-        ]].copy()
-        
-        display_df["confidence"] = display_df["confidence"].astype(str) + "%"
-        
-        st.dataframe(
-            display_df,
-            width="stretch",
-            hide_index=True,
-            column_config={
-                "id": st.column_config.TextColumn("ID", width=80),
-                "customer": st.column_config.TextColumn("Customer", width=120),
-                "subject": st.column_config.TextColumn("Subject", width=150),
-                "category": st.column_config.TextColumn("Category", width=100),
-                "sentiment": st.column_config.TextColumn("Sentiment", width=100),
-                "confidence": st.column_config.TextColumn("Confidence", width=80),
-                "assigned_queue": st.column_config.TextColumn("Queue", width=120),
-                "status": st.column_config.TextColumn("Status", width=100),
-            }
-        )
-    else:
-        st.info("No automatically classified tickets yet.")
-    
+
     st.markdown("---")
 
-    # ── Tickets-tab KPI mini cards ───────────────────────────────────────────
+    # SECTION 2: AUTOMATICALLY CLASSIFIED
+    st.markdown("### ✅ Automatically Classified Tickets")
+
+    if len(st.session_state.auto_classified) == 0:
+        st.info("No automatically classified tickets yet.")
+    else:
+        # Apply filters
+        now = datetime.now()
+        if filter_date == "Last 7 days":
+            date_threshold = now - timedelta(days=7)
+        elif filter_date == "Last 30 days":
+            date_threshold = now - timedelta(days=30)
+        else:
+            date_threshold = None
+
+        def _ticket_matches(t: dict) -> bool:
+            if filter_status != "All" and t.get("status") != filter_status:
+                return False
+            if filter_urgency != "All" and t.get("urgency", "Medium") != filter_urgency:
+                return False
+            if filter_category != "All" and t.get("category") != filter_category:
+                return False
+            if filter_product != "All" and t.get("product_id") != filter_product:
+                return False
+            if date_threshold is not None:
+                created_at = t.get("created_at")
+                if not created_at:
+                    return False
+                ts = pd.to_datetime(created_at).tz_localize(None)
+                if ts < date_threshold:
+                    return False
+            return True
+
+        filtered_classified = [t for t in st.session_state.auto_classified if _ticket_matches(t)]
+
+        st.markdown(f"**Showing {len(filtered_classified)} of {len(st.session_state.auto_classified)} classified tickets**")
+
+        if len(filtered_classified) == 0:
+            st.info("No classified tickets match the current filters.")
+        else:
+            # Create dataframe for display
+            classified_df = pd.DataFrame(filtered_classified)
+            classified_df["product"] = classified_df["product_id"].apply(
+                lambda pid: products_by_id.get(pid, "—") if pid else "—"
+            )
+            if "urgency" not in classified_df.columns:
+                classified_df["urgency"] = "Medium"
+
+            display_df = classified_df[[
+                "id", "customer", "subject", "product", "category", "sentiment", "urgency", "confidence", "assigned_queue", "status"
+            ]].copy()
+
+            display_df["confidence"] = display_df["confidence"].astype(str) + "%"
+
+            st.dataframe(
+                display_df,
+                width="stretch",
+                hide_index=True,
+                column_config={
+                    "id": st.column_config.TextColumn("ID", width=80),
+                    "customer": st.column_config.TextColumn("Customer", width=120),
+                    "subject": st.column_config.TextColumn("Subject", width=150),
+                    "product": st.column_config.TextColumn("Product", width=160),
+                    "category": st.column_config.TextColumn("Category", width=100),
+                    "sentiment": st.column_config.TextColumn("Sentiment", width=100),
+                    "urgency": st.column_config.TextColumn("Urgency", width=80),
+                    "confidence": st.column_config.TextColumn("Confidence", width=80),
+                    "assigned_queue": st.column_config.TextColumn("Queue", width=120),
+                    "status": st.column_config.TextColumn("Status", width=100),
+                }
+            )
+
+            # ─── MANAGE TICKET PANEL ──────────────────────────────────────────
+            st.markdown("#### Manage ticket")
+            manage_options = [None] + [t["id"] for t in filtered_classified]
+            selected_id = st.selectbox(
+                "Select ticket to manage",
+                manage_options,
+                format_func=lambda x: "—" if x is None else x,
+                key="manage_select",
+            )
+
+            if selected_id is not None:
+                # Find the live reference in session_state (not the filtered copy)
+                target = next(
+                    (t for t in st.session_state.auto_classified if t["id"] == selected_id),
+                    None,
+                )
+                if target is not None:
+                    with st.container(border=True):
+                        info_col, edit_col = st.columns(2)
+
+                        with info_col:
+                            st.markdown(f"**Customer:** {target['customer']}")
+                            st.markdown(f"**Subject:** {target['subject']}")
+                            pid = target.get("product_id")
+                            product_label = f"`{pid}` — {products_by_id.get(pid, 'Unknown')}" if pid else "—"
+                            st.markdown(f"**Product:** {product_label}")
+                            st.markdown(f"**Created at:** {target.get('created_at', '—')}")
+                            st.markdown(f"**Resolved at:** {target.get('resolved_at') or '—'}")
+                            st.markdown(f"**AI confidence:** {target.get('confidence', 0)}%")
+                            st.markdown(f"**Sentiment:** {target.get('sentiment', 'Neutral')}")
+
+                        with edit_col:
+                            category_options = ["Bug", "Shipping", "Returns", "Payments", "Other"]
+                            queue_options = ["Technical Support", "Logistics", "Returns", "Payments", "General"]
+                            urgency_options = ["High", "Medium", "Low"]
+                            status_options = ["Open", "In Progress", "Resolved"]
+
+                            cur_category = target.get("category", "Other")
+                            cur_queue = target.get("assigned_queue", CATEGORY_TO_QUEUE.get(cur_category, "General"))
+                            cur_urgency = target.get("urgency", "Medium")
+                            cur_status = target.get("status", "In Progress")
+
+                            new_category = st.selectbox(
+                                "Category",
+                                category_options,
+                                index=category_options.index(cur_category) if cur_category in category_options else 0,
+                                key=f"manage_cat_{selected_id}",
+                            )
+                            new_queue = st.selectbox(
+                                "Assigned queue",
+                                queue_options,
+                                index=queue_options.index(cur_queue) if cur_queue in queue_options else queue_options.index(CATEGORY_TO_QUEUE.get(new_category, "General")),
+                                key=f"manage_queue_{selected_id}",
+                            )
+                            new_urgency = st.selectbox(
+                                "Urgency",
+                                urgency_options,
+                                index=urgency_options.index(cur_urgency) if cur_urgency in urgency_options else 1,
+                                key=f"manage_urg_{selected_id}",
+                            )
+                            new_status = st.selectbox(
+                                "Status",
+                                status_options,
+                                index=status_options.index(cur_status) if cur_status in status_options else 1,
+                                key=f"manage_status_{selected_id}",
+                            )
+
+                            reclass_col, save_col = st.columns(2)
+                            with reclass_col:
+                                if st.button("🤖 Re-classify with AI", key=f"manage_reclass_{selected_id}", width="stretch"):
+                                    try:
+                                        raw = target.get("raw_text") or target.get("subject", "")
+                                        result = classify_ticket(target["subject"], raw)
+                                        target["category"] = result.category
+                                        target["sentiment"] = result.sentiment
+                                        target["urgency"] = result.urgency
+                                        target["assigned_queue"] = result.assigned_queue
+                                        target["confidence"] = result.confidence
+                                        st.success(f"Re-classified as **{result.category}** ({result.confidence}% confidence).")
+                                        st.rerun()
+                                    except Exception as exc:
+                                        st.error(f"Re-classification failed: {exc}")
+
+                            with save_col:
+                                if st.button("💾 Save changes", key=f"manage_save_{selected_id}", width="stretch"):
+                                    target["category"] = new_category
+                                    target["assigned_queue"] = new_queue
+                                    target["urgency"] = new_urgency
+                                    previous_status = target.get("status")
+                                    target["status"] = new_status
+                                    if new_status == "Resolved" and not target.get("resolved_at"):
+                                        target["resolved_at"] = datetime.now().isoformat() + "Z"
+                                    elif new_status != "Resolved" and previous_status == "Resolved":
+                                        target["resolved_at"] = None
+                                    st.success("Changes saved.")
+                                    st.rerun()
+
+    st.markdown("---")
+    
+    # KPI MINI CARDS
     st.markdown("### Performance Metrics")
     
     total_tickets = len(st.session_state.pending_reviews) + len(st.session_state.auto_classified)
@@ -516,33 +715,33 @@ elif selected_tab == "Tickets":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Auto-Classified</p>
             <p style="color: #4F46E5; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{int(auto_classified_pct)}%</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col2:
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Pending Review</p>
             <p style="color: #F59E0B; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{len(st.session_state.pending_reviews)}</p>
         </div>
-        """, unsafe_allow_html=True)
-    
+        """)
+
     with col3:
         avg_confidence = (
             sum(t["confidence"] for t in st.session_state.pending_reviews) / len(st.session_state.pending_reviews)
             if len(st.session_state.pending_reviews) > 0
             else 0
         )
-        st.markdown(f"""
+        st.html(f"""
         <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="color: #6B7280; font-size: 12px; margin: 0;">Avg Confidence</p>
             <p style="color: #10B981; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{int(avg_confidence)}%</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
 # ═══════════════════════════════════════════════════════════════════════════
 # TAB 4: LLM Dashboard

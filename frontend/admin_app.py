@@ -83,7 +83,9 @@ with open("data/mock/recent_chats.json") as f:
     chats_data = json.load(f)
 
 with open("data/mock/products.json") as f:
-    products_by_id = {p["id"]: p["name"] for p in json.load(f)}
+    _products_raw = json.load(f)
+    products_by_id = {p["id"]: p["name"] for p in _products_raw}
+    product_category_by_id = {p["id"]: p.get("category_id") for p in _products_raw}
 
 # ── Comments tab: load reviews + sentiment events, derive classification ─────
 _ASPECT_KEYS = ("delivery", "quality", "accuracy", "packaging", "customer_service", "value")
@@ -878,6 +880,12 @@ elif selected_tab == "Comments":
         with btn_col:
             if st.button("🤖 Auto-classify all pending", key="comments_auto_all", width="stretch"):
                 from sentiment_analysis.analyzer import analyse_text
+                # Load existing events file so we can append new persistent records.
+                _events_path = "data/mock/sentiment_events.json"
+                with open(_events_path, encoding="utf-8") as _f:
+                    _all_events_now = json.load(_f)
+                _existing_ids = {e.get("event_id") for e in _all_events_now}
+
                 with st.status("Classifying comments with DeepSeek...", expanded=True) as status:
                     for _c in list(st.session_state.pending_comments):
                         st.write(f"→ {_c['id']}: {_c['title']}")
@@ -913,8 +921,38 @@ elif selected_tab == "Comments":
                         st.session_state.pending_comments = [
                             x for x in st.session_state.pending_comments if x["id"] != _c["id"]
                         ]
+                        # Persist a full sentiment event so the Sentiment Analysis tab picks it up.
+                        _new_event_id = f"sa_review_{_c['id']}"
+                        if _new_event_id not in _existing_ids:
+                            _all_events_now.append({
+                                "event_id": _new_event_id,
+                                "source": "review",
+                                "source_id": _c["id"],
+                                "product_id": _c.get("product_id"),
+                                "category_id": product_category_by_id.get(_c.get("product_id")),
+                                "ticket_category": None,
+                                "timestamp": _c.get("date"),
+                                "raw_text": _c.get("body", ""),
+                                "delivery": result.delivery,
+                                "quality": result.quality,
+                                "accuracy": result.accuracy,
+                                "packaging": result.packaging,
+                                "customer_service": result.customer_service,
+                                "value": result.value,
+                                "dominant_problem": result.dominant_problem,
+                                "overall_sentiment": result.overall_sentiment,
+                                "severity": result.severity,
+                                "summary": getattr(result, "summary", ""),
+                                "confidence": result.confidence,
+                            })
+                            _existing_ids.add(_new_event_id)
                     else:
                         status.update(label="All comments classified ✅", state="complete")
+
+                # Write the updated events file once at the end (atomic-ish, single write).
+                with open(_events_path, "w", encoding="utf-8") as _f:
+                    json.dump(_all_events_now, _f, ensure_ascii=False, indent=2)
+
                 st.rerun()
 
         for idx, comment in enumerate(list(st.session_state.pending_comments)):

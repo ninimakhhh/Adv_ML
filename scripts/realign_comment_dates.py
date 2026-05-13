@@ -63,9 +63,34 @@ def main() -> None:
         )
 
     # 2. Select 5 pending reviews from those NOT already classified.
-    candidate_pool = [r for r in reviews if r["id"] not in classified_id_set]
-    rng.shuffle(candidate_pool)
-    pending_reviews = candidate_pool[:5]
+    #    Restricted to rating 1-2 so the AI pipeline extracts real
+    #    dominant_problem labels (delivery, quality, sizing, …) instead of "none".
+    #    Prefer one review per distinct product when possible.
+    low_rating_pool = [
+        r for r in reviews
+        if r["id"] not in classified_id_set and r.get("rating") in (1, 2)
+    ]
+    rng.shuffle(low_rating_pool)
+
+    pending_reviews: list[dict] = []
+    seen_products: set[str] = set()
+    for r in low_rating_pool:
+        pid = r.get("product_id")
+        if pid in seen_products:
+            continue
+        pending_reviews.append(r)
+        seen_products.add(pid)
+        if len(pending_reviews) == 5:
+            break
+    if len(pending_reviews) < 5:
+        # Fallback: fill remaining slots ignoring the distinct-product preference.
+        for r in low_rating_pool:
+            if r in pending_reviews:
+                continue
+            pending_reviews.append(r)
+            if len(pending_reviews) == 5:
+                break
+
     pending_ids = [r["id"] for r in pending_reviews]
 
     target_ids = classified_ids + pending_ids

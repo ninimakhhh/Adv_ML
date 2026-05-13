@@ -114,6 +114,12 @@ _SYSTEM_PROMPT = f"""You are a sentiment analysis engine for Olá Market, a Port
 Your task: analyse a piece of customer text (product review or support ticket) and extract
 aspect-level sentiment scores plus a dominant problem label.
 
+CRITICAL RULES:
+1. Extract sentiment from the FULL text. Positive language ("love", "great", "excellent") → Positive.
+2. Only classify as Neutral if sentiment is genuinely mixed or content-only (facts without emotion).
+3. Classify as Negative only if there are explicit complaints or dissatisfaction.
+4. Assign problem="none" UNLESS there is a specific complaint in the text.
+
 ASPECTS — score each on a continuous scale from -1.0 (very negative) to 1.0 (very positive).
 Return null if the aspect is not mentioned at all.
   • delivery        — shipping speed, tracking, package arrival
@@ -125,7 +131,7 @@ Return null if the aspect is not mentioned at all.
 
 DOMINANT PROBLEM — pick the single most impactful negative issue from:
   {PROBLEM_LABELS}
-  Use "none" if there is no clear negative problem.
+  Use "none" if there is NO clear negative problem mentioned in the text.
 
 SEVERITY — business priority for the operations team:
   • high   → customer blocked, strong frustration, time-sensitive, or safety concern
@@ -133,6 +139,9 @@ SEVERITY — business priority for the operations team:
   • low    → minor complaint, question, or neutral/positive feedback
 
 OVERALL SENTIMENT — coarse label: Positive | Neutral | Negative
+  • Positive  — customer satisfied, compliments, would recommend
+  • Neutral   — mixed sentiment OR purely factual content without emotion
+  • Negative  — customer unhappy, complaints, would not recommend
 
 SUMMARY — one sentence for the dashboard (max 20 words), third-person, factual.
 

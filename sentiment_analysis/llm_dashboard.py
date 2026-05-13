@@ -23,7 +23,6 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from sentiment_analysis.aggregator import (
-    aspect_heatmap,
     category_sentiment,
     cross_reference_alerts,
     load_events,
@@ -106,11 +105,6 @@ def render_llm_dashboard() -> None:
 
     # ── Section 2: Sentiment trend ───────────────────────────────────────────
     _render_trend(events)
-
-    st.markdown("---")
-
-    # ── Section 3: Aspect heatmap ────────────────────────────────────────────
-    _render_heatmap(events)
 
     st.markdown("---")
 
@@ -213,48 +207,6 @@ def _render_trend(events: list[dict]) -> None:
     st.plotly_chart(fig, use_container_width=True)
 
 
-def _render_heatmap(events: list[dict]) -> None:
-    st.markdown("### 🔥 Aspect Sentiment Heatmap (Category × Aspect)")
-    st.caption("Mean score from -1.0 (very negative) to 1.0 (very positive). Grey = not enough data.")
-
-    heatmap = aspect_heatmap(events)
-    if not heatmap:
-        st.info("No categorised review events found.")
-        return
-
-    cats = sorted(heatmap.keys())
-    asp_labels = [ASPECT_LABELS[a] for a in ASPECTS]
-    cat_labels  = [CATEGORY_LABELS.get(c, c) for c in cats]
-
-    z = []
-    for cat in cats:
-        row = [heatmap[cat].get(asp) for asp in ASPECTS]
-        z.append(row)
-
-    fig = go.Figure(data=go.Heatmap(
-        z=z,
-        x=asp_labels,
-        y=cat_labels,
-        colorscale=[
-            [0.0,  "#EF4444"],   # -1 → red
-            [0.5,  "#F9FAFB"],   # 0  → near-white
-            [1.0,  "#10B981"],   # +1 → green
-        ],
-        zmid=0,
-        zmin=-1, zmax=1,
-        text=[[f"{v:.2f}" if v is not None else "N/A" for v in row] for row in z],
-        texttemplate="%{text}",
-        hovertemplate="Category: %{y}<br>Aspect: %{x}<br>Score: %{z:.3f}<extra></extra>",
-        colorbar=dict(title="Score", tickvals=[-1, 0, 1]),
-    ))
-    fig.update_layout(
-        height=250,
-        margin=dict(l=0, r=0, t=10, b=0),
-        plot_bgcolor="rgba(0,0,0,0)",
-        paper_bgcolor="rgba(0,0,0,0)",
-    )
-    st.plotly_chart(fig, use_container_width=True)
-
 
 def _render_problem_frequency(events: list[dict]) -> None:
     st.markdown("### 📊 Most Common Problems")
@@ -282,32 +234,12 @@ def _render_problem_frequency(events: list[dict]) -> None:
         else:
             st.info("No review problems found.")
 
-    with col2:
-        st.caption("**Tickets**")
-        freq_t = problem_frequency(events, source="ticket")
-        if freq_t:
-            df_t = pd.DataFrame(freq_t)
-            fig = px.bar(
-                df_t, x="count", y="problem", orientation="h",
-                text="pct", color="count",
-                color_continuous_scale=["#DBEAFE", "#4F46E5"],
-                labels={"count": "Occurrences", "problem": "Problem Type"},
-            )
-            fig.update_traces(texttemplate="%{text}%", textposition="outside")
-            fig.update_layout(
-                showlegend=False, coloraxis_showscale=False,
-                height=300, margin=dict(l=0, r=0, t=10, b=0),
-                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("No ticket problems found.")
 
 
 def _render_top_products(events: list[dict]) -> None:
-    st.markdown("### ⚠️ Top Problem Products (Last 30 Days)")
+    window = st.slider("Window (days)", 7, 90, 30, key="top_products_window_days")
+    st.markdown(f"### ⚠️ Top Problem Products (Last {window} Days)")
 
-    window = st.slider("Window (days)", 7, 90, 30, key="prod_window")
     rows = top_problem_products(events, n=10, window_days=window)
 
     if not rows:

@@ -1,3 +1,12 @@
+import sys
+from pathlib import Path
+
+_FRONTEND = Path(__file__).parent
+_ROOT = _FRONTEND.parent
+for _p in (str(_ROOT), str(_FRONTEND)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -7,6 +16,11 @@ from datetime import datetime, timedelta
 from components.admin_sidebar import render_admin_sidebar
 from components.metric_card import metric_card, small_metric
 from components.chatbot_widget import render_admin_chatbot_widget
+from components.metric_card import metric_card
+from shared.db.repository import TicketRepository
+from shared.db.migrate import _DB_PATH, migrate
+from chatbot.registry.loader import load_intents
+from chatbot.feedback.analyzer import weekly_review, export_labeled_jsonl
 
 # Page config
 st.set_page_config(layout="wide", page_title="Olá Market - Admin Dashboard")
@@ -114,46 +128,41 @@ def _path_badge(path: str) -> str:
 # ═══════════════════════════════════════════════════════════════════════════
 
 if selected_tab == "Dashboard":
-    kpi = metrics_data["kpi_summary"]
-    
-    # TOP KPI STRIP
+    m = repo.get_metrics()
+    daily = repo.get_daily_counts(days=30)
+    insight = repo.get_escalation_insight()
+
+    open_count      = m["by_status"].get("open", 0)
+    resolved_count  = m["by_status"].get("resolved", 0) + m["by_status"].get("closed", 0)
+
+    # ── KPI strip ───────────────────────────────────────────────────────────
     st.markdown("### Key Performance Indicators")
-    
-    # Row 1: Tickets
+
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        metric_card("Created", f"{kpi['tickets']['created']}", icon="📥")
+        metric_card("Total Tickets", str(m["total_tickets"]), icon="📥")
     with col2:
-        metric_card("Solved", f"{kpi['tickets']['solved']}", icon="✅")
+        metric_card("Resolved", str(resolved_count), icon="✅")
     with col3:
-        metric_card("Open", f"{kpi['tickets']['open']}", icon="🔓")
+        metric_card("Open", str(open_count), icon="🔓")
     with col4:
-        metric_card("Reopened", f"{kpi['tickets']['reopened']}", icon="🔄")
-    
-    # Row 2: AI Performance
+        metric_card("Escalated", str(m["escalated"]), icon="🔄")
+
     col1, col2, col3 = st.columns(3)
     with col1:
-        metric_card("Auto-Resolution", f"{kpi['ai_performance']['auto_resolution_rate']}%", icon="🤖")
+        metric_card("Auto-Resolution Rate", f"{m['bot_resolution_rate_pct']}%", icon="🤖")
     with col2:
-        metric_card("Auto-Routed", f"{kpi['ai_performance']['tickets_auto_routed']}", icon="📊")
+        metric_card("AI Accuracy", f"{m['ai_accuracy_pct']}%", icon="🎯")
     with col3:
-        metric_card("AI Accuracy", f"{kpi['ai_performance']['accuracy']}%", icon="🎯")
-    
-    # Row 3: Response Times
+        csat = m["avg_csat"]
+        metric_card("Avg CSAT", f"{csat:.1f} / 5" if csat else "—", icon="⭐")
+
     col1, col2 = st.columns(2)
     with col1:
-        metric_card(
-            "Avg First Reply",
-            f"{kpi['response_times']['avg_first_reply_minutes']}m",
-            icon="⏱️"
-        )
+        metric_card("Avg First Reply", f"{m['avg_first_reply_min']}m", icon="⏱️")
     with col2:
-        metric_card(
-            "Avg Resolution Time",
-            f"{kpi['response_times']['avg_full_resolution_hours']:.1f}h",
-            icon="⏲️"
-        )
-    
+        metric_card("Avg Resolution Time", f"{m['avg_resolution_hours']}h", icon="⏲️")
+
     st.markdown("---")
 
     # ── Tickets Created vs Solved (30 days) ─────────────────────────────────
@@ -309,7 +318,7 @@ if selected_tab == "Dashboard":
             </div>
         </div>
     </div>
-    """)
+    """, unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -318,12 +327,23 @@ if selected_tab == "Dashboard":
 
 elif selected_tab == "Tickets":
     st.markdown("### Ticket Management")
-    
-    # TOP FILTER BAR
+
+     # ── Filter bar ───────────────────────────────────────────────────────────
+    STATUS_OPTIONS = {
+        "All": None,
+        "Open": "open",
+        "In Progress": "in_progress",
+        "Resolved": "resolved",
+        "Closed": "closed",
+    }
+
     col1, col2, col3, col4 = st.columns(4)
-    
     with col1:
-        filter_status = st.selectbox("Status", ["All", "Open", "In Progress", "Resolved", "Waiting"])
+        filter_status_label = st.selectbox(
+            "Status", list(STATUS_OPTIONS.keys()), key="f_status"
+        )
+        filter_status = STATUS_OPTIONS[filter_status_label]      
+
     with col2:
         intent_options = {"All": "All"} | INTENT_OPTIONS
         filter_intent_label = st.selectbox("Intent / Category", list(intent_options.values()), key="f_intent")
@@ -498,4 +518,3 @@ elif selected_tab == "LLM Dashboard":
     """)
 
 # Render chatbot widget
-render_admin_chatbot_widget()

@@ -24,7 +24,12 @@ from typing import Any
 
 from openai import OpenAI, APIStatusError, APIConnectionError, RateLimitError
 
-from shared.config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL
+from shared.config import (
+    DEEPSEEK_API_KEY,
+    DEEPSEEK_BASE_URL,
+    DEEPSEEK_MODEL,
+    require_deepseek_api_key,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,11 +41,16 @@ class LLMClient:
     """Thin wrapper around the DeepSeek chat-completions endpoint."""
 
     def __init__(self) -> None:
-        self._client = OpenAI(
-            api_key=DEEPSEEK_API_KEY,
-            base_url=DEEPSEEK_BASE_URL,
-        )
+        # Do not validate the key here — instantiation must not fail just
+        # because the key is missing. The error is raised lazily on first call.
+        self._client: OpenAI | None = None
         self._model = DEEPSEEK_MODEL
+
+    def _ensure_client(self) -> OpenAI:
+        if self._client is None:
+            api_key = require_deepseek_api_key()
+            self._client = OpenAI(api_key=api_key, base_url=DEEPSEEK_BASE_URL)
+        return self._client
 
     def chat(
         self,
@@ -70,9 +80,10 @@ class LLMClient:
         extra: dict,
     ) -> str:
         last_exc: Exception | None = None
+        client = self._ensure_client()
         for attempt in range(_RETRY_ATTEMPTS):
             try:
-                response = self._client.chat.completions.create(
+                response = client.chat.completions.create(
                     model=self._model,
                     messages=messages,
                     temperature=temperature,
@@ -139,12 +150,8 @@ def _parse_json(raw: str) -> dict[str, Any]:
 
 @lru_cache(maxsize=1)
 def get_deepseek_client() -> OpenAI:
-    if not DEEPSEEK_API_KEY:
-        raise RuntimeError(
-            "DEEPSEEK_API_KEY not set. "
-            "Please add it to your .env file: DEEPSEEK_API_KEY=sk-..."
-        )
-    return OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
+    api_key = require_deepseek_api_key()
+    return OpenAI(api_key=api_key, base_url=DEEPSEEK_BASE_URL)
 
 
 # Alias for backwards compatibility

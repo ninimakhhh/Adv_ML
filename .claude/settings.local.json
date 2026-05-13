@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import sys; sys.path.insert\\(0, '.'\\); sys.path.insert\\(0, 'frontend'\\); import frontend.admin_app\")"
+    ]
+  }
+}

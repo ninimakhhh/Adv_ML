@@ -11,11 +11,18 @@ DEEPSEEK_BASE_URL: str = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.co
 DEEPSEEK_MODEL: str = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
 
-if not DEEPSEEK_API_KEY:
-    raise EnvironmentError(
-        "DEEPSEEK_API_KEY is not set. "
-        "Add it to your .env file — see .env.example for the required variables."
-    )
+def require_deepseek_api_key() -> str:
+    """Return the DeepSeek API key, raising a clear error if missing.
+
+    Use this at the call site that actually needs the key, so importing
+    modules that depend on shared.config does not crash when the key is unset.
+    """
+    if not DEEPSEEK_API_KEY:
+        raise RuntimeError(
+            "DEEPSEEK_API_KEY is not set. "
+            "Add it to your .env file — see .env.example for the required variables."
+        )
+    return DEEPSEEK_API_KEY
 
 # --- Model defaults ---
 DEFAULT_DEEPSEEK_MODEL = DEEPSEEK_MODEL

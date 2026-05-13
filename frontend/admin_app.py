@@ -34,7 +34,9 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-    
+    [data-testid="stSidebarNav"] { display: none !important; }
+    [data-testid="stSidebarNavItems"] { display: none !important; }
+
     /* Overall styling */
     body {
         background-color: #F7F8FA;
@@ -83,12 +85,106 @@ with open("data/mock/recent_chats.json") as f:
 with open("data/mock/products.json") as f:
     products_by_id = {p["id"]: p["name"] for p in json.load(f)}
 
+# ── Comments tab: load reviews + sentiment events, derive classification ─────
+_ASPECT_KEYS = ("delivery", "quality", "accuracy", "packaging", "customer_service", "value")
+_ASPECT_LABEL = {
+    "delivery": "Delivery",
+    "quality": "Quality",
+    "accuracy": "Accuracy",
+    "packaging": "Packaging",
+    "customer_service": "Customer Service",
+    "value": "Value",
+}
+_SEVERITY_LABEL = {"high": "High", "medium": "Medium", "low": "Low"}
+_ASPECT_TO_TEAM = {
+    "Delivery": "Logistics",
+    "Quality": "Product Quality",
+    "Accuracy": "Catalog",
+    "Packaging": "Logistics",
+    "Customer Service": "Support",
+    "Value": "Marketing",
+    "None": "General",
+}
+
+
+def _dominant_aspect(event: dict) -> str:
+    best_label = "None"
+    best_abs = 0.0
+    for key in _ASPECT_KEYS:
+        score = event.get(key)
+        if score is None:
+            continue
+        if abs(score) > best_abs and abs(score) > 0.1:
+            best_abs = abs(score)
+            best_label = _ASPECT_LABEL[key]
+    return best_label
+
+
+def _build_classified_comment(review: dict, event: dict) -> dict:
+    aspect = _dominant_aspect(event)
+    return {
+        "id": review["id"],
+        "author": review.get("author_name", "—"),
+        "product_id": review.get("product_id"),
+        "title": review.get("title", ""),
+        "body": review.get("body", ""),
+        "rating": review.get("rating"),
+        "date": review.get("date"),
+        "aspect": aspect,
+        "severity": _SEVERITY_LABEL.get(event.get("severity", "low"), "Low"),
+        "sentiment": event.get("overall_sentiment", "Neutral"),
+        "confidence": event.get("confidence", 0),
+        "dominant_problem": event.get("dominant_problem", "none"),
+        "assigned_team": _ASPECT_TO_TEAM.get(aspect, "General"),
+    }
+
+
+if "pending_comments" not in st.session_state:
+    with open("data/mock/reviews.json", encoding="utf-8") as f:
+        _all_reviews = json.load(f)
+    with open("data/mock/sentiment_events.json", encoding="utf-8") as f:
+        _all_events = json.load(f)
+
+    _reviews_by_id = {r["id"]: r for r in _all_reviews}
+    _review_events = [e for e in _all_events if e.get("source") == "review"]
+
+    _classified: list[dict] = []
+    _classified_ids: set[str] = set()
+    for _ev in _review_events:
+        _sid = _ev.get("source_id")
+        _rev = _reviews_by_id.get(_sid)
+        if _rev is None:
+            continue
+        _classified.append(_build_classified_comment(_rev, _ev))
+        _classified_ids.add(_sid)
+
+    # Pick the same 5 pending reviews the realign script chose (seed-deterministic).
+    import random as _random
+    _candidates = [r for r in _all_reviews if r["id"] not in _classified_ids]
+    _rng = _random.Random(31)  # same seed as scripts/realign_comment_dates.py
+    _rng.shuffle(_candidates)
+    _pending_raw = _candidates[:5]
+    _pending: list[dict] = []
+    for _rev in _pending_raw:
+        _pending.append({
+            "id": _rev["id"],
+            "author": _rev.get("author_name", "—"),
+            "product_id": _rev.get("product_id"),
+            "title": _rev.get("title", ""),
+            "body": _rev.get("body", ""),
+            "rating": _rev.get("rating"),
+            "date": _rev.get("date"),
+        })
+
+    st.session_state.classified_comments = _classified
+    st.session_state.pending_comments = _pending
+
 # Render sidebar
 render_admin_sidebar()
 
 st.markdown("""
 <div style="padding:0 0 20px 0;">
-  <h1 style="color:#111827;margin:0;font-weight:800;">Admin Dashboard</h1>
+  <h1 style="color:#111827;margin:0;font-weight:800;">Olá Market — Admin</h1>
   <p style="color:#6B7280;margin:8px 0 0 0;">
     Monitor operations, manage support, and evaluate AI performance
   </p>
@@ -97,7 +193,7 @@ st.markdown("""
 
 selected_tab = st.radio(
     "Navigation",
-    ["Dashboard", "Tickets", "LLM Dashboard"],
+    ["Main", "Tickets", "Comments", "Sentiment Analysis"],
     horizontal=True,
     key="main_tabs",
     label_visibility="collapsed",
@@ -133,7 +229,7 @@ def _path_badge(path: str) -> str:
 # TAB 1: DASHBOARD
 # ═══════════════════════════════════════════════════════════════════════════
 
-if selected_tab == "Dashboard":
+if selected_tab == "Main":
     kpi = metrics_data["kpi_summary"]
     
     # TOP KPI STRIP
@@ -744,10 +840,362 @@ elif selected_tab == "Tickets":
         """)
 
 # ═══════════════════════════════════════════════════════════════════════════
-# TAB 4: LLM Dashboard
+# TAB 3: COMMENTS (review-based, last 7 days)
 # ═══════════════════════════════════════════════════════════════════════════
 
-elif selected_tab == "LLM Dashboard":
+elif selected_tab == "Comments":
+    st.markdown("### Comments Management")
+    st.caption("Customer reviews from the last 7 days. The 20 already processed by the sentiment pipeline are shown classified; 5 more are waiting for review.")
+
+    _aspect_options = ["Delivery", "Quality", "Accuracy", "Packaging", "Customer Service", "Value", "None"]
+    _severity_options = ["High", "Medium", "Low"]
+    _sentiment_options = ["Positive", "Neutral", "Negative"]
+    _team_options = ["Logistics", "Product Quality", "Catalog", "Support", "Marketing", "General"]
+
+    def _sentiment_from_rating(rating: int) -> str:
+        if rating >= 4:
+            return "Positive"
+        if rating == 3:
+            return "Neutral"
+        return "Negative"
+
+    def _severity_from_rating(rating: int) -> str:
+        if rating == 1:
+            return "High"
+        if rating == 2:
+            return "Medium"
+        return "Low"
+
+    # ─── SECTION 1: TO BE CLASSIFIED ─────────────────────────────────────────
+    st.markdown("### 🔍 To Be Classified")
+
+    if len(st.session_state.pending_comments) == 0:
+        st.info("✨ No pending comments! All caught up.")
+    else:
+        header_col, btn_col = st.columns([3, 1])
+        with header_col:
+            st.markdown(f"**{len(st.session_state.pending_comments)} comments pending review**")
+        with btn_col:
+            if st.button("🤖 Auto-classify all pending", key="comments_auto_all", width="stretch"):
+                from sentiment_analysis.analyzer import analyse_text
+                with st.status("Classifying comments with DeepSeek...", expanded=True) as status:
+                    for _c in list(st.session_state.pending_comments):
+                        st.write(f"→ {_c['id']}: {_c['title']}")
+                        try:
+                            result = analyse_text(_c["body"])
+                        except Exception as exc:
+                            status.update(label=f"Failed on {_c['id']}: {exc}", state="error")
+                            st.exception(exc)
+                            break
+                        # Convert AspectSentiment dataclass to dict-like fake event
+                        _ev = {
+                            "delivery": result.delivery,
+                            "quality": result.quality,
+                            "accuracy": result.accuracy,
+                            "packaging": result.packaging,
+                            "customer_service": result.customer_service,
+                            "value": result.value,
+                            "severity": result.severity,
+                            "overall_sentiment": result.overall_sentiment,
+                            "confidence": result.confidence,
+                            "dominant_problem": result.dominant_problem,
+                        }
+                        _rev_view = {
+                            "id": _c["id"],
+                            "author_name": _c["author"],
+                            "product_id": _c["product_id"],
+                            "title": _c["title"],
+                            "body": _c["body"],
+                            "rating": _c["rating"],
+                            "date": _c["date"],
+                        }
+                        st.session_state.classified_comments.append(_build_classified_comment(_rev_view, _ev))
+                        st.session_state.pending_comments = [
+                            x for x in st.session_state.pending_comments if x["id"] != _c["id"]
+                        ]
+                    else:
+                        status.update(label="All comments classified ✅", state="complete")
+                st.rerun()
+
+        for idx, comment in enumerate(list(st.session_state.pending_comments)):
+            with st.container(border=True):
+                col1, col2, col3 = st.columns([1, 2, 3])
+                with col1:
+                    st.caption(f"**{comment['id']}**")
+                with col2:
+                    st.caption(f"👤 {comment['author']}")
+                with col3:
+                    st.caption(f"**{comment['title']}**")
+
+                if comment.get("product_id"):
+                    st.caption(f"📦 `{comment['product_id']}` — {products_by_id.get(comment['product_id'], 'Unknown')}")
+
+                with st.expander("View details"):
+                    st.markdown(f"**Body:** {comment['body']}")
+                    st.markdown(f"**Rating:** {'⭐' * int(comment.get('rating', 0))}  ({comment.get('rating')}/5) &nbsp;·&nbsp; **Date:** {comment.get('date', '—')}")
+
+                    edit_col, action_col = st.columns(2)
+                    with edit_col:
+                        _aspect_val = st.selectbox(
+                            "Aspect",
+                            _aspect_options,
+                            index=_aspect_options.index("None"),
+                            key=f"comments_pending_aspect_{idx}",
+                        )
+                        _severity_val = st.selectbox(
+                            "Severity",
+                            _severity_options,
+                            index=_severity_options.index(_severity_from_rating(comment.get("rating") or 5)),
+                            key=f"comments_pending_severity_{idx}",
+                        )
+                        _sentiment_val = st.selectbox(
+                            "Sentiment",
+                            _sentiment_options,
+                            index=_sentiment_options.index(_sentiment_from_rating(comment.get("rating") or 5)),
+                            key=f"comments_pending_sentiment_{idx}",
+                        )
+
+                    with action_col:
+                        st.markdown("**Actions:**")
+                        if st.button("✅ Approve Classification", key=f"comments_approve_{idx}", width="stretch"):
+                            st.session_state.classified_comments.append({
+                                "id": comment["id"],
+                                "author": comment["author"],
+                                "product_id": comment["product_id"],
+                                "title": comment["title"],
+                                "body": comment["body"],
+                                "rating": comment["rating"],
+                                "date": comment["date"],
+                                "aspect": _aspect_val,
+                                "severity": _severity_val,
+                                "sentiment": _sentiment_val,
+                                "confidence": 100,
+                                "dominant_problem": "none",
+                                "assigned_team": _ASPECT_TO_TEAM.get(_aspect_val, "General"),
+                            })
+                            st.session_state.pending_comments = [
+                                x for x in st.session_state.pending_comments if x["id"] != comment["id"]
+                            ]
+                            st.rerun()
+
+    st.markdown("---")
+
+    # ─── SECTION 2: CLASSIFIED COMMENTS ──────────────────────────────────────
+    st.markdown("### ✅ Classified Comments")
+
+    if len(st.session_state.classified_comments) == 0:
+        st.info("No classified comments yet.")
+    else:
+        product_ids_in_comments = sorted({c.get("product_id") for c in st.session_state.classified_comments if c.get("product_id")})
+        product_filter_options = ["All"] + product_ids_in_comments
+
+        def _format_product_option(pid: str) -> str:
+            if pid == "All":
+                return "All"
+            return f"{pid} — {products_by_id.get(pid, 'Unknown')}"
+
+        fcol1, fcol2, fcol3, fcol4 = st.columns(4)
+        with fcol1:
+            f_sentiment = st.selectbox("Sentiment", ["All"] + _sentiment_options, key="comments_f_sentiment")
+        with fcol2:
+            f_severity = st.selectbox("Severity", ["All"] + _severity_options, key="comments_f_severity")
+        with fcol3:
+            f_aspect = st.selectbox("Aspect", ["All"] + _aspect_options, key="comments_f_aspect")
+        with fcol4:
+            f_product = st.selectbox(
+                "Product",
+                product_filter_options,
+                format_func=_format_product_option,
+                key="comments_f_product",
+            )
+
+        def _matches(c: dict) -> bool:
+            if f_sentiment != "All" and c.get("sentiment") != f_sentiment:
+                return False
+            if f_severity != "All" and c.get("severity") != f_severity:
+                return False
+            if f_aspect != "All" and c.get("aspect") != f_aspect:
+                return False
+            if f_product != "All" and c.get("product_id") != f_product:
+                return False
+            return True
+
+        filtered = [c for c in st.session_state.classified_comments if _matches(c)]
+        st.markdown(f"**Showing {len(filtered)} of {len(st.session_state.classified_comments)} classified comments**")
+
+        if not filtered:
+            st.info("No comments match the current filters.")
+        else:
+            display_rows = []
+            for c in filtered:
+                display_rows.append({
+                    "id": c["id"],
+                    "author": c["author"],
+                    "product": products_by_id.get(c["product_id"], "—") if c.get("product_id") else "—",
+                    "title": c["title"],
+                    "aspect": c["aspect"],
+                    "severity": c["severity"],
+                    "sentiment": c["sentiment"],
+                    "rating": c.get("rating"),
+                    "confidence": f"{c.get('confidence', 0)}%",
+                    "date": c.get("date"),
+                })
+            df = pd.DataFrame(display_rows)
+            st.dataframe(
+                df,
+                width="stretch",
+                hide_index=True,
+                column_config={
+                    "id": st.column_config.TextColumn("ID", width=80),
+                    "author": st.column_config.TextColumn("Author", width=120),
+                    "product": st.column_config.TextColumn("Product", width=160),
+                    "title": st.column_config.TextColumn("Title", width=150),
+                    "aspect": st.column_config.TextColumn("Aspect", width=120),
+                    "severity": st.column_config.TextColumn("Severity", width=80),
+                    "sentiment": st.column_config.TextColumn("Sentiment", width=90),
+                    "rating": st.column_config.NumberColumn("Rating", width=70, format="%d ⭐"),
+                    "confidence": st.column_config.TextColumn("Conf.", width=70),
+                    "date": st.column_config.TextColumn("Date", width=100),
+                },
+            )
+
+            # ─── MANAGE COMMENT PANEL ────────────────────────────────────────
+            st.markdown("#### Manage comment")
+            manage_options = [None] + [c["id"] for c in filtered]
+            sel_id = st.selectbox(
+                "Select comment to manage",
+                manage_options,
+                format_func=lambda x: "—" if x is None else x,
+                key="comments_manage_select",
+            )
+
+            if sel_id is not None:
+                target = next((c for c in st.session_state.classified_comments if c["id"] == sel_id), None)
+                if target is not None:
+                    with st.container(border=True):
+                        info_col, edit_col = st.columns(2)
+                        with info_col:
+                            st.markdown(f"**Author:** {target['author']}")
+                            pid = target.get("product_id")
+                            product_label = f"`{pid}` — {products_by_id.get(pid, 'Unknown')}" if pid else "—"
+                            st.markdown(f"**Product:** {product_label}")
+                            st.markdown(f"**Date:** {target.get('date', '—')}")
+                            st.markdown(f"**Rating:** {'⭐' * int(target.get('rating') or 0)}  ({target.get('rating')}/5)")
+                            st.markdown(f"**Body:** {target.get('body', '')}")
+                            st.markdown(f"**AI confidence:** {target.get('confidence', 0)}%")
+                            st.markdown(f"**Dominant problem:** `{target.get('dominant_problem', 'none')}`")
+
+                        with edit_col:
+                            cur_aspect = target.get("aspect", "None")
+                            cur_severity = target.get("severity", "Low")
+                            cur_sentiment = target.get("sentiment", "Neutral")
+                            cur_team = target.get("assigned_team", "General")
+
+                            new_aspect = st.selectbox(
+                                "Aspect",
+                                _aspect_options,
+                                index=_aspect_options.index(cur_aspect) if cur_aspect in _aspect_options else _aspect_options.index("None"),
+                                key=f"comments_manage_aspect_{sel_id}",
+                            )
+                            new_severity = st.selectbox(
+                                "Severity",
+                                _severity_options,
+                                index=_severity_options.index(cur_severity) if cur_severity in _severity_options else _severity_options.index("Low"),
+                                key=f"comments_manage_severity_{sel_id}",
+                            )
+                            new_sentiment = st.selectbox(
+                                "Sentiment",
+                                _sentiment_options,
+                                index=_sentiment_options.index(cur_sentiment) if cur_sentiment in _sentiment_options else _sentiment_options.index("Neutral"),
+                                key=f"comments_manage_sentiment_{sel_id}",
+                            )
+                            new_team = st.selectbox(
+                                "Assigned team",
+                                _team_options,
+                                index=_team_options.index(cur_team) if cur_team in _team_options else _team_options.index("General"),
+                                key=f"comments_manage_team_{sel_id}",
+                            )
+
+                            reclass_col, save_col = st.columns(2)
+                            with reclass_col:
+                                if st.button("🤖 Re-classify with AI", key=f"comments_reclass_{sel_id}", width="stretch"):
+                                    try:
+                                        from sentiment_analysis.analyzer import analyse_text
+                                        res = analyse_text(target.get("body", ""))
+                                        _ev = {
+                                            "delivery": res.delivery,
+                                            "quality": res.quality,
+                                            "accuracy": res.accuracy,
+                                            "packaging": res.packaging,
+                                            "customer_service": res.customer_service,
+                                            "value": res.value,
+                                            "severity": res.severity,
+                                            "overall_sentiment": res.overall_sentiment,
+                                            "confidence": res.confidence,
+                                            "dominant_problem": res.dominant_problem,
+                                        }
+                                        target["aspect"] = _dominant_aspect(_ev)
+                                        target["severity"] = _SEVERITY_LABEL.get(res.severity, "Low")
+                                        target["sentiment"] = res.overall_sentiment
+                                        target["confidence"] = res.confidence
+                                        target["dominant_problem"] = res.dominant_problem
+                                        target["assigned_team"] = _ASPECT_TO_TEAM.get(target["aspect"], "General")
+                                        st.success(f"Re-classified — aspect: **{target['aspect']}** ({res.confidence}% confidence).")
+                                        st.rerun()
+                                    except Exception as exc:
+                                        st.error(f"Re-classification failed: {exc}")
+
+                            with save_col:
+                                if st.button("💾 Save changes", key=f"comments_save_{sel_id}", width="stretch"):
+                                    target["aspect"] = new_aspect
+                                    target["severity"] = new_severity
+                                    target["sentiment"] = new_sentiment
+                                    target["assigned_team"] = new_team
+                                    st.success("Changes saved.")
+                                    st.rerun()
+
+    st.markdown("---")
+
+    # ─── KPI MINI ────────────────────────────────────────────────────────────
+    st.markdown("### Performance Metrics")
+    kpi_col1, kpi_col2, kpi_col3 = st.columns(3)
+
+    _n_classified = len(st.session_state.classified_comments)
+    _n_pending = len(st.session_state.pending_comments)
+    _avg_conf = (
+        sum(c.get("confidence", 0) for c in st.session_state.classified_comments) / _n_classified
+        if _n_classified > 0
+        else 0
+    )
+
+    with kpi_col1:
+        st.html(f"""
+        <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
+            <p style="color: #6B7280; font-size: 12px; margin: 0;">Classified</p>
+            <p style="color: #4F46E5; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{_n_classified}</p>
+        </div>
+        """)
+    with kpi_col2:
+        st.html(f"""
+        <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
+            <p style="color: #6B7280; font-size: 12px; margin: 0;">Pending</p>
+            <p style="color: #F59E0B; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{_n_pending}</p>
+        </div>
+        """)
+    with kpi_col3:
+        st.html(f"""
+        <div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center;">
+            <p style="color: #6B7280; font-size: 12px; margin: 0;">Avg Confidence</p>
+            <p style="color: #10B981; font-size: 28px; font-weight: 700; margin: 8px 0 0 0;">{int(_avg_conf)}%</p>
+        </div>
+        """)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TAB 4: SENTIMENT ANALYSIS (LLM Dashboard)
+# ═══════════════════════════════════════════════════════════════════════════
+
+elif selected_tab == "Sentiment Analysis":
     render_llm_dashboard()
 
 # Render chatbot widget

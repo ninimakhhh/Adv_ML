@@ -5,15 +5,26 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 # --- LLM keys ---
-DEEPSEEK_API_KEY: str | None = os.getenv("DEEPSEEK_API_KEY")
-#GEMINI_API_KEY: str | None = os.getenv("GEMINI_API_KEY")
-#ANTHROPIC_API_KEY: str | None = os.getenv("ANTHROPIC_API_KEY")
-#OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
+
+DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY", "")
+DEEPSEEK_BASE_URL: str = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+DEEPSEEK_MODEL: str = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+
+
+if not DEEPSEEK_API_KEY:
+    raise EnvironmentError(
+        "DEEPSEEK_API_KEY is not set. "
+        "Add it to your .env file — see .env.example for the required variables."
+    )
 
 # --- Model defaults ---
-DEFAULT_DEEPSEEK_MODEL = "deepseek-chat"
-DEFAULT_GEMINI_MODEL = "gemini-2.0-flash"
-DEFAULT_CLAUDE_MODEL = "claude-sonnet-4-6"
+DEFAULT_DEEPSEEK_MODEL = DEEPSEEK_MODEL
+
+
+# --- Paths ---
+ROOT_DIR = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT_DIR / "data"
+CHROMADB_DIR = ROOT_DIR / "chromadb_store"
 
 # --- RAG ---
 CHUNK_SIZE = 500

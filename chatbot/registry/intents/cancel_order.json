@@ -24,6 +24,7 @@
   ],
   "resolution_type": "guided_flow",
   "resolution_config": {
+    "pre_check_endpoint": "/api/v1/orders/{order_id}/cancel-check",
     "steps": [
       {
         "prompt": "I found order **{order_id}**. Before I proceed, can you confirm you want to cancel this entire order? Reply **yes** to continue or **no** to keep it.",
